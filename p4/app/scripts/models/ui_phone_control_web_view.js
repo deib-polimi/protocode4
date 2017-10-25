@@ -8,7 +8,7 @@ App.WebView = App.UiPhoneControl.extend({
 
     toXml: function (xmlDoc) {
         var elem = xmlDoc.createElement(this.get('xmlName'));
-        this.decorateXml(elem);
+        this.decorateXml(xmlDoc, elem);
 
         elem.setAttribute('HTMLFileName', this.get('htmlFileName'));
 

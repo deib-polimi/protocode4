@@ -8,7 +8,7 @@ App.Timepicker = App.UiPhoneControl.extend({
 
     toXml: function (xmlDoc) {
         var timepicker = xmlDoc.createElement(this.get('xmlName'));
-        this.decorateXml(timepicker);
+        this.decorateXml(xmlDoc, timepicker);
         return timepicker;
     }
 

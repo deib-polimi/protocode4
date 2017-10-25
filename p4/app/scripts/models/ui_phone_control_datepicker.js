@@ -8,7 +8,7 @@ App.Datepicker = App.UiPhoneControl.extend({
 
     toXml: function (xmlDoc) {
         var datepicker = xmlDoc.createElement(this.get('xmlName'));
-        this.decorateXml(datepicker);
+        this.decorateXml(xmlDoc, datepicker);
         return datepicker;
     }
 

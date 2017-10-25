@@ -8,7 +8,7 @@ App.Slider = App.UiPhoneControl.extend({
 
     toXml: function (xmlDoc) {
         var slider = xmlDoc.createElement(this.get('xmlName'));
-        this.decorateXml(slider);
+        this.decorateXml(xmlDoc, slider);
         return slider;
     }
 

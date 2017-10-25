@@ -8,7 +8,7 @@ App.Container = App.UiPhoneControl.extend({
 
     toXml: function (xmlDoc) {
         var elem = xmlDoc.createElement('container');
-        this.decorateXml(elem);
+        this.decorateXml(xmlDoc, elem);
 
         elem.setAttribute('title', this.get('title'));
 

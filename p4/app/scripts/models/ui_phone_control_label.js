@@ -22,7 +22,7 @@ App.Label = App.UiPhoneControl.extend({
 
     toXml: function (xmlDoc) {
         var label = xmlDoc.createElement(this.get('xmlName'));
-        this.decorateXml(label);
+        this.decorateXml(xmlDoc, label);
         label.setAttribute('content', this.get('title'));
         label.setAttribute('textAlign', this.get('textAlign'));
 

@@ -8,7 +8,7 @@ App.Switch = App.UiPhoneControl.extend({
 
     toXml: function (xmlDoc) {
         var _switch = xmlDoc.createElement(this.get('xmlName'));
-        this.decorateXml(_switch);
+        this.decorateXml(xmlDoc, _switch);
         return _switch;
     }
 

@@ -25,7 +25,7 @@ App.Button = App.UiPhoneControl.extend({
 
     toXml: function (xmlDoc) {
         var button = xmlDoc.createElement(this.get('xmlName'));
-        this.decorateXml(button);
+        this.decorateXml(xmlDoc, button);
         button.setAttribute('title', this.get('title'));
 
         button.setAttribute('textColor', this.get('textColor'));

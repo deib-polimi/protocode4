@@ -34,7 +34,7 @@ App.ListView = App.UiPhoneControl.extend({
         var self = this;
 
         var elem = xmlDoc.createElement(self.get('xmlName'));
-        self.decorateXml(elem);
+        self.decorateXml(xmlDoc, elem);
 
         elem.setAttribute('backgroundColor', this.get('backgroundColor'));
         elem.setAttribute('listType', this.get('listType'));

@@ -36,7 +36,7 @@ App.GridView = App.UiPhoneControl.extend({
         var self = this;
 
         var elem = xmlDoc.createElement(self.get('xmlName'));
-        self.decorateXml(elem);
+        self.decorateXml(xmlDoc, elem);
 
         elem.setAttribute('gridType', this.get('gridType'));
 

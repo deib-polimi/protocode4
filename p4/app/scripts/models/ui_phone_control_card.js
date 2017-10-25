@@ -32,7 +32,7 @@ App.Card = App.UiPhoneControl.extend({
 
     toXml: function (xmlDoc) {
         var card = xmlDoc.createElement(this.get('xmlName'));
-        this.decorateXml(card);
+        this.decorateXml(xmlDoc, card);
         card.setAttribute('title', this.get('title'));
         card.setAttribute('subtitle', this.get('subtitle'));
         card.setAttribute('numActions', this.get('numActions'));

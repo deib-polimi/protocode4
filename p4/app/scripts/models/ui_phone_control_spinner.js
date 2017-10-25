@@ -8,7 +8,7 @@ App.Spinner = App.UiPhoneControl.extend({
 
     toXml: function (xmlDoc) {
         var spinner = xmlDoc.createElement(this.get('xmlName'));
-        this.decorateXml(spinner);
+        this.decorateXml(xmlDoc, spinner);
         return spinner;
     }
 

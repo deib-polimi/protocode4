@@ -42,7 +42,7 @@ App.VideoView = App.UiPhoneControl.extend({
 
     toXml: function (xmlDoc) {
         var elem = xmlDoc.createElement(this.get('xmlName'));
-        this.decorateXml(elem);
+        this.decorateXml(xmlDoc, elem);
 
         var sourceType = this.get('sourceType');
 

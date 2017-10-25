@@ -14,11 +14,6 @@ App.UiControl = DS.Model.extend({
     marginStart: DS.attr('number', {defaultValue: 0}),
     marginEnd: DS.attr('number', {defaultValue: 0}),
 
-    alignParentTop: DS.attr('boolean', {defaultValue: false}),
-    alignParentBottom: DS.attr('boolean', {defaultValue: false}),
-    alignParentStart: DS.attr('boolean', {defaultValue: false}),
-    alignParentEnd: DS.attr('boolean', {defaultValue: false}),
-
     width: DS.attr('number', {defaultValue: 125}),
     height: DS.attr('number', {defaultValue: 30})
 

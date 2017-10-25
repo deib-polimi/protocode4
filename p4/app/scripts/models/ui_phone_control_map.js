@@ -11,7 +11,7 @@ App.Map = App.UiPhoneControl.extend({
 
     toXml: function (xmlDoc) {
         var map = xmlDoc.createElement(this.get('xmlName'));
-        this.decorateXml(map);
+        this.decorateXml(xmlDoc, map);
 
         map.setAttribute('lat', this.get('lat'));
         map.setAttribute('lon', this.get('lon'));

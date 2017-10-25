@@ -18,7 +18,7 @@ App.VideocameraController = App.UiPhoneControl.extend({
 
     toXml: function (xmlDoc) {
         var elem = xmlDoc.createElement(this.get('xmlName'));
-        this.decorateXml(elem);
+        this.decorateXml(xmlDoc, elem);
 
         elem.setAttribute('backgroundType', this.get('backgroundType'));
 

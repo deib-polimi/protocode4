@@ -12,6 +12,11 @@ App.UiWatchControl = App.UiControl.extend({
     watchController: DS.belongsTo('watchController'),
     parentContainer: DS.belongsTo('container', {inverse: 'uiWatchControls'}),
 
+    alignParentTop: DS.attr('boolean', {defaultValue: false}),
+    alignParentBottom: DS.attr('boolean', {defaultValue: false}),
+    alignParentStart: DS.attr('boolean', {defaultValue: false}),
+    alignParentEnd: DS.attr('boolean', {defaultValue: false}),
+
     alignTop: DS.belongsTo('uiWatchControl', {polymorphic: true, inverse: null}),
     alignBottom: DS.belongsTo('uiWatchControl', {polymorphic: true, inverse: null}),
     alignStart: DS.belongsTo('uiWatchControl', {polymorphic: true, inverse: null}),
