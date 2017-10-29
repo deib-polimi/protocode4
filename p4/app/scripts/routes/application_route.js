@@ -74,6 +74,7 @@ App.ApplicationRoute = Ember.Route.extend({
             videoViews: this.store.find('videoView'),
             videocameraControllers: this.store.find('videocameraController'),
             webViews: this.store.find('webView'),
+            constraints: this.store.find('constraint'),
 
             // UiWatchControls
             watchButtons: this.store.find('watchButton'),
@@ -88,7 +89,6 @@ App.ApplicationRoute = Ember.Route.extend({
     actions: {
 
         deleteApp: function () {
-
             if (confirm('Are you sure to delete?')) {
                 var self = this;
 
@@ -122,7 +122,6 @@ App.ApplicationRoute = Ember.Route.extend({
                         self.store.findAll(model).then(function (array) {
                             array.forEach(function (data) {
                                 Ember.run.once(self, function () {
-
                                     data.deleteRecord();
                                     data.save();
                                 });

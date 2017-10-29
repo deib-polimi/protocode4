@@ -6,6 +6,20 @@ App.Container = App.UiPhoneControl.extend({
 
     uiPhoneControls: DS.hasMany('uiPhoneControl', {polymorphic: true, inverse: 'parentContainer'}),
 
+    centerX: function() {
+        return this.get('posX') + (this.get('width') / 2);
+    }.property(
+        'posX',
+        'width'
+    ),
+
+    centerY: function() {
+        return this.get('posY') + (this.get('height') / 2);
+    }.property(
+        'posY',
+        'height'
+    ),
+
     toXml: function (xmlDoc) {
         var elem = xmlDoc.createElement('container');
         this.decorateXml(xmlDoc, elem);

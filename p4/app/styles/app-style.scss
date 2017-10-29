@@ -35,6 +35,12 @@ body,
     border-color: #ddd;
 }
 
+.panel-info .panel-default .panel-heading,
+.panel-info .panel-default .panel-footer {
+    background-color: #f1f1f1;
+    color: #333333;
+}
+
 .panel-info .panel-heading,
 .panel-info .panel-footer {
     background-color: #cc181e;
@@ -53,6 +59,18 @@ body,
     border-top: none;
     margin-bottom: 0;
     border-bottom: 1px solid #ddd;
+}
+
+.list-group-item-highlight {
+    margin-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    padding-left: 15px;
+    list-style: none;
+}
+
+.list-group-item-highlight a {
+    color: #ff0000;
 }
 
 .tab-pane .list-group-item {

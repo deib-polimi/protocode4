@@ -146,6 +146,10 @@ App.Router.map(function () {
                     path: '/progressDialog/:progress_dialog_id'
                 }, function () {
                 });
+                this.resource('constraint', {
+                    path: '/constraints/:constraint_id'
+                }, function () {
+                });
             });
         });
     });

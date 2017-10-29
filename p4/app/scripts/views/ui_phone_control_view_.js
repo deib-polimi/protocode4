@@ -94,22 +94,6 @@ App.UiPhoneControlView = Ember.View.extend(App.UiMoveable, {
     }
   }.property(),
 
-  alignParentTop: function() {
-    return this.get('context.alignParentTop');
-  }.property('context.alignParentTop'),
-
-  alignParentBottom: function() {
-    return this.get('context.alignParentBottom');
-  }.property('context.alignParentBottom'),
-
-  alignParentStart: function() {
-    return this.get('context.alignParentStart');
-  }.property('context.alignParentStart'),
-
-  alignParentEnd: function() {
-    return this.get('context.alignParentEnd');
-  }.property('context.alignParentEnd'),
-
   top: function() {
     return this.computeVerticalAxis(this.get('context.top'));
   }.property('context.top', 'smartphone'),

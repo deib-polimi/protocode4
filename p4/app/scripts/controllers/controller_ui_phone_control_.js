@@ -2,88 +2,26 @@
  templates/control_XXX/index.hbs
  */
 App.UiPhoneControlController = Ember.ObjectController.extend(App.Saveable, {
+    number: 0,
+    newConstraint: 'constraint',
+    needs: ['viewController'],
 
-    alignTop: function (key, value, previousValue) {
-        // setter
-        if (arguments.length > 1) {
-            return this.handleConstraint(key, value, previousValue);
-        }
-
-        // getter
-        return this.handleConstraint(key);
-    }.property('model.alignTop'),
-
-    alignBottom: function (key, value, previousValue) {
-        // setter
-        if (arguments.length > 1) {
-            return this.handleConstraint(key, value, previousValue);
-        }
-
-        // getter
-        return this.handleConstraint(key);
-    }.property('model.alignBottom'),
-
-    alignStart: function (key, value, previousValue) {
-        // setter
-        if (arguments.length > 1) {
-            return this.handleConstraint(key, value, previousValue);
-        }
-
-        // getter
-        return this.handleConstraint(key);
-    }.property('model.alignStart'),
-
-    alignEnd: function (key, value, previousValue) {
-        // setter
-        if (arguments.length > 1) {
-            return this.handleConstraint(key, value, previousValue);
-        }
-
-        // getter
-        return this.handleConstraint(key);
-    }.property('model.alignEnd'),
-
-
-    above: function (key, value, previousValue) {
-        // setter
-        if (arguments.length > 1) {
-            return this.handleConstraint(key, value, previousValue);
-        }
-
-        // getter
-        return this.handleConstraint(key);
-    }.property('model.above'),
-
-    below: function (key, value, previousValue) {
-        // setter
-        if (arguments.length > 1) {
-            return this.handleConstraint(key, value, previousValue);
-        }
-
-        // getter
-        return this.handleConstraint(key);
-    }.property('model.below'),
-
-    toStartOf: function (key, value, previousValue) {
-        // setter
-        if (arguments.length > 1) {
-            return this.handleConstraint(key, value, previousValue);
-        }
-
-        // getter
-        return this.handleConstraint(key);
-    }.property('model.toStartOf'),
-
-    toEndOf: function (key, value, previousValue) {
-        // setter
-        if (arguments.length > 1) {
-            return this.handleConstraint(key, value, previousValue);
-        }
-
-        // getter
-        return this.handleConstraint(key);
-    }.property('model.toEndOf'),
-
+    currentNumber: function() {
+        var constraints = this.get('model.constraints');
+        var n = -1;
+        constraints.forEach(function(constraint) {
+            var name = constraint.get('name');
+            var i = parseInt(name.charAt(name.length - 1));
+            if(i > n) {
+                n = i;
+            }
+        });
+        this.set('number', n + 1);
+        return n + 1;
+    }.property(
+        'model.constraints',
+        'model.constraints.name'
+    ),
 
     handleConstraint: function (key, value, previousValue) {
         var model = this.get('model');
@@ -123,6 +61,26 @@ App.UiPhoneControlController = Ember.ObjectController.extend(App.Saveable, {
     },
 
     actions: {
+        createConstraint: function () {
+            this.get('currentNumber');
+            var name = this.get('newConstraint') + this.get('number');
+
+            var constraint = this.store.createRecord('constraint', {
+                uiPhoneControl: this.get('model'),
+                name: name,
+                layoutEdge: null,
+                withParent: false,
+                referenceElement: null,
+                referenceLayoutEdge: null,
+                value: 0,
+                valid: false
+            });
+
+            this.set('number', this.get('number') + 1);
+
+            constraint.save();
+        },
+
         deleteUiPhoneControl: function () {
             var controlToDelete = this.get('model');
 
