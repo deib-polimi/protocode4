@@ -9,6 +9,78 @@ App.UiPhoneControl = App.UiControl.extend({
     parentContainer: DS.belongsTo('container', {inverse: 'uiPhoneControls'}),
 
     constraints: DS.hasMany('constraint', {inverse: 'uiPhoneControl'}),
+    isWidthConstrained: DS.attr('boolean', {defaultValue: false}),
+    isHeightConstrained: DS.attr('boolean', {defaultValue: false}),
+    isRatioConstrained: DS.attr('boolean', {defaultValue: false}),
+    ratioWidth: DS.attr('number', {defaultValue: 1}),
+    ratioHeight: DS.attr('number', {defaultValue: 1}),
+
+    widthCanBeConstrained: function() {
+        if(this.get('isRatioConstrained')) {
+            return false;
+        } else {
+            var xConstraintsNumber = 0;
+            var constraints = this.get('constraints');
+            constraints.forEach(function(constraint) {
+                if(constraint.get('valid')) {
+                    if(constraint.get('layoutEdge') === 'start' || constraint.get('layoutEdge') === 'end' || constraint.get('layoutEdge') === 'centerX') {
+                        xConstraintsNumber++;
+                    }
+                }
+            });
+            if(xConstraintsNumber > 1) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }.property(
+        'constraints.@each.layoutEdge',
+        'constraints.@each.valid',
+        'isRatioConstrained'
+    ),
+
+    heightCanBeConstrained: function() {
+        if(this.get('isRatioConstrained')) {
+            return false;
+        } else {
+            var yConstraintsNumber = 0;
+            var constraints = this.get('constraints');
+            constraints.forEach(function(constraint) {
+                if(constraint.get('valid')) {
+                    if(constraint.get('layoutEdge') === 'top' || constraint.get('layoutEdge') === 'bottom' || constraint.get('layoutEdge') === 'centerY') {
+                        yConstraintsNumber++;
+                    }
+                }
+            });
+            if(yConstraintsNumber > 1) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }.property(
+        'constraints.@each.layoutEdge',
+        'constraints.@each.valid',
+        'isRatioConstrained'
+    ),
+
+    ratioCanBeConstrained: function() {
+        if(this.get('isRatioConstrained')) {
+            return true;
+        }
+        if(!(this.get('widthCanBeConstrained')) && !(this.get('heightCanBeConstrained'))) {
+            return false;
+        } else {
+            return  !(this.get('isWidthConstrained') || this.get('isHeightConstrained'));
+        }
+    }.property(
+        'isRatioConstrained',
+        'isWidthConstrained',
+        'isHeightConstrained',
+        'widthCanBeConstrained',
+        'heightCanBeConstrained'
+    ),
 
     sameLevelControls: function () {
         var parentContainer = this.get('parentContainer');
@@ -32,9 +104,9 @@ App.UiPhoneControl = App.UiControl.extend({
 
     top: function () {
         var self = this;
-        var result = -1;
+        var result = -1000;
         var constraints = self.get('constraints').filter(function(c) {
-            return c.get('valid');
+            return c.get('valid') && ((!c.get('isDirty') || c.get('isSaving')));
         });
         // Look for constraints with top
         constraints.forEach(function (constraint) {
@@ -59,70 +131,75 @@ App.UiPhoneControl = App.UiControl.extend({
                         // Offset from tab bar for menu in Android
                         if (isAndroid && currentViewControllerIsMenu) {
                             result = self.get('viewController.application.smartphone.viewTop') + 48 + constraint.get('value');
-                        }
-                        result = self.get('viewController.application.smartphone.viewTop') + constraint.get('value');
-                    }
-                }
-            }
-        });
-
-        // Look for other y constraints with parent
-        constraints.forEach(function (constraint) {
-            if(constraint.get('withParent') === true) {
-                // Case bottom - parentBottom
-                if(constraint.get('referenceLayoutEdge') === 'bottom') {
-                    if (self.get('parentContainer') !== null) {
-                        result = self.get('bottom') - self.get('outerHeight');
-                    } else {
-                        result = self.get('bottom') - self.get('outerHeight');
-                    }
-                } else if(constraint.get('referenceLayoutEdge') === 'centerY') {
-                    // Case centerY - parentCenterY
-                    if (self.get('parentContainer') !== null) {
-                        result = (self.get('parentContainer.height') / 2) - (self.get('outerHeight') / 2) + constraint.get('value');
-                    } else {
-                        // Check tab bar for menu in Android
-                        var isAndroid = self.get('viewController.application.smartphone.platform') === 'android';
-                        var currentViewControllerIsMenu = false;
-                        var viewControllerName = self.get('viewController.name');
-                        var menuItems = self.get('viewController.application.menu.menuItems');
-                        menuItems.forEach(function (menuItem, index) {
-                            if (viewControllerName === menuItem.get('navigation.destination.name')) {
-                                currentViewControllerIsMenu = true;
-                            }
-                        });
-
-                        if (isAndroid && currentViewControllerIsMenu) {
-                            result = self.get('viewController.application.smartphone.viewTop') + 48 +
-                                ((self.get('viewController.application.smartphone.viewBottom') -
-                                self.get('viewController.application.smartphone.viewTop') - 48) / 2) -
-                                (self.get('outerHeight') / 2) + constraint.get('value');
                         } else {
-                            result = self.get('viewController.application.smartphone.viewTop') +
-                                ((self.get('viewController.application.smartphone.viewBottom') -
-                                self.get('viewController.application.smartphone.viewTop')) / 2) -
-                                (self.get('outerHeight') / 2) + constraint.get('value');
+                            result = self.get('viewController.application.smartphone.viewTop') + constraint.get('value');
                         }
                     }
                 }
             }
         });
 
-        // Look for other y constraints with other uiPhoneControls
-        constraints.forEach(function (constraint) {
-            if(constraint.get('withParent') === false) {
-                if(constraint.get('layoutEdge') === 'bottom') {
-                    result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) +
-                        constraint.get('value') - self.get('outerHeight');
-                } else if(constraint.get('layoutEdge') === 'centerY') {
-                    result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) +
-                        constraint.get('value') - (self.get('outerHeight') / 2);
+        if(result === -1000) {
+            // Look for other y constraints with parent
+            constraints.forEach(function (constraint) {
+                if(constraint.get('withParent') === true) {
+                    // Case bottom - parentBottom
+                    if(constraint.get('referenceLayoutEdge') === 'bottom') {
+                        if (self.get('parentContainer') !== null) {
+                            result = self.get('bottom') - self.get('outerHeight');
+                        } else {
+                            result = self.get('bottom') - self.get('outerHeight');
+                        }
+                    } else if(constraint.get('referenceLayoutEdge') === 'centerY') {
+                        // Case centerY - parentCenterY
+                        if (self.get('parentContainer') !== null) {
+                            result = (self.get('parentContainer.height') / 2) - (self.get('outerHeight') / 2) + constraint.get('value');
+                        } else {
+                            // Check tab bar for menu in Android
+                            var isAndroid = self.get('viewController.application.smartphone.platform') === 'android';
+                            var currentViewControllerIsMenu = false;
+                            var viewControllerName = self.get('viewController.name');
+                            var menuItems = self.get('viewController.application.menu.menuItems');
+                            menuItems.forEach(function (menuItem, index) {
+                                if (viewControllerName === menuItem.get('navigation.destination.name')) {
+                                    currentViewControllerIsMenu = true;
+                                }
+                            });
+
+                            if (isAndroid && currentViewControllerIsMenu) {
+                                result = self.get('viewController.application.smartphone.viewTop') + 48 +
+                                    ((self.get('viewController.application.smartphone.viewBottom') -
+                                    self.get('viewController.application.smartphone.viewTop') - 48) / 2) -
+                                    (self.get('outerHeight') / 2) + constraint.get('value');
+                            } else {
+                                result = self.get('viewController.application.smartphone.viewTop') +
+                                    ((self.get('viewController.application.smartphone.viewBottom') -
+                                    self.get('viewController.application.smartphone.viewTop')) / 2) -
+                                    (self.get('outerHeight') / 2) + constraint.get('value');
+                            }
+                        }
+                    }
                 }
+            });
+
+            if(result === -1000) {
+                // Look for other y constraints with other uiPhoneControls
+                constraints.forEach(function (constraint) {
+                    if(constraint.get('withParent') === false) {
+                        if(constraint.get('layoutEdge') === 'bottom') {
+                            result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) +
+                                constraint.get('value') - self.get('outerHeight');
+                        } else if(constraint.get('layoutEdge') === 'centerY') {
+                            result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) +
+                                constraint.get('value') - (self.get('outerHeight') / 2);
+                        }
+                    }
+                });
             }
-        });
+        }
 
         // Base case: there aren't y constraints
-        if(result != -1) {
+        if(result != -1000) {
             return result;
         } else {
             if (self.get('parentContainer') !== null) {
@@ -133,6 +210,7 @@ App.UiPhoneControl = App.UiControl.extend({
             }
         }
     }.property(
+        'constraints.@each.isDirty',
         'posY',
         'outerHeight',
         'constraints.@each.layoutEdge',
@@ -152,9 +230,9 @@ App.UiPhoneControl = App.UiControl.extend({
 
     bottom: function () {
         var self = this;
-        var result = -1;
+        var result = -1000;
         var constraints = self.get('constraints').filter(function(c) {
-            return c.get('valid');
+            return c.get('valid') && ((!c.get('isDirty') || c.get('isSaving')));
         });
         // look for a constraint with bottom
         constraints.forEach(function (constraint) {
@@ -179,74 +257,80 @@ App.UiPhoneControl = App.UiControl.extend({
                         // Offset from tab bar for menu in iOS
                         if (isIOS && currentViewControllerIsMenu) {
                             result = self.get('viewController.application.smartphone.viewBottom') - 48 + constraint.get('value');
+                        } else {
+                            result = self.get('viewController.application.smartphone.viewBottom') + constraint.get('value');
                         }
-                        result = self.get('viewController.application.smartphone.viewBottom') + constraint.get('value');
                     }
                 }
             }
         });
 
-        //Look for another y constraint with parentContainer
-        constraints.forEach(function (constraint) {
-            if(constraint.get('withParent') === true) {
-                // Case top - parentTop
-                if(constraint.get('referenceLayoutEdge') === 'top') {
-                    if (self.get('parentContainer') !== null) {
-                        result = self.get('top') + self.get('outerHeight');
-                    } else {
-                        result = self.get('top') + self.get('outerHeight');
-                    }
-                } else if(constraint.get('referenceLayoutEdge') === 'centerY') {
-                    // Case centerY - parentCenterY
-                    if (self.get('parentContainer') !== null) {
-                        result = (self.get('parentContainer.height') / 2) + (self.get('outerHeight') / 2) + constraint.get('value');
-                    } else {
-                        // Check tab bar for menu in iOS
-                        var isIOS = self.get('viewController.application.smartphone.platform') === 'ios';
-                        var currentViewControllerIsMenu = false;
-                        var viewControllerName = self.get('viewController.name');
-                        var menuItems = self.get('viewController.application.menu.menuItems');
-                        menuItems.forEach(function (menuItem, index) {
-                            if (viewControllerName === menuItem.get('navigation.destination.name')) {
-                                currentViewControllerIsMenu = true;
+        if(result === -1000) {
+            //Look for another y constraint with parentContainer
+            constraints.forEach(function (constraint) {
+                if(constraint.get('withParent') === true) {
+                    // Case top - parentTop
+                    if(constraint.get('referenceLayoutEdge') === 'top') {
+                        if (self.get('parentContainer') !== null) {
+                            result = self.get('top') + self.get('outerHeight');
+                        } else {
+                            result = self.get('top') + self.get('outerHeight');
+                        }
+                    } else if(constraint.get('referenceLayoutEdge') === 'centerY') {
+                        // Case centerY - parentCenterY
+                        if (self.get('parentContainer') !== null) {
+                            result = (self.get('parentContainer.height') / 2) + (self.get('outerHeight') / 2) + constraint.get('value');
+                        } else {
+                            // Check tab bar for menu in iOS
+                            var isIOS = self.get('viewController.application.smartphone.platform') === 'ios';
+                            var currentViewControllerIsMenu = false;
+                            var viewControllerName = self.get('viewController.name');
+                            var menuItems = self.get('viewController.application.menu.menuItems');
+                            menuItems.forEach(function (menuItem, index) {
+                                if (viewControllerName === menuItem.get('navigation.destination.name')) {
+                                    currentViewControllerIsMenu = true;
+                                }
+                            });
+                            // Offset from tab bar for menu in iOS
+                            if (isIOS && currentViewControllerIsMenu) {
+                                result = self.get('viewController.application.smartphone.viewBottom') - 48 -
+                                    ((self.get('viewController.application.smartphone.viewBottom') -
+                                    self.get('viewController.application.smartphone.viewTop' - 48)) / 2) +
+                                    (self.get('outerHeight') / 2) + constraint.get('value');
                             }
-                        });
-                        // Offset from tab bar for menu in iOS
-                        if (isIOS && currentViewControllerIsMenu) {
-                            result = self.get('viewController.application.smartphone.viewBottom') - 48 -
+                            result = self.get('viewController.application.smartphone.viewBottom') -
                                 ((self.get('viewController.application.smartphone.viewBottom') -
-                                self.get('viewController.application.smartphone.viewTop' - 48)) / 2) +
+                                self.get('viewController.application.smartphone.viewTop')) / 2) +
                                 (self.get('outerHeight') / 2) + constraint.get('value');
                         }
-                        result = self.get('viewController.application.smartphone.viewBottom') -
-                            ((self.get('viewController.application.smartphone.viewBottom') -
-                            self.get('viewController.application.smartphone.viewTop')) / 2) +
-                            (self.get('outerHeight') / 2) + constraint.get('value');
                     }
                 }
-            }
-        });
+            });
 
-        // Look for other y constraints with other uiPhoneControls
-        constraints.forEach(function (constraint) {
-            if(constraint.get('withParent') === false) {
-                if(constraint.get('layoutEdge') === 'top') {
-                    result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) +
-                        constraint.get('value') + self.get('outerHeight');
-                } else if(constraint.get('layoutEdge') === 'centerY') {
-                    result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) +
-                        constraint.get('value') + (self.get('outerHeight') / 2);
-                }
+            if(result === -1000) {
+                // Look for other y constraints with other uiPhoneControls
+                constraints.forEach(function (constraint) {
+                    if(constraint.get('withParent') === false) {
+                        if(constraint.get('layoutEdge') === 'top') {
+                            result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) +
+                                constraint.get('value') + self.get('outerHeight');
+                        } else if(constraint.get('layoutEdge') === 'centerY') {
+                            result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) +
+                                constraint.get('value') + (self.get('outerHeight') / 2);
+                        }
+                    }
+                });
             }
-        });
+        }
 
         // Base case: no y constraints
-        if(result != -1) {
+        if(result != -1000) {
             return result;
         } else {
             return self.get('top') + parseFloat(self.get('outerHeight'));
         }
     }.property(
+        'constraints.@each.isDirty',
         'constraints.@each.layoutEdge',
         'constraints.@each.withParent',
         'constraints.@each.referenceElement',
@@ -266,9 +350,9 @@ App.UiPhoneControl = App.UiControl.extend({
 
     start: function () {
         var self = this;
-        var result = -1;
+        var result = -1000;
         var constraints = self.get('constraints').filter(function(c) {
-            return c.get('valid');
+            return c.get('valid') && ((!c.get('isDirty') || c.get('isSaving')));
         });
         // look for a constraint with start
         constraints.forEach(function (constraint) {
@@ -282,42 +366,47 @@ App.UiPhoneControl = App.UiControl.extend({
             }
         });
 
-        // look for another x constraint with parent
-        constraints.forEach(function (constraint) {
-            if(constraint.get('withParent') === true) {
-                // Case end - parentEnd
-                if(constraint.get('referenceLayoutEdge') === 'end') {
-                    result = self.get('end') - self.get('outerWidth');
-                } else if(constraint.get('referenceLayoutEdge') === 'centerX') {
-                    // Case centerX - parentCenterX
-                    if(self.get('parentContainer') !== null) {
-                        result = (self.get('parentContainer.width') / 2) - (self.get('outerWidth') / 2) + constraint.get('value');
-                    } else {
-                        result = (self.get('viewController.application.smartphone.screenWidth') / 2) - (self.get('outerWidth') / 2) + constraint.get('value');
+        if(result === -1000) {
+            // look for another x constraint with parent
+            constraints.forEach(function (constraint) {
+                if(constraint.get('withParent') === true) {
+                    // Case end - parentEnd
+                    if(constraint.get('referenceLayoutEdge') === 'end') {
+                        result = self.get('end') - self.get('outerWidth');
+                    } else if(constraint.get('referenceLayoutEdge') === 'centerX') {
+                        // Case centerX - parentCenterX
+                        if(self.get('parentContainer') !== null) {
+                            result = (self.get('parentContainer.width') / 2) - (self.get('outerWidth') / 2) + constraint.get('value');
+                        } else {
+                            result = (self.get('viewController.application.smartphone.screenWidth') / 2) - (self.get('outerWidth') / 2) + constraint.get('value');
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        // look for another x constraint with other uiPhoneControls
-        constraints.forEach(function (constraint) {
-            if(constraint.get('withParent') === false) {
-                if(constraint.get('layoutEdge') === 'end') {
-                    result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) +
-                        constraint.get('value') - self.get('outerWidth');
-                } else if(constraint.get('layoutEdge') === 'centerX') {
-                    result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) +
-                        constraint.get('value') - (self.get('outerWidth') / 2);
-                }
+            if(result === -1000) {
+                // look for another x constraint with other uiPhoneControls
+                constraints.forEach(function (constraint) {
+                    if(constraint.get('withParent') === false) {
+                        if(constraint.get('layoutEdge') === 'end') {
+                            result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) +
+                                constraint.get('value') - self.get('outerWidth');
+                        } else if(constraint.get('layoutEdge') === 'centerX') {
+                            result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) +
+                                constraint.get('value') - (self.get('outerWidth') / 2);
+                        }
+                    }
+                });
             }
-        });
+        }
 
-        if(result != -1) {
+        if(result != -1000) {
             return result;
         } else {
             return parseFloat(self.get('posX'));
         }
     }.property(
+        'constraints.@each.isDirty',
         'constraints.@each.layoutEdge',
         'constraints.@each.withParent',
         'constraints.@each.referenceElement',
@@ -333,9 +422,9 @@ App.UiPhoneControl = App.UiControl.extend({
 
     end: function () {
         var self = this;
-        var result = -1;
+        var result = -1000;
         var constraints = self.get('constraints').filter(function(c) {
-            return c.get('valid');
+            return c.get('valid') && ((!c.get('isDirty') || c.get('isSaving')));
         });
         // look for a constraint with end
         constraints.forEach(function (constraint) {
@@ -344,47 +433,56 @@ App.UiPhoneControl = App.UiControl.extend({
                     result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) + constraint.get('value');
                 } else {
                     // Case end - parentEnd
-                    result = self.get('parentContainer.width') + constraint.get('value');
-                }
-            }
-        });
-
-        // look for another x constraint with parent
-        constraints.forEach(function (constraint) {
-            if(constraint.get('withParent') === true) {
-                // Case end - parentEnd
-                if(constraint.get('referenceLayoutEdge') === 'start') {
-                    result = self.get('start') + self.get('outerWidth');
-                } else if(constraint.get('referenceLayoutEdge') === 'centerX') {
-                    // Case centerX - parentCenterX
-                    if(self.get('parentContainer') !== null) {
-                        result = (self.get('parentContainer.width') / 2) + (self.get('outerWidth') / 2) + constraint.get('value');
+                    if (self.get('parentContainer') !== null) {
+                        result = self.get('parentContainer.width') + constraint.get('value');
                     } else {
-                        result = (self.get('viewController.application.smartphone.screenWidth') / 2) + (self.get('outerWidth') / 2) + constraint.get('value');
+                        result = self.get('viewController.application.smartphone.screenWidth') + constraint.get('value');
                     }
                 }
             }
         });
 
-        // look for another x constraint with other uiPhoneControls
-        constraints.forEach(function (constraint) {
-            if(constraint.get('withParent') === false) {
-                if(constraint.get('layoutEdge') === 'start') {
-                    result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) +
-                        constraint.get('value') + self.get('outerWidth');
-                } else if(constraint.get('layoutEdge') === 'centerX') {
-                    result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) +
-                        constraint.get('value') + (self.get('outerWidth') / 2);
+        if(result === -1000) {
+            // look for another x constraint with parent
+            constraints.forEach(function (constraint) {
+                if(constraint.get('withParent') === true) {
+                    // Case end - parentEnd
+                    if(constraint.get('referenceLayoutEdge') === 'start') {
+                        result = self.get('start') + self.get('outerWidth');
+                    } else if(constraint.get('referenceLayoutEdge') === 'centerX') {
+                        // Case centerX - parentCenterX
+                        if(self.get('parentContainer') !== null) {
+                            result = (self.get('parentContainer.width') / 2) + (self.get('outerWidth') / 2) + constraint.get('value');
+                        } else {
+                            result = (self.get('viewController.application.smartphone.screenWidth') / 2) + (self.get('outerWidth') / 2) + constraint.get('value');
+                        }
+                    }
                 }
-            }
-        });
+            });
 
-        if(result != -1) {
+            if(result === -1000) {
+                // look for another x constraint with other uiPhoneControls
+                constraints.forEach(function (constraint) {
+                    if(constraint.get('withParent') === false) {
+                        if(constraint.get('layoutEdge') === 'start') {
+                            result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) +
+                                constraint.get('value') + self.get('outerWidth');
+                        } else if(constraint.get('layoutEdge') === 'centerX') {
+                            result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) +
+                                constraint.get('value') + (self.get('outerWidth') / 2);
+                        }
+                    }
+                });
+            }
+        }
+
+        if(result != -1000) {
             return result;
         } else {
             return self.get('start') + parseFloat(self.get('outerWidth'));
         }
     }.property(
+        'constraints.@each.isDirty',
         'constraints.@each.layoutEdge',
         'constraints.@each.withParent',
         'constraints.@each.referenceElement',
@@ -444,6 +542,20 @@ App.UiPhoneControl = App.UiControl.extend({
         'height',
         'paddingBottom',
         'marginBottom'),
+
+    ratioObserverWidth: function() {
+        if(this.get('isRatioConstrained')) {
+            var ratio = this.get('ratioHeight') / this.get('ratioWidth');
+            this.set('height', this.get('width') * ratio);
+        }
+    }.observes('width', 'ratioWidth', 'ratioHeight'),
+
+    ratioObserverHeight: function() {
+        if(this.get('isRatioConstrained')) {
+            var ratio = this.get('ratioWidth') / this.get('ratioHeight');
+            this.set('width', this.get('height') * ratio);
+        }
+    }.observes('height'),
 
     // Used to reload views
     didCreate: function () {
@@ -518,12 +630,14 @@ App.UiPhoneControl = App.UiControl.extend({
         var constraints = this.get('constraints').filter(function(c) {
             return c.get('valid');
         });
-        var length = 0;
-        constraints.forEach(function(constraint) {
-            length++;
-        });
-        if(length > 0) {
+        if(constraints.get('length') > 0 || this.get('isWidthConstrained') || this.get('isHeightConstrained') || this.get('isRatioConstrained')) {
             var elem = xmlDoc.createElement('constraints');
+            elem.setAttribute('constrainedWidth', this.get('isWidthConstrained'));
+            elem.setAttribute('constrainedHeight', this.get('isHeightConstrained'));
+            elem.setAttribute('constrainedRatio', this.get('isRatioConstrained'));
+            if(this.get('isRatioConstrained')) {
+                elem.setAttribute('ratio', this.get('ratioWidth') + ':' + this.get('ratioHeight'));
+            }
             xmlElem.appendChild(elem);
 
             constraints.forEach(function(constraint) {

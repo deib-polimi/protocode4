@@ -1,4 +1,5 @@
 var App = window.App = Ember.Application.create({
+    //currentPath: '',
     LOG_TRANSITIONS_INTERNAL: true,
     LOG_ACTIVE_GENERATION: true,
     LOG_VIEW_LOOKUPS: true,

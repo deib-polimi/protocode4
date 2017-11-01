@@ -10,18 +10,29 @@ App.Constraint = DS.Model.extend({
     referenceLayoutEdge: DS.attr('string'),
     value: DS.attr('number'),
     valid: DS.attr('boolean'),
+    flag: DS.attr('boolean', {defaultValue: false}),
 
     xmlName: 'constraint',
 
     filteredLayoutEdges: function() {
         var wp = this.get('withParent');
         var edges = this.get('layoutEdges');
-        if(wp) {
-            return edges;
-        } else {
-            return edges.without('centerX').without('centerY');
+        var constraints = this.get('uiPhoneControl.constraints');
+        if(constraints) {
+            constraints = constraints.without(this);
+            if(wp) {
+                constraints.forEach(function (constraint) {
+                    edges = edges.without(constraint.get('layoutEdge'));
+                });
+            } else {
+                edges = edges.without('centerX').without('centerY');
+                constraints.forEach(function (constraint) {
+                    edges = edges.without(constraint.get('layoutEdge'));
+                });
+            }
         }
-    }.property('withParent', 'layoutEdges'),
+        return edges;
+    }.property('withParent', 'layoutEdges', 'uiPhoneControl.constraints.@each'),
 
     filteredReferenceLayoutEdges: function() {
         var wp = this.get('withParent');
@@ -51,15 +62,29 @@ App.Constraint = DS.Model.extend({
         this.set('referenceLayoutEdge', null);
     }.observes('layoutEdge'),
 
+    valueSet: function() {
+        this.set('value', parseFloat(this.get('value')));
+    }.observes('value'),
+
+    referenceElementChanged: function() {
+        this.set('flag', true);
+    }.observes('referenceElement'),
+
+    somethingChanged: function() {
+        this.set('valid', false);
+    }.observes('layoutEdge', 'referenceElement', 'referenceLayoutEdge', 'value'),
+
     didCreate: function () {
         this._super();
+        this.set('flag', false);
+        this.save();
 
         this.get('uiPhoneControl').save();
     },
 
     toXml: function (xmlDoc) {
         var constraint = xmlDoc.createElement(this.get('xmlName'));
-        constraint.setAttribute('name', this.get('name'));
+        constraint.setAttribute('id', this.get('id'));
         constraint.setAttribute('layoutEdge', this.get('layoutEdge'));
         if(this.get('withParent') === true) {
             if(this.get('uiPhoneControl.parentContainer') !== null) {

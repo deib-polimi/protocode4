@@ -19,46 +19,9 @@ App.UiPhoneControlController = Ember.ObjectController.extend(App.Saveable, {
         this.set('number', n + 1);
         return n + 1;
     }.property(
-        'model.constraints',
-        'model.constraints.name'
+        'model.constraints.@each',
+        'model.constraints.@each.name'
     ),
-
-    handleConstraint: function (key, value, previousValue) {
-        var model = this.get('model');
-
-        // setter
-        if (arguments.length > 1) {
-            if (this.isGoodConstraint(model, key, value)) {
-                model.set(key, value);
-                model.save();
-            } else {
-                alert('Found circularity in constraints. Please restore previous value.');
-            }
-        }
-
-        // getter
-        return model.get(key);
-    },
-
-    isGoodConstraint: function (model, key, value) {
-        if (value === null) {
-            return true;
-        }
-
-        var uiPhoneControls = [];
-        var uiPhoneControlsToCheck = model.getRelatedUiPhoneControls().concat(value).uniq();
-
-        while (!($(uiPhoneControls).not(uiPhoneControlsToCheck).length === 0 && $(uiPhoneControlsToCheck).not(uiPhoneControls).length === 0) && !uiPhoneControlsToCheck.contains(model)) {
-            uiPhoneControls = uiPhoneControlsToCheck;
-
-            uiPhoneControlsToCheck = uiPhoneControlsToCheck.reduce(function (results, uiPhoneControl) {
-                return results.concat(uiPhoneControl.getRelatedUiPhoneControls());
-            }, []).uniq();
-
-        }
-
-        return !uiPhoneControlsToCheck.contains(model);
-    },
 
     actions: {
         createConstraint: function () {
@@ -96,6 +59,8 @@ App.UiPhoneControlController = Ember.ObjectController.extend(App.Saveable, {
                 });
 
             }
+
+            this.set('number', this.get('number') - 1);
 
             controlToDelete.deleteRecord();
             controlToDelete.save();

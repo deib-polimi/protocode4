@@ -22,21 +22,14 @@
                     <br>
                     {{input-select label="Layout Edge:" content=filteredLayoutEdges optionLabelPath="content"
                         optionValuePath="content" selection=layoutEdge prompt="Select edge"}}
-                    <div class="form-group">
-                        <label class="col-sm-5" style="padding: 8px 10px;text-align:right">
-                            With parent:
-                        </label>
-                        <div class="col-sm-7">
-                            {{input type="checkbox" checked=withParent}}
-                        </div>
-                    </div>
+                    {{input-checkbox label="With Parent" checked=withParent}}
                     {{#unless withParent}}
                         {{input-select label="Reference Element:" content=uiPhoneControl.siblings  optionLabelPath="content.name"
                             optionValuePath="content" selection=referenceElement prompt="Select element"}}
                     {{/unless}}
                     {{input-select label="Reference Layout Edge:" content=filteredReferenceLayoutEdges optionLabelPath="content"
                         optionValuePath="content" selection=referenceLayoutEdge prompt="Select edge"}}
-                    {{input-number label="Value" value=value action='acceptChanges'}}
+                    {{input-number label="Value:" value=value}}
                 </div>
             </div>
         </div>

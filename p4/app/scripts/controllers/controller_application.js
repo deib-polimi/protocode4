@@ -3,6 +3,10 @@
  */
 App.ApplicationController = Ember.ObjectController.extend(App.Saveable, {
 
+    /*currentPathDidChange: function() {
+        App.set('currentPath', this.get('currentPath'));
+    }.observes('currentPath'),*/
+
     actions: {
 
         generateAppModel: function () {

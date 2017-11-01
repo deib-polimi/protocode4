@@ -10,16 +10,10 @@ App.Device = DS.Model.extend({
     cssHeight: DS.attr('number'),
 
     centerX: function() {
-        return (this.get('posX') + this.get('width')) / 2;
-    }.property(
-        'posX',
-        'width'
-    ),
+        return (this.get('width') / 2);
+    }.property('width'),
 
     centerY: function() {
-        return (this.get('posY') + this.get('height')) / 2;
-    }.property(
-        'posY',
-        'height'
-    )
+        return this.get('viewTop') + ((this.get('viewBottom') - this.get('viewTop')) / 2);
+    }.property('height')
 });

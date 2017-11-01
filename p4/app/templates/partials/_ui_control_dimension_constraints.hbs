@@ -1,0 +1,28 @@
+{{#if widthCanBeConstrained}}
+    {{input-checkbox label="Width Constrained" checked=isWidthConstrained}}
+{{else}}
+    <div class="form-group">
+        <label class="col-sm-5" style="padding: 10px 10px;text-align:right">Width Constrained</label>
+        <div class="col-sm-7"><input type="checkbox" class="input-sm" disabled/></div>
+    </div>
+{{/if}}
+{{#if heightCanBeConstrained}}
+    {{input-checkbox label="Height Constrained" checked=isHeightConstrained}}
+{{else}}
+    <div class="form-group">
+        <label class="col-sm-5" style="padding: 10px 10px;text-align:right">Height Constrained</label>
+        <div class="col-sm-7"><input type="checkbox" class="input-sm" disabled/></div>
+    </div>
+{{/if}}
+{{#if ratioCanBeConstrained}}
+    {{input-checkbox label="Ratio Constrained" checked=isRatioConstrained}}
+{{else}}
+    <div class="form-group">
+        <label class="col-sm-5" style="padding: 10px 10px;text-align:right">Ratio Constrained</label>
+        <div class="col-sm-7"><input type="checkbox" class="input-sm" disabled/></div>
+    </div>
+{{/if}}
+{{#if isRatioConstrained}}
+    {{input-number label="Width Ratio" min="1" value=ratioWidth}}
+    {{input-number label="Height Ratio" min="1" value=ratioHeight}}
+{{/if}}
