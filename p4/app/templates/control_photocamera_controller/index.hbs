@@ -43,9 +43,10 @@
                     {{partial "partials/ui_control_position"}}
                 </div>
                 <div class="tab-pane fade form-horizontal" id="dimension">
+        <br>
+                    {{input-number label="Width" disabled=widthCantBeChanged min="64" value=width action='acceptChanges' }}
+                    {{input-number label="Height" disabled=heightCantBeChanged min="40" value=height action='acceptChanges' }}
                     {{partial "partials/ui_control_dimension_constraints"}}
-                    {{input-number label="Width" min="64" value=width action='acceptChanges' }}
-                    {{input-number label="Height" min="40" value=height action='acceptChanges' }}
                     {{partial "partials/ui_control_dimension"}}
                 </div>
             </div>

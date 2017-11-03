@@ -59,20 +59,28 @@ App.Constraint = DS.Model.extend({
     }.property('withParent', 'layoutEdge', 'referenceLayoutEdge'),
 
     firstEdgeChanged: function() {
-        this.set('referenceLayoutEdge', null);
+        if(!(this.get('isDeleted'))) {
+            this.set('referenceLayoutEdge', null);
+        }
     }.observes('layoutEdge'),
 
     valueSet: function() {
-        this.set('value', parseFloat(this.get('value')));
+        if(!(this.get('isDeleted'))) {
+            this.set('value', parseFloat(this.get('value')));
+        }
     }.observes('value'),
 
-    referenceElementChanged: function() {
-        this.set('flag', true);
-    }.observes('referenceElement'),
+    referenceElementOrWithParentChanged: function() {
+        if(!(this.get('isDeleted'))) {
+            this.set('flag', true);
+        }
+    }.observes('referenceElement', 'withParent'),
 
     somethingChanged: function() {
-        this.set('valid', false);
-    }.observes('layoutEdge', 'referenceElement', 'referenceLayoutEdge', 'value'),
+        if(!(this.get('isDeleted'))) {
+            this.set('valid', false);
+        }
+    }.observes('layoutEdge', 'referenceElement', 'referenceLayoutEdge', 'value', 'withParent'),
 
     didCreate: function () {
         this._super();

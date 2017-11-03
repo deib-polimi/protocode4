@@ -9,60 +9,109 @@ App.UiPhoneControl = App.UiControl.extend({
     parentContainer: DS.belongsTo('container', {inverse: 'uiPhoneControls'}),
 
     constraints: DS.hasMany('constraint', {inverse: 'uiPhoneControl'}),
+    bindedControls: DS.hasMany('uiPhoneControl', {polymorphic: true}),
     isWidthConstrained: DS.attr('boolean', {defaultValue: false}),
     isHeightConstrained: DS.attr('boolean', {defaultValue: false}),
     isRatioConstrained: DS.attr('boolean', {defaultValue: false}),
     ratioWidth: DS.attr('number', {defaultValue: 1}),
     ratioHeight: DS.attr('number', {defaultValue: 1}),
 
+    isntRatioConstrained: function() {
+        return !this.get('isRatioConstrained');
+    }.property('isRatioConstrained'),
+
+    widthIsBindedByConstraints: function(constraints) {
+        var xConstraintsNumber = 0;
+        constraints.forEach(function(constraint) {
+            if(constraint.get('valid')) {
+                if(constraint.get('layoutEdge') === 'start' || constraint.get('layoutEdge') === 'end' || constraint.get('layoutEdge') === 'centerX') {
+                    xConstraintsNumber++;
+                }
+            }
+        });
+        if(xConstraintsNumber > 1) {
+            return true;
+        } else {
+            return false;
+        }
+    },
+
+    heightIsBindedByConstraints: function(constraints) {
+        var yConstraintsNumber = 0;
+        constraints.forEach(function(constraint) {
+            if(constraint.get('valid')) {
+                if(constraint.get('layoutEdge') === 'top' || constraint.get('layoutEdge') === 'bottom' || constraint.get('layoutEdge') === 'centerY') {
+                    yConstraintsNumber++;
+                }
+            }
+        });
+        if(yConstraintsNumber > 1) {
+            return true;
+        } else {
+            return false;
+        }
+    },
+
+    widthCanBeChanged: function() {
+        var constraints = this.get('constraints');
+        if(this.widthIsBindedByConstraints(constraints)) {
+            return false;
+        }
+        if(this.get('isRatioConstrained') && this.heightIsBindedByConstraints(constraints)) {
+            return false;
+        }
+        return true;
+    }.property(
+        'isRatioConstrained',
+        'constraints.@each.layoutEdge',
+        'constraints.@each.valid'
+    ),
+
+    heightCanBeChanged: function() {
+        var constraints = this.get('constraints');
+        if(this.heightIsBindedByConstraints(constraints)) {
+            return false;
+        }
+        if(this.get('isRatioConstrained') && this.widthIsBindedByConstraints(constraints)) {
+            return false;
+        }
+        return true;
+    }.property(
+        'isRatioConstrained',
+        'constraints.@each.layoutEdge',
+        'constraints.@each.valid'
+    ),
+
+    widthCantBeChanged: function() {
+        return !this.get('widthCanBeChanged');
+    }.property('widthCanBeChanged'),
+
+    heightCantBeChanged: function() {
+        return !this.get('heightCanBeChanged');
+    }.property('heightCanBeChanged'),
+
     widthCanBeConstrained: function() {
         if(this.get('isRatioConstrained')) {
             return false;
         } else {
-            var xConstraintsNumber = 0;
-            var constraints = this.get('constraints');
-            constraints.forEach(function(constraint) {
-                if(constraint.get('valid')) {
-                    if(constraint.get('layoutEdge') === 'start' || constraint.get('layoutEdge') === 'end' || constraint.get('layoutEdge') === 'centerX') {
-                        xConstraintsNumber++;
-                    }
-                }
-            });
-            if(xConstraintsNumber > 1) {
-                return false;
-            } else {
-                return true;
-            }
+            return !(this.widthIsBindedByConstraints(this.get('constraints')));
         }
     }.property(
+        'isRatioConstrained',
         'constraints.@each.layoutEdge',
-        'constraints.@each.valid',
-        'isRatioConstrained'
+        'constraints.@each.valid'
     ),
 
     heightCanBeConstrained: function() {
         if(this.get('isRatioConstrained')) {
             return false;
         } else {
-            var yConstraintsNumber = 0;
-            var constraints = this.get('constraints');
-            constraints.forEach(function(constraint) {
-                if(constraint.get('valid')) {
-                    if(constraint.get('layoutEdge') === 'top' || constraint.get('layoutEdge') === 'bottom' || constraint.get('layoutEdge') === 'centerY') {
-                        yConstraintsNumber++;
-                    }
-                }
-            });
-            if(yConstraintsNumber > 1) {
-                return false;
-            } else {
-                return true;
-            }
+            return !(this.heightIsBindedByConstraints(this.get('constraints')));
         }
     }.property(
+        'isRatioConstrained',
         'constraints.@each.layoutEdge',
-        'constraints.@each.valid',
-        'isRatioConstrained'
+        'constraints.@each.valid'
     ),
 
     ratioCanBeConstrained: function() {
@@ -81,6 +130,18 @@ App.UiPhoneControl = App.UiControl.extend({
         'widthCanBeConstrained',
         'heightCanBeConstrained'
     ),
+
+    widthCantBeConstrained: function() {
+        return !this.get('widthCanBeConstrained');
+    }.property('widthCanBeConstrained'),
+
+    heightCantBeConstrained: function() {
+        return !this.get('heightCanBeConstrained');
+    }.property('heightCanBeConstrained'),
+
+    ratioCantBeConstrained: function() {
+        return !this.get('ratioCanBeConstrained');
+    }.property('ratioCanBeConstrained'),
 
     sameLevelControls: function () {
         var parentContainer = this.get('parentContainer');
@@ -102,12 +163,15 @@ App.UiPhoneControl = App.UiControl.extend({
         return null;
     }.property('sameLevelControls'),
 
-    top: function () {
+    getTop: function(onlyValid) {
         var self = this;
         var result = -1000;
-        var constraints = self.get('constraints').filter(function(c) {
-            return c.get('valid') && ((!c.get('isDirty') || c.get('isSaving')));
-        });
+        var constraints = self.get('constraints');
+        if(onlyValid) {
+            constraints = constraints.filter(function(c) {
+                return c.get('valid');
+            });
+        }
         // Look for constraints with top
         constraints.forEach(function (constraint) {
             if(constraint.get('layoutEdge') === 'top') {
@@ -209,8 +273,17 @@ App.UiPhoneControl = App.UiControl.extend({
                 return parseFloat(self.get('posY')) + self.get('viewController.application.smartphone.viewTop');
             }
         }
+    },
+
+    top: function () {
+        if(!this.get('isDeleted')) {
+            return this.getTop(true);
+        } else {
+            return null;
+        }
     }.property(
-        'constraints.@each.isDirty',
+        'bindedControls.@each.posX',
+        'bindedControls.@each.posY',
         'posY',
         'outerHeight',
         'constraints.@each.layoutEdge',
@@ -222,18 +295,21 @@ App.UiPhoneControl = App.UiControl.extend({
         'viewController.application.smartphone.viewTop',
         'viewController.application.smartphone.viewBottom',
         'viewController.application.smartphone.platform',
-        'viewController.application.menu.menuItems',
+        'viewController.application.menu.menuItems.@each',
         'viewController.name',
         'bottom',
         'parentContainer',
         'parentContainer.height'),
 
-    bottom: function () {
+    getBottom: function(onlyValid) {
         var self = this;
         var result = -1000;
-        var constraints = self.get('constraints').filter(function(c) {
-            return c.get('valid') && ((!c.get('isDirty') || c.get('isSaving')));
-        });
+        var constraints = self.get('constraints');
+        if(onlyValid) {
+            constraints = constraints.filter(function(c) {
+                return c.get('valid');
+            });
+        }
         // look for a constraint with bottom
         constraints.forEach(function (constraint) {
             if(constraint.get('layoutEdge') === 'bottom') {
@@ -329,8 +405,17 @@ App.UiPhoneControl = App.UiControl.extend({
         } else {
             return self.get('top') + parseFloat(self.get('outerHeight'));
         }
+    },
+
+    bottom: function () {
+        if(!this.get('isDeleted')) {
+            return this.getBottom(true);
+        } else {
+            return null;
+        }
     }.property(
-        'constraints.@each.isDirty',
+        'bindedControls.@each.posX',
+        'bindedControls.@each.posY',
         'constraints.@each.layoutEdge',
         'constraints.@each.withParent',
         'constraints.@each.referenceElement',
@@ -341,19 +426,22 @@ App.UiPhoneControl = App.UiControl.extend({
         'outerHeight',
         'viewController.name',
         'viewController.application.smartphone.platform',
-        'viewController.application.menu.menuItems',
+        'viewController.application.menu.menuItems.@each',
         'viewController.application.smartphone.viewBottom',
         'viewController.application.smartphone.viewTop',
         'parentContainer',
         'parentContainer.height'
     ),
 
-    start: function () {
+    getStart: function(onlyValid) {
         var self = this;
         var result = -1000;
-        var constraints = self.get('constraints').filter(function(c) {
-            return c.get('valid') && ((!c.get('isDirty') || c.get('isSaving')));
-        });
+        var constraints = self.get('constraints');
+        if(onlyValid) {
+            constraints = constraints.filter(function(c) {
+                return c.get('valid');
+            });
+        }
         // look for a constraint with start
         constraints.forEach(function (constraint) {
             if(constraint.get('layoutEdge') === 'start') {
@@ -405,8 +493,17 @@ App.UiPhoneControl = App.UiControl.extend({
         } else {
             return parseFloat(self.get('posX'));
         }
+    },
+
+    start: function () {
+        if(!this.get('isDeleted')) {
+            return this.getStart(true);
+        } else {
+            return null;
+        }
     }.property(
-        'constraints.@each.isDirty',
+        'bindedControls.@each.posX',
+        'bindedControls.@each.posY',
         'constraints.@each.layoutEdge',
         'constraints.@each.withParent',
         'constraints.@each.referenceElement',
@@ -420,12 +517,15 @@ App.UiPhoneControl = App.UiControl.extend({
         'end',
         'viewController.application.smartphone.screenWidth'),
 
-    end: function () {
+    getEnd: function(onlyValid) {
         var self = this;
         var result = -1000;
-        var constraints = self.get('constraints').filter(function(c) {
-            return c.get('valid') && ((!c.get('isDirty') || c.get('isSaving')));
-        });
+        var constraints = self.get('constraints');
+        if(onlyValid) {
+            constraints = constraints.filter(function(c) {
+                return c.get('valid');
+            });
+        }
         // look for a constraint with end
         constraints.forEach(function (constraint) {
             if(constraint.get('layoutEdge') === 'end') {
@@ -481,8 +581,17 @@ App.UiPhoneControl = App.UiControl.extend({
         } else {
             return self.get('start') + parseFloat(self.get('outerWidth'));
         }
+    },
+
+    end: function () {
+        if(!this.get('isDeleted')) {
+            return this.getEnd(true);
+        } else {
+            return null;
+        }
     }.property(
-        'constraints.@each.isDirty',
+        'bindedControls.@each.posX',
+        'bindedControls.@each.posY',
         'constraints.@each.layoutEdge',
         'constraints.@each.withParent',
         'constraints.@each.referenceElement',
@@ -543,19 +652,44 @@ App.UiPhoneControl = App.UiControl.extend({
         'paddingBottom',
         'marginBottom'),
 
+    ratioObserver: function() {
+        if(!this.get('isDeleted') && this.get('isRatioConstrained')) {
+            var ratio;
+            if(this.get('ratioWidth') < this.get('ratioHeight')) {
+                ratio = this.get('ratioWidth') / this.get('ratioHeight');
+                this.set('width', this.get('height') * ratio);
+            } else {
+                ratio = this.get('ratioHeight') / this.get('ratioWidth');
+                this.set('height', this.get('width') * ratio);
+            }
+        }
+    }.observes('isRatioConstrained', 'ratioWidth', 'ratioHeight'),
+
     ratioObserverWidth: function() {
-        if(this.get('isRatioConstrained')) {
+        if(!this.get('isDeleted') && this.get('isRatioConstrained')) {
             var ratio = this.get('ratioHeight') / this.get('ratioWidth');
             this.set('height', this.get('width') * ratio);
         }
-    }.observes('width', 'ratioWidth', 'ratioHeight'),
+    }.observes('width'),
 
     ratioObserverHeight: function() {
-        if(this.get('isRatioConstrained')) {
+        if(!this.get('isDeleted') && this.get('isRatioConstrained')) {
             var ratio = this.get('ratioWidth') / this.get('ratioHeight');
             this.set('width', this.get('height') * ratio);
         }
     }.observes('height'),
+
+    widthObserver: function() {
+        if(!this.get('isDeleted') && this.get('computedWidth') !== this.get('width')) {
+            this.set('width', this.get('computedWidth'));
+        }
+    }.observes('computedWidth'),
+
+    heightObserver: function() {
+        if(!this.get('isDeleted') && this.get('computedHeight') !== this.get('height')) {
+            this.set('height', this.get('computedHeight'));
+        }
+    }.observes('computedHeight'),
 
     // Used to reload views
     didCreate: function () {
@@ -589,10 +723,14 @@ App.UiPhoneControl = App.UiControl.extend({
                     var constraints = uiPhoneControl.get('constraints');
                     constraints.forEach(function (constraint) {
                         if (constraint.get('referenceElement') === self) {
-                            Ember.run.once(self, function () {
-                                constraint.deleteRecord();
-                                constraint.save();
-                            });
+                            //Ember.run.once(self, function () {
+                                if(constraint) {
+                                    constraint.set('referenceElement', null);
+                                    constraint.save();
+                                    uiPhoneControl.get('bindedControls').removeObject(self);
+                                    uiPhoneControl.save();
+                                }
+                            //});
                         }
                     });
                 });
@@ -601,8 +739,10 @@ App.UiPhoneControl = App.UiControl.extend({
 
         var myConstraints = this.get('constraints');
         myConstraints.forEach(function (constraint) {
-            constraint.deleteRecord();
-            constraint.save();
+            Ember.run.once(self, function () {
+                constraint.deleteRecord();
+                constraint.save();
+            });
         });
 
         this._super();
