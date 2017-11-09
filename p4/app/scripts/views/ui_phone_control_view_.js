@@ -6,6 +6,12 @@ App.UiPhoneControlView = Ember.View.extend(App.UiMoveable, {
 
   smartphone: Ember.computed.alias('controller.controllers.editor.smartphone'),
 
+  init: function() {
+      this._super();
+      // Do this to make the control reactive to changes of position of other controls
+      this.get('context').save();
+  },
+
   uiPhoneControlType: function () {
     var controlType = this.get('context').constructor.toString();
     console.log('Choose view for: ' + controlType);

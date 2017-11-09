@@ -147,7 +147,11 @@ App.Router.map(function () {
                 }, function () {
                 });
                 this.resource('constraint', {
-                    path: '/constraints/:constraint_id'
+                    path: '/constraint/:constraint_id'
+                }, function () {
+                });
+                this.resource('controlChain', {
+                    path: '/controlChain/:controlChain_id'
                 }, function () {
                 });
             });

@@ -1,5 +1,9 @@
 App.ImageView = App.UiPhoneControl.extend({
     sourceType: DS.belongsTo('sourceType', {inverse: null}),
+    minWidth: 0,
+    minHeight: 0,
+    defaultWidth: 240,
+    defaultHeight: 128,
 
     width: DS.attr('number', {defaultValue: 240}),
     height: DS.attr('number', {defaultValue: 128}),

@@ -1,6 +1,10 @@
 App.EditText = App.UiPhoneControl.extend({
     title: DS.attr('string', {defaultValue: ''}),
     placeholder: DS.attr('string', {defaultValue: 'EditText'}),
+    minWidth: 88,
+    minHeight: 36,
+    defaultWidth: 88,
+    defaultHeight: 36,
 
     width: DS.attr('number', {defaultValue: 88}),
     height: DS.attr('number', {defaultValue: 36}),

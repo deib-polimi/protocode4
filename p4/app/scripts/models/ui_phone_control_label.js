@@ -1,6 +1,10 @@
 App.Label = App.UiPhoneControl.extend({
     name: DS.attr('string', {defaultValue: 'Label'}),
     title: DS.attr('string', {defaultValue: 'Label'}),
+    minWidth: 88,
+    minHeight: 24,
+    defaultWidth: 88,
+    defaultHeight: 36,
 
     textAlign: DS.attr('string', {defaultValue: 'left'}),
     textColor: DS.attr('string', {defaultValue: '#000000'}),

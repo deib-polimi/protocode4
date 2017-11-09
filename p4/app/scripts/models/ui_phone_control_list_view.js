@@ -1,6 +1,10 @@
 App.ListView = App.UiPhoneControl.extend({
     listViewCells: DS.hasMany('listViewCell', {inverse: 'parentListView'}),
     clickListener: DS.belongsTo('clickListener'),
+    minWidth: 270,
+    minHeight: 60,
+    defaultWidth: 270,
+    defaultHeight: 270,
 
     width: DS.attr('number', {defaultValue: 270}),
     height: DS.attr('number', {defaultValue: 270}),

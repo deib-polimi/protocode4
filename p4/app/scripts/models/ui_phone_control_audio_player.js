@@ -1,5 +1,9 @@
 App.AudioPlayer = App.UiPhoneControl.extend({
     sourceType: DS.belongsTo('sourceType', {inverse: null}),
+    minWidth: 250,
+    minHeight: 75,
+    defaultWidth: 250,
+    defaultHeight: 75,
 
     width: DS.attr('number', {defaultValue: 250}),
     height: DS.attr('number', {defaultValue: 75}),

@@ -32,14 +32,7 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
         var constraints = thisConstraint.get('uiPhoneControl.constraints').without(thisConstraint);
         var isIOS = thisConstraint.get('uiPhoneControl.viewController.application.smartphone.platform') === 'ios';
         // Compute if the viewController has the menu bar
-        var currentViewControllerIsMenu = false;
-        var viewControllerName = thisConstraint.get('uiPhoneControl.viewController.name');
-        var menuItems = thisConstraint.get('uiPhoneControl.viewController.application.menu.menuItems');
-        menuItems.forEach(function (menuItem, index) {
-            if (viewControllerName === menuItem.get('navigation.destination.name')) {
-                currentViewControllerIsMenu = true;
-            }
-        });
+        var currentViewControllerIsMenu = thisConstraint.get('uiPhoneControl.viewController.hasMenu');
         // Check x position over-constrained
         var constrainedX;
         if(thisConstraint.get('layoutEdge') === 'start' || thisConstraint.get('layoutEdge') === 'end') {
@@ -261,9 +254,9 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
             var constraintToDelete = this.get('model');
             var uiPhoneControl = constraintToDelete.get('uiPhoneControl');
             if(constraintToDelete.get('referenceElement') !== null) {
-                this.get('uiPhoneControl.bindedControls').removeObject(constraintToDelete.get('referenceElement'));
+                uiPhoneControl.get('bindedControls').removeObject(constraintToDelete.get('referenceElement'));
             }
-            this.get('uiPhoneControl.constraints').removeObject(constraintToDelete);
+            uiPhoneControl.get('constraints').removeObject(constraintToDelete);
             uiPhoneControl.save();
             this.get('model').deleteRecord();
             this.get('model').save();

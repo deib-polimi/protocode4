@@ -31,6 +31,17 @@ App.ViewControllerIndexController = Ember.ObjectController.extend(App.Saveable, 
             viewController.save();
         },
 
+        createChain: function() {
+            var viewController = this.get('model');
+            var controlChain = this.store.createRecord('controlChain', {
+                viewController: viewController,
+                spacing: 0
+            });
+            controlChain.save();
+            viewController.save();
+            this.transitionToRoute('controlChain', controlChain);
+        },
+
         deleteViewController: function () {
             if (confirm('Are you sure to delete?')) {
                 var viewController = this.get('model');

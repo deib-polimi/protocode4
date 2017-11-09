@@ -75,6 +75,7 @@ App.ApplicationRoute = Ember.Route.extend({
             videocameraControllers: this.store.find('videocameraController'),
             webViews: this.store.find('webView'),
             constraints: this.store.find('constraint'),
+            chains: this.store.find('controlChain'),
 
             // UiWatchControls
             watchButtons: this.store.find('watchButton'),

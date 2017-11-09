@@ -30,9 +30,22 @@ App.Constraint = DS.Model.extend({
                     edges = edges.without(constraint.get('layoutEdge'));
                 });
             }
+            if(this.get('uiPhoneControl.controlChain')) {
+                if(this.get('uiPhoneControl.controlChain.axis') === 'horizontal') {
+                    edges = edges.without('centerX').without('start').without('end');
+                } else if(this.get('uiPhoneControl.controlChain.axis') === 'vertical') {
+                    edges = edges.without('centerY').without('top').without('bottom');
+                }
+            }
         }
         return edges;
-    }.property('withParent', 'layoutEdges', 'uiPhoneControl.constraints.@each'),
+    }.property(
+        'withParent',
+        'layoutEdges',
+        'uiPhoneControl.constraints.@each',
+        'uiPhoneControl.controlChain',
+        'uiPhoneControl.controlChain.axis'
+    ),
 
     filteredReferenceLayoutEdges: function() {
         var wp = this.get('withParent');

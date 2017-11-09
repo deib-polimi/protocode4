@@ -1,5 +1,13 @@
-{{input-checkbox label="Width Constrained" checked=isWidthConstrained disabled=widthCantBeConstrained}}
-{{input-checkbox label="Height Constrained" checked=isHeightConstrained disabled=heightCantBeConstrained}}
+{{input-checkbox label="Width Fixed" checked=isWidthConstrained disabled=widthCantBeConstrained}}
+{{input-checkbox label="Height Fixed" checked=isHeightConstrained disabled=heightCantBeConstrained}}
+{{input-number label="Width" disabled=isntWidthConstrained min=minWidth value=width action='acceptChanges' }}
+{{input-number label="Height" disabled=isntHeightConstrained min=minHeight value=height action='acceptChanges' }}
+
+{{input-checkbox label="Width Percent" checked=isWidthPercentConstrained disabled=widthPercentCantBeConstrained}}
+{{input-checkbox label="Height Percent" checked=isHeightPercentConstrained disabled=heightPercentCantBeConstrained}}
+{{input-number label="Width %" disabled=isntWidthPercentConstrained min="0.1" max="0.9" step="0.1" value=widthPercent action='acceptChanges' }}
+{{input-number label="Height %" disabled=isntHeightPercentConstrained min="0.1" max="0.9" step="0.1" value=heightPercent action='acceptChanges' }}
+
 {{input-checkbox label="Ratio Constrained" checked=isRatioConstrained disabled=ratioCantBeConstrained}}
 {{input-number label="Width Ratio" min="1" value=ratioWidth disabled=isntRatioConstrained}}
 {{input-number label="Height Ratio" min="1" value=ratioHeight disabled=isntRatioConstrained}}

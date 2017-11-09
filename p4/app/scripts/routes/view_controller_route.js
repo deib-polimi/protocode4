@@ -57,6 +57,7 @@ App.ViewControllerRoute = Ember.Route.extend({
             if (canInstantiate) {
                 var uiPhoneControl = this.store.createRecord(controlType, {
                     viewController: this.get('controller.model'),
+                    valueInChain: 1,
                     ratioWidth: 1,
                     ratioHeight: 1
                 });

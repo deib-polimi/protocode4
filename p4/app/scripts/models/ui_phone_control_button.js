@@ -1,6 +1,10 @@
 App.Button = App.UiPhoneControl.extend({
     title: DS.attr('string', {defaultValue: 'Button'}),
     clickListener: DS.belongsTo('clickListener'),
+    minWidth: 64,
+    minHeight: 40,
+    defaultWidth: 88,
+    defaultHeight: 40,
 
     width: DS.attr('number', {defaultValue: 88}),
     height: DS.attr('number', {defaultValue: 40}),

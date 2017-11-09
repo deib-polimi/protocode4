@@ -7,11 +7,27 @@ App.ViewController = DS.Model.extend({
     application: DS.belongsTo('application', {inverse: 'viewControllers'}),
 
     uiPhoneControls: DS.hasMany('uiPhoneControl', {polymorphic: true, async: true}),
+    controlChains: DS.hasMany('controlChain', {inverse: 'viewController'}),
     alertDialogs: DS.hasMany('alertDialog', {inverse: 'viewController'}),
     progressDialogs: DS.hasMany('progressDialog', {inverse: 'viewController'}),
     asyncTasks: DS.hasMany('asyncTask', {inverse: 'viewController'}),
 
     xmlName: 'viewControllers',
+
+    hasMenu: function() {
+        var hasMenu = false;
+        var viewControllerName = this.get('name');
+        var menuItems = this.get('application.menu.menuItems');
+        menuItems.forEach(function (menuItem) {
+            if (viewControllerName === menuItem.get('navigation.destination.name')) {
+                hasMenu = true;
+            }
+        });
+        return hasMenu;
+    }.property(
+        'name',
+        'application.menu.menuItems.@each'
+    ),
 
     deleteRecord: function () {
         var self = this;
@@ -22,6 +38,13 @@ App.ViewController = DS.Model.extend({
                     uiPhoneControl.deleteRecord();
                     uiPhoneControl.save();
                 });
+            });
+        });
+
+        this.get('controlChains').forEach(function (chain) {
+            Ember.run.once(self, function () {
+                chain.deleteRecord();
+                chain.save();
             });
         });
 
@@ -61,6 +84,10 @@ App.ViewController = DS.Model.extend({
 
             self.get('asyncTasks').map(function (asyncTask) {
                 viewController.appendChild(asyncTask.toXml(xmlDoc));
+            });
+
+            self.get('controlChains').map(function (controlChain) {
+                viewController.appendChild(controlChain.toXml(xmlDoc));
             });
 
             self.get('uiPhoneControls').then(function (uiPhoneControls) {

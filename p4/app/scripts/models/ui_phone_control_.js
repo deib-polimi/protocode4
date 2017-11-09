@@ -1,4 +1,6 @@
 App.UiPhoneControl = App.UiControl.extend({
+    defaultWidth: 0,
+    defaultHeight: 0,
 
     //Override
     /*--------------------------------------------------------------*/
@@ -7,14 +9,36 @@ App.UiPhoneControl = App.UiControl.extend({
 
     viewController: DS.belongsTo('viewController'),
     parentContainer: DS.belongsTo('container', {inverse: 'uiPhoneControls'}),
+    controlChain: DS.belongsTo('controlChain', {inverse: 'uiPhoneControls'}),
+    valueInChain: DS.attr('number', {defaultValue: 1}),
 
     constraints: DS.hasMany('constraint', {inverse: 'uiPhoneControl'}),
     bindedControls: DS.hasMany('uiPhoneControl', {polymorphic: true}),
     isWidthConstrained: DS.attr('boolean', {defaultValue: false}),
     isHeightConstrained: DS.attr('boolean', {defaultValue: false}),
+    isWidthPercentConstrained: DS.attr('boolean', {defaultValue: false}),
+    isHeightPercentConstrained: DS.attr('boolean', {defaultValue: false}),
+    widthPercent: DS.attr('number', {defaultValue: 0.3}),
+    heightPercent: DS.attr('number', {defaultValue: 0.3}),
     isRatioConstrained: DS.attr('boolean', {defaultValue: false}),
     ratioWidth: DS.attr('number', {defaultValue: 1}),
     ratioHeight: DS.attr('number', {defaultValue: 1}),
+
+    isntWidthConstrained: function() {
+        return !this.get('isWidthConstrained');
+    }.property('isWidthConstrained'),
+
+    isntHeightConstrained: function() {
+        return !this.get('isHeightConstrained');
+    }.property('isHeightConstrained'),
+
+    isntWidthPercentConstrained: function() {
+        return !this.get('isWidthPercentConstrained');
+    }.property('isWidthPercentConstrained'),
+
+    isntHeightPercentConstrained: function() {
+        return !this.get('isHeightPercentConstrained');
+    }.property('isHeightPercentConstrained'),
 
     isntRatioConstrained: function() {
         return !this.get('isRatioConstrained');
@@ -52,17 +76,26 @@ App.UiPhoneControl = App.UiControl.extend({
         }
     },
 
-    widthCanBeChanged: function() {
+    /*widthCanBeChanged: function() {
         var constraints = this.get('constraints');
         if(this.widthIsBindedByConstraints(constraints)) {
             return false;
-        }
-        if(this.get('isRatioConstrained') && this.heightIsBindedByConstraints(constraints)) {
+        } else if(this.get('controlChain')) {
+            if(this.get('controlChain.type') === 'weighted' && this.get('controlChain.axis') === 'horizontal') {
+                return false;
+            }
+        } else if(this.get('isRatioConstrained') && this.heightIsBindedByConstraints(constraints)) {
+            return false;
+        } else if(this.get('isWidthPercentConstrained')) {
             return false;
         }
         return true;
     }.property(
         'isRatioConstrained',
+        'isWidthPercentConstrained',
+        'controlChain',
+        'controlChain.axis',
+        'controlChain.type',
         'constraints.@each.layoutEdge',
         'constraints.@each.valid'
     ),
@@ -71,13 +104,22 @@ App.UiPhoneControl = App.UiControl.extend({
         var constraints = this.get('constraints');
         if(this.heightIsBindedByConstraints(constraints)) {
             return false;
-        }
-        if(this.get('isRatioConstrained') && this.widthIsBindedByConstraints(constraints)) {
+        } else if(this.get('controlChain')) {
+            if(this.get('controlChain.type') === 'weighted' && this.get('controlChain.axis') === 'vertical') {
+                return false;
+            }
+        } else if(this.get('isRatioConstrained') && this.widthIsBindedByConstraints(constraints)) {
+            return false;
+        } else if(this.get('isHeightPercentConstrained')) {
             return false;
         }
         return true;
     }.property(
         'isRatioConstrained',
+        'isHeightPercentConstrained',
+        'controlChain',
+        'controlChain.axis',
+        'controlChain.type',
         'constraints.@each.layoutEdge',
         'constraints.@each.valid'
     ),
@@ -88,30 +130,88 @@ App.UiPhoneControl = App.UiControl.extend({
 
     heightCantBeChanged: function() {
         return !this.get('heightCanBeChanged');
-    }.property('heightCanBeChanged'),
+    }.property('heightCanBeChanged'),*/
 
     widthCanBeConstrained: function() {
         if(this.get('isRatioConstrained')) {
             return false;
-        } else {
-            return !(this.widthIsBindedByConstraints(this.get('constraints')));
+        } else if(this.get('isWidthPercentConstrained')) {
+            return false;
+        } else if(this.widthIsBindedByConstraints(this.get('constraints'))) {
+            return false;
+        } else if(this.get('controlChain')) {
+            return this.get('controlChain.axis') !== 'horizontal';
         }
+        return true;
     }.property(
         'isRatioConstrained',
+        'isWidthPercentConstrained',
         'constraints.@each.layoutEdge',
-        'constraints.@each.valid'
+        'constraints.@each.valid',
+        'controlChain',
+        'controlChain.axis'
     ),
 
     heightCanBeConstrained: function() {
         if(this.get('isRatioConstrained')) {
             return false;
-        } else {
-            return !(this.heightIsBindedByConstraints(this.get('constraints')));
+        } else if(this.get('isHeightPercentConstrained')) {
+            return false;
+        } if (this.heightIsBindedByConstraints(this.get('constraints'))) {
+            return false;
+        } else if(this.get('controlChain')) {
+            return this.get('controlChain.axis') !== 'vertical';
         }
+        return true;
     }.property(
         'isRatioConstrained',
+        'isHeightPercentConstrained',
         'constraints.@each.layoutEdge',
-        'constraints.@each.valid'
+        'constraints.@each.valid',
+        'controlChain',
+        'controlChain.axis'
+    ),
+
+    widthPercentCanBeConstrained: function() {
+        if(this.get('isRatioConstrained') && this.get('isHeightPercentConstrained')) {
+            return false;
+        } else if(this.get('isWidthConstrained')) {
+            return false;
+        } else if(this.widthIsBindedByConstraints(this.get('constraints'))) {
+            return false;
+        } else if(this.get('controlChain')) {
+            return this.get('controlChain.axis') !== 'horizontal';
+        }
+        return true;
+    }.property(
+        'isRatioConstrained',
+        'isHeightPercentConstrained',
+        'isWidthConstrained',
+        'constraints.@each.layoutEdge',
+        'constraints.@each.valid',
+        'controlChain',
+        'controlChain.axis'
+    ),
+
+    heightPercentCanBeConstrained: function() {
+        if(this.get('isRatioConstrained') && this.get('isWidthPercentConstrained')) {
+            return false;
+        } else if(this.get('isHeightConstrained')) {
+            return false;
+        } if (this.heightIsBindedByConstraints(this.get('constraints'))) {
+            return false;
+        } else if(this.get('controlChain')) {
+            return this.get('controlChain.axis') !== 'vertical';
+        }
+        return true;
+    }.property(
+        'isRatioConstrained',
+        'isWidthPercentConstrained',
+        'isHeightConstrained',
+        'constraints.@each.layoutEdge',
+        'constraints.@each.valid',
+        'controlChain',
+        'controlChain.axis'
     ),
 
     ratioCanBeConstrained: function() {
@@ -120,13 +220,17 @@ App.UiPhoneControl = App.UiControl.extend({
         }
         if(!(this.get('widthCanBeConstrained')) && !(this.get('heightCanBeConstrained'))) {
             return false;
+        } else if(this.get('isWidthConstrained') || this.get('isHeightConstrained')) {
+            return false;
         } else {
-            return  !(this.get('isWidthConstrained') || this.get('isHeightConstrained'));
+            return !(this.get('isWidthPercentConstrained') && this.get('isHeightPercentConstrained'));
         }
     }.property(
         'isRatioConstrained',
         'isWidthConstrained',
         'isHeightConstrained',
+        'isWidthPercentConstrained',
+        'isHeightPercentConstrained',
         'widthCanBeConstrained',
         'heightCanBeConstrained'
     ),
@@ -138,6 +242,14 @@ App.UiPhoneControl = App.UiControl.extend({
     heightCantBeConstrained: function() {
         return !this.get('heightCanBeConstrained');
     }.property('heightCanBeConstrained'),
+
+    widthPercentCantBeConstrained: function() {
+        return !this.get('widthPercentCanBeConstrained');
+    }.property('widthPercentCanBeConstrained'),
+
+    heightPercentCantBeConstrained: function() {
+        return !this.get('heightPercentCanBeConstrained');
+    }.property('heightPercentCanBeConstrained'),
 
     ratioCantBeConstrained: function() {
         return !this.get('ratioCanBeConstrained');
@@ -184,14 +296,7 @@ App.UiPhoneControl = App.UiControl.extend({
                     } else {
                         // Check tab bar for menu in Android
                         var isAndroid = self.get('viewController.application.smartphone.platform') === 'android';
-                        var currentViewControllerIsMenu = false;
-                        var viewControllerName = self.get('viewController.name');
-                        var menuItems = self.get('viewController.application.menu.menuItems');
-                        menuItems.forEach(function (menuItem, index) {
-                            if (viewControllerName === menuItem.get('navigation.destination.name')) {
-                                currentViewControllerIsMenu = true;
-                            }
-                        });
+                        var currentViewControllerIsMenu = self.get('viewController.hasMenu');
                         // Offset from tab bar for menu in Android
                         if (isAndroid && currentViewControllerIsMenu) {
                             result = self.get('viewController.application.smartphone.viewTop') + 48 + constraint.get('value');
@@ -221,14 +326,7 @@ App.UiPhoneControl = App.UiControl.extend({
                         } else {
                             // Check tab bar for menu in Android
                             var isAndroid = self.get('viewController.application.smartphone.platform') === 'android';
-                            var currentViewControllerIsMenu = false;
-                            var viewControllerName = self.get('viewController.name');
-                            var menuItems = self.get('viewController.application.menu.menuItems');
-                            menuItems.forEach(function (menuItem, index) {
-                                if (viewControllerName === menuItem.get('navigation.destination.name')) {
-                                    currentViewControllerIsMenu = true;
-                                }
-                            });
+                            var currentViewControllerIsMenu = self.get('viewController.hasMenu');
 
                             if (isAndroid && currentViewControllerIsMenu) {
                                 result = self.get('viewController.application.smartphone.viewTop') + 48 +
@@ -277,14 +375,25 @@ App.UiPhoneControl = App.UiControl.extend({
 
     top: function () {
         if(!this.get('isDeleted')) {
-            return this.getTop(true);
+            if(this.get('controlChain') && this.get('controlChain.axis') === 'vertical') {
+                return this.get('controlChain').getTopInChain(this.get('id'));
+            } else {
+                return this.getTop(true);
+            }
         } else {
             return null;
         }
     }.property(
-        'bindedControls.@each.posX',
-        'bindedControls.@each.posY',
+        'controlChain',
+        'controlChain.axis',
+        'controlChain.type',
+        'controlChain.totalValue',
+        'controlChain.spacing',
+        'controlChain.byas',
+        'controlChain.availableSpace',
+        'bindedControls.@each.top',
         'posY',
+        'viewController.hasMenu',
         'outerHeight',
         'constraints.@each.layoutEdge',
         'constraints.@each.withParent',
@@ -295,8 +404,6 @@ App.UiPhoneControl = App.UiControl.extend({
         'viewController.application.smartphone.viewTop',
         'viewController.application.smartphone.viewBottom',
         'viewController.application.smartphone.platform',
-        'viewController.application.menu.menuItems.@each',
-        'viewController.name',
         'bottom',
         'parentContainer',
         'parentContainer.height'),
@@ -322,14 +429,7 @@ App.UiPhoneControl = App.UiControl.extend({
                     } else {
                         // Check tab bar for menu in iOS
                         var isIOS = self.get('viewController.application.smartphone.platform') === 'ios';
-                        var currentViewControllerIsMenu = false;
-                        var viewControllerName = self.get('viewController.name');
-                        var menuItems = self.get('viewController.application.menu.menuItems');
-                        menuItems.forEach(function (menuItem, index) {
-                            if (viewControllerName === menuItem.get('navigation.destination.name')) {
-                                currentViewControllerIsMenu = true;
-                            }
-                        });
+                        var currentViewControllerIsMenu = self.get('viewController.hasMenu');
                         // Offset from tab bar for menu in iOS
                         if (isIOS && currentViewControllerIsMenu) {
                             result = self.get('viewController.application.smartphone.viewBottom') - 48 + constraint.get('value');
@@ -359,14 +459,7 @@ App.UiPhoneControl = App.UiControl.extend({
                         } else {
                             // Check tab bar for menu in iOS
                             var isIOS = self.get('viewController.application.smartphone.platform') === 'ios';
-                            var currentViewControllerIsMenu = false;
-                            var viewControllerName = self.get('viewController.name');
-                            var menuItems = self.get('viewController.application.menu.menuItems');
-                            menuItems.forEach(function (menuItem, index) {
-                                if (viewControllerName === menuItem.get('navigation.destination.name')) {
-                                    currentViewControllerIsMenu = true;
-                                }
-                            });
+                            var currentViewControllerIsMenu = self.get('viewController.hasMenu');
                             // Offset from tab bar for menu in iOS
                             if (isIOS && currentViewControllerIsMenu) {
                                 result = self.get('viewController.application.smartphone.viewBottom') - 48 -
@@ -409,13 +502,23 @@ App.UiPhoneControl = App.UiControl.extend({
 
     bottom: function () {
         if(!this.get('isDeleted')) {
-            return this.getBottom(true);
+            if(this.get('controlChain') && this.get('controlChain.axis') === 'vertical') {
+                return this.get('controlChain').getBottomInChain(this.get('id'), this.get('valueInChain'));
+            } else {
+                return this.getBottom(true);
+            }
         } else {
             return null;
         }
     }.property(
-        'bindedControls.@each.posX',
-        'bindedControls.@each.posY',
+        'controlChain',
+        'controlChain.axis',
+        'controlChain.type',
+        'controlChain.totalValue',
+        'controlChain.spacing',
+        'controlChain.byas',
+        'controlChain.availableSpace',
+        'bindedControls.@each.bottom',
         'constraints.@each.layoutEdge',
         'constraints.@each.withParent',
         'constraints.@each.referenceElement',
@@ -423,10 +526,9 @@ App.UiPhoneControl = App.UiControl.extend({
         'constraints.@each.value',
         'constraints.@each.valid',
         'top',
+        'viewController.hasMenu',
         'outerHeight',
-        'viewController.name',
         'viewController.application.smartphone.platform',
-        'viewController.application.menu.menuItems.@each',
         'viewController.application.smartphone.viewBottom',
         'viewController.application.smartphone.viewTop',
         'parentContainer',
@@ -497,13 +599,23 @@ App.UiPhoneControl = App.UiControl.extend({
 
     start: function () {
         if(!this.get('isDeleted')) {
-            return this.getStart(true);
+            if(this.get('controlChain') && this.get('controlChain.axis') === 'horizontal') {
+                return this.get('controlChain').getStartInChain(this.get('id'));
+            } else {
+                return this.getStart(true);
+            }
         } else {
             return null;
         }
     }.property(
-        'bindedControls.@each.posX',
-        'bindedControls.@each.posY',
+        'controlChain',
+        'controlChain.axis',
+        'controlChain.type',
+        'controlChain.totalValue',
+        'controlChain.spacing',
+        'controlChain.byas',
+        'controlChain.availableSpace',
+        'bindedControls.@each.start',
         'constraints.@each.layoutEdge',
         'constraints.@each.withParent',
         'constraints.@each.referenceElement',
@@ -585,13 +697,23 @@ App.UiPhoneControl = App.UiControl.extend({
 
     end: function () {
         if(!this.get('isDeleted')) {
-            return this.getEnd(true);
+            if(this.get('controlChain') && this.get('controlChain.axis') === 'horizontal') {
+                return this.get('controlChain').getEndInChain(this.get('id'), this.get('valueInChain'));
+            } else {
+                return this.getEnd(true);
+            }
         } else {
             return null;
         }
     }.property(
-        'bindedControls.@each.posX',
-        'bindedControls.@each.posY',
+        'controlChain',
+        'controlChain.axis',
+        'controlChain.type',
+        'controlChain.totalValue',
+        'controlChain.spacing',
+        'controlChain.byas',
+        'controlChain.availableSpace',
+        'bindedControls.@each.end',
         'constraints.@each.layoutEdge',
         'constraints.@each.withParent',
         'constraints.@each.referenceElement',
@@ -652,18 +774,71 @@ App.UiPhoneControl = App.UiControl.extend({
         'paddingBottom',
         'marginBottom'),
 
-    ratioObserver: function() {
-        if(!this.get('isDeleted') && this.get('isRatioConstrained')) {
-            var ratio;
-            if(this.get('ratioWidth') < this.get('ratioHeight')) {
-                ratio = this.get('ratioWidth') / this.get('ratioHeight');
-                this.set('width', this.get('height') * ratio);
+    valueInChainCanBeChanged: function() {
+        if(!this.get('isDeleted') && this.get('controlChain')) {
+            if(this.get('controlChain.type') === 'weighted') {
+                return true;
             } else {
-                ratio = this.get('ratioHeight') / this.get('ratioWidth');
-                this.set('height', this.get('width') * ratio);
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }.property('controlChain.type'),
+
+    valueInChainCantBeChanged: function() {
+        return !this.get('valueInChainCanBeChanged');
+    }.property('valueInChainCanBeChanged'),
+
+    valueObserver: function() {
+        if(!this.get('isDeleted')) {
+            this.set('valueInChain', parseInt(this.get('valueInChain')));
+        }
+    }.observes('valueInChain'),
+
+    ratioObserver: function() {
+        if(!this.get('isDeleted')) {
+            if(this.get('isRatioConstrained')) {
+                var ratio;
+                if(this.get('isWidthPercentConstrained') || this.widthIsBindedByConstraints(this.get('constraints'))) {
+                    ratio = this.get('ratioHeight') / this.get('ratioWidth');
+                    this.set('height', this.get('width') * ratio);
+                } else if(this.get('isHeightPercentConstrained') || this.heightIsBindedByConstraints(this.get('constraints'))) {
+                    ratio = this.get('ratioWidth') / this.get('ratioHeight');
+                    this.set('width', this.get('height') * ratio);
+                } else if(this.get('ratioWidth') < this.get('ratioHeight')) {
+                    ratio = this.get('ratioWidth') / this.get('ratioHeight');
+                    this.set('width', this.get('height') * ratio);
+                } else {
+                    ratio = this.get('ratioHeight') / this.get('ratioWidth');
+                    this.set('height', this.get('width') * ratio);
+                }
+            } else {
+                var mustUpdateWidth = true;
+                mustUpdateWidth = mustUpdateWidth && !this.get('isWidthPercentConstrained');
+                mustUpdateWidth = mustUpdateWidth && !this.widthIsBindedByConstraints(this.get('constraints'));
+                if(this.get('controlChain')) {
+                    mustUpdateWidth = mustUpdateWidth && (this.get('controlChain.axis') !== 'horizontal');
+                }
+                if(mustUpdateWidth) {
+                    this.set('width', this.get('defaultWidth'));
+                }
+                var mustUpdateHeight = true;
+                mustUpdateHeight = mustUpdateHeight && !this.get('isHeightPercentConstrained');
+                mustUpdateHeight = mustUpdateHeight && !this.heightIsBindedByConstraints(this.get('constraints'));
+                if(this.get('controlChain')) {
+                    mustUpdateHeight = mustUpdateHeight && (this.get('controlChain.axis') !== 'vertical');
+                }
+                if(mustUpdateHeight) {
+                    this.set('height', this.get('defaultHeight'));
+                }
             }
         }
-    }.observes('isRatioConstrained', 'ratioWidth', 'ratioHeight'),
+    }.observes(
+        'isRatioConstrained',
+        'ratioWidth',
+        'ratioHeight'
+    ),
 
     ratioObserverWidth: function() {
         if(!this.get('isDeleted') && this.get('isRatioConstrained')) {
@@ -680,16 +855,83 @@ App.UiPhoneControl = App.UiControl.extend({
     }.observes('height'),
 
     widthObserver: function() {
-        if(!this.get('isDeleted') && this.get('computedWidth') !== this.get('width')) {
-            this.set('width', this.get('computedWidth'));
+        var mustUpdateWidth = true;
+        mustUpdateWidth = mustUpdateWidth && !this.get('isDeleted');
+        mustUpdateWidth = mustUpdateWidth && !this.widthIsBindedByConstraints(this.get('constraints'));
+        if(mustUpdateWidth) {
+            if(this.get('isWidthPercentConstrained')) {
+                this.set('width', this.get('widthPercent') * this.get('viewController.application.smartphone.screenWidth'));
+            }
         }
-    }.observes('computedWidth'),
+        mustUpdateWidth = mustUpdateWidth && !this.get('isRatioConstrained');
+        if(mustUpdateWidth) {
+            if(this.get('isWidthConstrained')) {
+
+            } else if(this.get('isWidthPercentConstrained')) {
+                this.set('width', this.get('widthPercent') * this.get('viewController.application.smartphone.screenWidth'));
+            } else if(!this.get('isWidthConstrained')) {
+                this.set('width', this.get('defaultWidth'));
+            } else if(!this.get('isWidthPercentConstrained')) {
+                this.set('width', this.get('defaultWidth'));
+            }
+        }
+    }.observes(
+        'viewController.application.smartphone.screenWidth',
+        'widthPercent',
+        'isWidthConstrained',
+        'isWidthPercentConstrained',
+        'computedWidth'
+    ),
 
     heightObserver: function() {
-        if(!this.get('isDeleted') && this.get('computedHeight') !== this.get('height')) {
-            this.set('height', this.get('computedHeight'));
+        var mustUpdateHeight = true;
+        mustUpdateHeight = mustUpdateHeight && !this.get('isDeleted');
+        mustUpdateHeight = mustUpdateHeight && !this.heightIsBindedByConstraints(this.get('constraints'));
+        if(mustUpdateHeight) {
+            if(this.get('isHeightPercentConstrained')) {
+                var screenHeight = this.get('viewController.application.smartphone.viewBottom') - this.get('viewController.application.smartphone.viewTop');
+                if(this.get('viewController.hasMenu')) {
+                    screenHeight = screenHeight - 48;
+                }
+                this.set('height', this.get('heightPercent') * screenHeight);
+            }
         }
-    }.observes('computedHeight'),
+        mustUpdateHeight = mustUpdateHeight && !this.get('isRatioConstrained');
+        if(mustUpdateHeight) {
+            if(this.get('isHeightConstrained')) {
+
+            } else if(this.get('isHeightPercentConstrained')) {
+                var screenHeight = this.get('viewController.application.smartphone.viewBottom') - this.get('viewController.application.smartphone.viewTop');
+                if(this.get('viewController.hasMenu')) {
+                    screenHeight = screenHeight - 48;
+                }
+                this.set('height', this.get('heightPercent') * screenHeight);
+            } else if(!this.get('isHeightConstrained')) {
+                this.set('height', this.get('defaultHeight'));
+            } else if(!this.get('isHeightPercentConstrained')) {
+                this.set('height', this.get('defaultHeight'));
+            }
+        }
+    }.observes(
+        'viewController.application.smartphone.viewTop',
+        'viewController.application.smartphone.viewBottom',
+        'viewController.hasMenu',
+        'heightPercent',
+        'isHeightConstrained',
+        'isHeightPercentConstrained',
+        'computedHeight'
+    ),
+
+    constraintsObserver: function() {
+        if(!this.get('isDeleted')) {
+            if(this.widthIsBindedByConstraints(this.get('constraints'))) {
+                this.set('width', this.get('computedWidth'));
+            }
+            if(this.heightIsBindedByConstraints(this.get('constraints'))) {
+                this.set('height', this.get('computedHeight'));
+            }
+        }
+    }.observes('computedWidth', 'computedHeight'),
 
     // Used to reload views
     didCreate: function () {
@@ -757,26 +999,42 @@ App.UiPhoneControl = App.UiControl.extend({
         xmlElem.setAttribute('width', this.get('width'));
         xmlElem.setAttribute('height', this.get('height'));
 
+        if(this.get('controlChain')) {
+            xmlElem.setAttribute('controlChain', this.get('controlChain').getRefPath(''));
+        }
+
         xmlElem.setAttribute('paddingTop', this.get('paddingTop'));
         xmlElem.setAttribute('paddingBottom', this.get('paddingBottom'));
         xmlElem.setAttribute('paddingStart', this.get('paddingStart'));
         xmlElem.setAttribute('paddingEnd', this.get('paddingEnd'));
 
-        xmlElem.setAttribute('marginTop', this.get('marginTop'));
+        /*xmlElem.setAttribute('marginTop', this.get('marginTop'));
         xmlElem.setAttribute('marginBottom', this.get('marginBottom'));
         xmlElem.setAttribute('marginStart', this.get('marginStart'));
-        xmlElem.setAttribute('marginEnd', this.get('marginEnd'));
+        xmlElem.setAttribute('marginEnd', this.get('marginEnd'));*/
 
         var constraints = this.get('constraints').filter(function(c) {
             return c.get('valid');
         });
-        if(constraints.get('length') > 0 || this.get('isWidthConstrained') || this.get('isHeightConstrained') || this.get('isRatioConstrained')) {
+        if(constraints.get('length') > 0 || this.get('isWidthConstrained') || this.get('isHeightConstrained')  || this.get('isWidthPercentConstrained')  || this.get('isHeightPercentConstrained') || this.get('isRatioConstrained')) {
             var elem = xmlDoc.createElement('constraints');
-            elem.setAttribute('constrainedWidth', this.get('isWidthConstrained'));
-            elem.setAttribute('constrainedHeight', this.get('isHeightConstrained'));
-            elem.setAttribute('constrainedRatio', this.get('isRatioConstrained'));
+            if(this.get('isWidthConstrained')) {
+                elem.setAttribute('fixedWidth', true);
+            }
+            if(this.get('isHeightConstrained')) {
+                elem.setAttribute('fixedHeight', true);
+            }
             if(this.get('isRatioConstrained')) {
+                elem.setAttribute('fixedRatio', true);
                 elem.setAttribute('ratio', this.get('ratioWidth') + ':' + this.get('ratioHeight'));
+            }
+            if(this.get('isWidthPercentConstrained')) {
+                elem.setAttribute('fixedPercentWidth', true);
+                elem.setAttribute('widthPercent', this.get('widthPercent'));
+            }
+            if(this.get('isHeightPercentConstrained')) {
+                elem.setAttribute('fixedPercentHeight', true);
+                elem.setAttribute('heightPercent', this.get('heightPercent'));
             }
             xmlElem.appendChild(elem);
 

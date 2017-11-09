@@ -42,9 +42,15 @@
                     {{input-color-picker label="Background Color" value=backgroundColor action='acceptChanges'}}
                     {{input-text label="Background Image" value=backgroundImage action='acceptChanges'}}
                     <br>
+                    <button type="button" {{bind-attr class=":btn :btn-block :btn-sm :btn-chain"}} {{action
+                        "createChain"}}>
+                        <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+                        Create Control Chain
+                    </button>
+                    <br>
                     <br>
                     <p align="center"><b>UiPhoneControls</b></p>
-                    <div class="tree col-sm-7">
+                    <div class="tree col-sm-11">
                         <ul>
                             <li>
                                 <span><i class="fa fa-mobile"></i> {{name}}</span>
@@ -52,6 +58,16 @@
                             <ul style="padding-left:16px">
                                 {{partial "partials/tree_container"}}
                             </ul>
+                        </ul>
+                    </div>
+                    <p align="center"><b>Control Chains</b></p>
+                    <div class="col-sm-11">
+                        <ul class="collapse in">
+                            {{#each item in controlChains}}
+                                <li class="list-item-simple">
+                                    {{#link-to "controlChain" item}}{{item.name}}{{/link-to}}
+                                </li>
+                            {{/each}}
                         </ul>
                     </div>
                 </div>

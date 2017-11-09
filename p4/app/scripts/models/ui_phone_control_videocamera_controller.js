@@ -1,5 +1,9 @@
 App.VideocameraController = App.UiPhoneControl.extend({
     videoView: DS.belongsTo('videoView', {inverse: null}),
+    minWidth: 64,
+    minHeight: 40,
+    defaultWidth: 120,
+    defaultHeight: 40,
 
     width: DS.attr('number', {defaultValue: 120}),
     height: DS.attr('number', {defaultValue: 40}),

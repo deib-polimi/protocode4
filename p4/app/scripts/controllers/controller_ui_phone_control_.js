@@ -42,6 +42,8 @@ App.UiPhoneControlController = Ember.ObjectController.extend(App.Saveable, {
             this.set('number', this.get('number') + 1);
 
             constraint.save();
+
+            this.transitionToRoute('constraint', constraint);
         },
 
         deleteUiPhoneControl: function () {
@@ -58,6 +60,12 @@ App.UiPhoneControlController = Ember.ObjectController.extend(App.Saveable, {
                     viewController.save();
                 });
 
+            }
+
+            if(controlToDelete.get('controlChain')) {
+                var chain = controlToDelete.get('controlChain');
+                chain.get('uiPhoneControls').removeObject(controlToDelete);
+                chain.save();
             }
 
             this.set('number', this.get('number') - 1);

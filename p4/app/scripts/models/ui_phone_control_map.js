@@ -1,5 +1,9 @@
 App.Map = App.UiPhoneControl.extend({
     name: DS.attr('string', {defaultValue: 'Map'}),
+    minWidth: 0,
+    minHeight: 0,
+    defaultWidth: 200,
+    defaultHeight: 330,
 
     lat: DS.attr('number', {defaultValue: 45.478}),
     lon: DS.attr('number', {defaultValue: 9.227}),

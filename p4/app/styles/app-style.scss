@@ -73,9 +73,26 @@ body,
     color: #ff0000;
 }
 
+.list-chain-item {
+    margin-top: 10px;
+    margin-bottom: 0;
+    padding-bottom: 40px;
+    padding-left: 5px;
+    border-top: none;
+    border-bottom: 1px solid #ddd;
+    list-style: none;
+}
+
 .tab-pane .list-group-item {
     margin-bottom: -1px;
     border-top: 1px solid #ddd;
+}
+
+.list-item-simple {
+    margin-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+    list-style: none;
 }
 
 .panel-title {
@@ -104,6 +121,16 @@ body,
 .plotted {
     background-image: url("../img/gui/tiny_grid/tiny_grid.png");
     overflow: auto;
+}
+
+.btn-chain {
+    color: #ffffff;
+    background-color: #f44336;
+}
+
+.btn-chain:hover {
+    color: #e0e0e0;
+    background-color: #cc181e;
 }
 
 /*============ CONTROL PICKER ============*/
