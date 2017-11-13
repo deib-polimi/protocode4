@@ -8,28 +8,19 @@ App.Constraint = DS.Model.extend({
     withParent: DS.attr('boolean'),
     referenceElement: DS.belongsTo('uiPhoneControl', {polymorphic: true, inverse: null}),
     referenceLayoutEdge: DS.attr('string'),
-    value: DS.attr('number'),
     valid: DS.attr('boolean'),
     flag: DS.attr('boolean', {defaultValue: false}),
 
     xmlName: 'constraint',
 
     filteredLayoutEdges: function() {
-        var wp = this.get('withParent');
         var edges = this.get('layoutEdges');
         var constraints = this.get('uiPhoneControl.constraints');
         if(constraints) {
             constraints = constraints.without(this);
-            if(wp) {
-                constraints.forEach(function (constraint) {
-                    edges = edges.without(constraint.get('layoutEdge'));
-                });
-            } else {
-                edges = edges.without('centerX').without('centerY');
-                constraints.forEach(function (constraint) {
-                    edges = edges.without(constraint.get('layoutEdge'));
-                });
-            }
+            constraints.forEach(function (constraint) {
+                edges = edges.without(constraint.get('layoutEdge'));
+            });
             if(this.get('uiPhoneControl.controlChain')) {
                 if(this.get('uiPhoneControl.controlChain.axis') === 'horizontal') {
                     edges = edges.without('centerX').without('start').without('end');
@@ -40,7 +31,6 @@ App.Constraint = DS.Model.extend({
         }
         return edges;
     }.property(
-        'withParent',
         'layoutEdges',
         'uiPhoneControl.constraints.@each',
         'uiPhoneControl.controlChain',
@@ -77,12 +67,6 @@ App.Constraint = DS.Model.extend({
         }
     }.observes('layoutEdge'),
 
-    valueSet: function() {
-        if(!(this.get('isDeleted'))) {
-            this.set('value', parseFloat(this.get('value')));
-        }
-    }.observes('value'),
-
     referenceElementOrWithParentChanged: function() {
         if(!(this.get('isDeleted'))) {
             this.set('flag', true);
@@ -93,7 +77,7 @@ App.Constraint = DS.Model.extend({
         if(!(this.get('isDeleted'))) {
             this.set('valid', false);
         }
-    }.observes('layoutEdge', 'referenceElement', 'referenceLayoutEdge', 'value', 'withParent'),
+    }.observes('layoutEdge', 'referenceElement', 'referenceLayoutEdge', 'withParent'),
 
     didCreate: function () {
         this._super();
@@ -117,7 +101,6 @@ App.Constraint = DS.Model.extend({
             constraint.setAttribute('referenceElement', this.get('referenceElement').getRefPath(''));
         }
         constraint.setAttribute('referenceLayoutEdge', this.get('referenceLayoutEdge'));
-        constraint.setAttribute('value', this.get('value'));
 
         return constraint;
     }

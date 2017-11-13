@@ -95,6 +95,17 @@ body,
     list-style: none;
 }
 
+.list-item-simple-highlight {
+    margin-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+    list-style: none;
+}
+
+.list-item-simple-highlight a {
+    color: #ff0000;
+}
+
 .panel-title {
     font-size: 14px;
     height: 30px;

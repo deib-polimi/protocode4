@@ -101,16 +101,16 @@ App.UiPhoneControlView = Ember.View.extend(App.UiMoveable, {
   }.property(),
 
   top: function() {
-    return this.computeVerticalAxis(this.get('context.top'));
-  }.property('context.top', 'smartphone'),
+    return this.computeVerticalAxis(this.get('context.topWithMargin') + parseFloat(this.get('context.marginTop')));
+  }.property('context.top', 'context.marginTop', 'smartphone'),
 
   bottom: function() {
     return this.computeVerticalAxis(this.get('context.bottom'));
   }.property('context.bottom', 'smartphone'),
 
   start: function() {
-    return this.computeHorizontalAxis(this.get('context.start'));
-  }.property('context.start', 'smartphone'),
+    return this.computeHorizontalAxis(this.get('context.startWithMargin') + parseFloat(this.get('context.marginStart')));
+}.property('context.start', 'context.marginStart', 'smartphone'),
 
   end: function() {
     return this.computeHorizontalAxis(this.get('context.end'));
@@ -185,10 +185,10 @@ App.UiPhoneControlView = Ember.View.extend(App.UiMoveable, {
     result += 'height: ' + this.get('computedHeight') + 'px;';
     result += 'width: ' + this.get('computedWidth') + 'px;';
 
-    result += 'margin-top: ' + this.get('marginTop') + 'px;';
+    /*result += 'margin-top: ' + this.get('marginTop') + 'px;';
     result += 'margin-bottom: ' + this.get('marginBottom') + 'px;';
     result += 'margin-left: ' + this.get('marginStart') + 'px;';
-    result += 'margin-right: ' + this.get('marginEnd') + 'px;';
+    result += 'margin-right: ' + this.get('marginEnd') + 'px;';*/
 
     result += 'padding-top: ' + this.get('paddingTop') + 'px;';
     result += 'padding-bottom: ' + this.get('paddingBottom') + 'px;';

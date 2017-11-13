@@ -72,6 +72,10 @@ App.ScreenCanvasComponent = Ember.Component.extend({
         'model.uiPhoneControls.@each.ratioWidth',
         'model.uiPhoneControls.@each.ratioHeight',
         'model.uiPhoneControls.@each.valueInChain',
+        'model.uiPhoneControls.@each.marginTop',
+        'model.uiPhoneControls.@each.marginBottom',
+        'model.uiPhoneControls.@each.marginStart',
+        'model.uiPhoneControls.@each.marginEnd',
         'model.controlChains.@each.type',
         'model.controlChains.@each.axis',
         'model.controlChains.@each.byas'
@@ -98,12 +102,12 @@ App.ScreenCanvasComponent = Ember.Component.extend({
                     // Draw dimension constraints
                     ctx.fillStyle = "#ff0000";
                     if(control.get('isWidthConstrained') || control.get('isWidthPercentConstrained')) {
-                        ctx.fillRect(control.get('start'), control.get('top') - 2, control.get('outerWidth'), 2);
-                        ctx.fillRect(control.get('start'), control.get('bottom'), control.get('outerWidth'), 2);
+                        ctx.fillRect(control.get('start'), control.get('top') - 2, control.get('computedWidth'), 2);
+                        ctx.fillRect(control.get('start'), control.get('bottom'), control.get('computedWidth'), 2);
                     }
                     if(control.get('isHeightConstrained') || control.get('isHeightPercentConstrained')) {
-                        ctx.fillRect(control.get('start') - 2, control.get('top'), 2, control.get('outerHeight'));
-                        ctx.fillRect(control.get('end'), control.get('top'), 2, control.get('outerHeight'));
+                        ctx.fillRect(control.get('start') - 2, control.get('top'), 2, control.get('computedHeight'));
+                        ctx.fillRect(control.get('end'), control.get('top'), 2, control.get('computedHeight'));
                     }
                     ctx.fillStyle = "#ff00ff";
                     if(control.get('isRatioConstrained')) {
@@ -117,27 +121,61 @@ App.ScreenCanvasComponent = Ember.Component.extend({
                     var chain = control.get('controlChain');
                     if(chain && chain.get('valid')) {
                         ctx.fillStyle = "#a6a6a6";
+                        ctx.strokeStyle = "#a6a6a6";
                         chainControls = chain.get('uiPhoneControls');
+                        var x, y;
                         chainControls.forEach(function(c, index) {
                             if(index === 0) {
                                 if(chain.get('axis') === 'horizontal') {
-                                    ctx.fillRect(c.get('end') - 4, c.get('top') + (c.get('outerHeight') / 2) - 4, 8, 8);
+                                    x = c.get('end') - 4;
+                                    y = c.get('top') + (c.get('computedHeight') / 2) - 4;
+                                    ctx.beginPath();
+                                    ctx.moveTo(x+4, y+4);
+                                    ctx.fillRect(x, y, 8, 8);
                                 } else {
-                                    ctx.fillRect(c.get('start') + (c.get('outerWidth') / 2) - 4, c.get('bottom') - 4, 8, 8);
+                                    x = c.get('start') + (c.get('computedWidth') / 2) - 4;
+                                    y = c.get('bottom') - 4;
+                                    ctx.beginPath();
+                                    ctx.moveTo(x+4, y+4);
+                                    ctx.fillRect(x, y, 8, 8);
                                 }
                             } else if(index === (chainControls.get('length') - 1)){
                                 if(chain.get('axis') === 'horizontal') {
-                                    ctx.fillRect(c.get('start') - 4, c.get('top') + (c.get('outerHeight') / 2) - 4, 8, 8);
+                                    x = c.get('start') - 4;
+                                    y = c.get('top') + (c.get('computedHeight') / 2) - 4;
+                                    ctx.lineTo(x+4, y+4);
+                                    ctx.stroke();
+                                    ctx.fillRect(x, y, 8, 8);
                                 } else {
-                                    ctx.fillRect(c.get('start') + (c.get('outerWidth') / 2) - 4, c.get('top') - 4, 8, 8);
+                                    x = c.get('start') + (c.get('computedWidth') / 2) - 4;
+                                    y = c.get('top') - 4;
+                                    ctx.lineTo(x+4, y+4);
+                                    ctx.stroke();
+                                    ctx.fillRect(x, y, 8, 8);
                                 }
                             } else {
                                 if(chain.get('axis') === 'horizontal') {
-                                    ctx.fillRect(c.get('end') - 4, c.get('top') + (c.get('outerHeight') / 2) - 4, 8, 8);
-                                    ctx.fillRect(c.get('start') - 4, c.get('top') + (c.get('outerHeight') / 2) - 4, 8, 8);
+                                    x = c.get('start') - 4;
+                                    y = c.get('top') + (c.get('computedHeight') / 2) - 4;
+                                    ctx.lineTo(x+4, y+4);
+                                    ctx.stroke();
+                                    ctx.fillRect(x, y, 8, 8);
+                                    x = c.get('end') - 4;
+                                    y = c.get('top') + (c.get('computedHeight') / 2) - 4;
+                                    ctx.beginPath();
+                                    ctx.moveTo(x+4, y+4);
+                                    ctx.fillRect(x, y, 8, 8);
                                 } else {
-                                    ctx.fillRect(c.get('start') + (c.get('outerWidth') / 2) - 4, c.get('bottom') - 4, 8, 8);
-                                    ctx.fillRect(c.get('start') + (c.get('outerWidth') / 2) - 4, c.get('top') - 4, 8, 8);
+                                    x = c.get('start') + (c.get('computedWidth') / 2) - 4;
+                                    y = c.get('top') - 4;
+                                    ctx.lineTo(x+4, y+4);
+                                    ctx.stroke();
+                                    ctx.fillRect(x, y, 8, 8);
+                                    x = c.get('start') + (c.get('computedWidth') / 2) - 4;
+                                    y = c.get('bottom') - 4;
+                                    ctx.beginPath();
+                                    ctx.moveTo(x+4, y+4);
+                                    ctx.fillRect(x, y, 8, 8);
                                 }
                             }
                         });
@@ -165,36 +203,30 @@ App.ScreenCanvasComponent = Ember.Component.extend({
                     viewBottom = viewBottom - 48;
                 }
                 if(constraint.get('layoutEdge') === 'top') {
-                    var startX = control.get('start') + (control.get('computedWidth') / 2);
-                    var endY = constraint.get('value') + plus;
-                    ctx.fillRect(startX, viewTop, 2, endY);
+                    var endY = parseFloat(control.get('marginTop')) + plus;
+                    ctx.fillRect(control.get('centerX'), viewTop, 2, endY);
                 } else if(constraint.get('layoutEdge') === 'bottom') {
-                    var startX = control.get('start') + (control.get('computedWidth') / 2);
-                    var endY = - constraint.get('value') + plus;
-                    ctx.fillRect(startX, control.get('bottom') - plus, 2, endY);
+                    var endY = parseFloat(control.get('marginBottom')) + plus;
+                    ctx.fillRect(control.get('centerX'), control.get('bottom') - plus, 2, endY);
                 } else if(constraint.get('layoutEdge') === 'start') {
-                    var startY = control.get('top') + (control.get('computedHeight') / 2);
-                    var endX = constraint.get('value') + plus;
-                    ctx.fillRect(0, startY, endX, 2);
+                    var endX = parseFloat(control.get('marginStart')) + plus;
+                    ctx.fillRect(0, control.get('centerY'), endX, 2);
                 } else if(constraint.get('layoutEdge') === 'end') {
-                    var startY = control.get('top') + (control.get('computedHeight') / 2);
-                    var endX = - constraint.get('value') + plus;
-                    ctx.fillRect(control.get('end') - plus, startY, endX, 2);
+                    var endX = parseFloat(control.get('marginEnd')) + plus;
+                    ctx.fillRect(control.get('end') - plus, control.get('centerY'), endX, 2);
                 } else if(constraint.get('layoutEdge') === 'centerX') {
                     ctx.fillStyle = "#ffdd00";
-                    var startY = control.get('top') + (control.get('computedHeight') / 2);
                     var endX = control.get('start') + plus;
-                    ctx.fillRect(0, startY, endX, 2);
+                    ctx.fillRect(0, control.get('centerY'), endX, 2);
                     endX = this.get('device.screenWidth') - control.get('end') + plus;
-                    ctx.fillRect(control.get('end') - plus, startY, endX, 2);
+                    ctx.fillRect(control.get('end') - plus, control.get('centerY'), endX, 2);
                     ctx.fillStyle = "#00ff00";
                 } else if(constraint.get('layoutEdge') === 'centerY') {
                     ctx.fillStyle = "#ffdd00";
-                    var startX = control.get('start') + (control.get('computedWidth') / 2);
                     var endY = control.get('top') - viewTop + plus;
-                    ctx.fillRect(startX, viewTop, 2, endY);
+                    ctx.fillRect(control.get('centerX'), viewTop, 2, endY);
                     endY = this.get('device.viewBottom') - control.get('bottom') + plus;
-                    ctx.fillRect(startX, control.get('bottom') - plus, 2, endY);
+                    ctx.fillRect(control.get('centerX'), control.get('bottom') - plus, 2, endY);
                     ctx.fillStyle = "#00ff00";
                     //console.log('AAAA ' + startX + ' ' + control.get('top') + ' ' + control.get('bottom') + ' ' + this.get('device.viewTop') + ' ' + this.get('device.viewBottom'));
                 }
@@ -203,21 +235,41 @@ App.ScreenCanvasComponent = Ember.Component.extend({
                 var color = this.getColor();
                 var r = 5;
                 if(constraint.get('layoutEdge') === 'top' || constraint.get('layoutEdge') === 'bottom') {
-                    x = control.get('start') + (control.get('computedWidth') / 2);
+                    x = control.get('centerX');
                     y = control.get(constraint.get('layoutEdge'));
+                    this.drawCircle(x, y, r, color);
                 } else if(constraint.get('layoutEdge') === 'start' || constraint.get('layoutEdge') === 'end') {
                     x = control.get(constraint.get('layoutEdge'));
-                    y = control.get('top') + (control.get('computedHeight') / 2);
+                    y = control.get('centerY');
+                    this.drawCircle(x, y, r, color);
+                } else if(constraint.get('layoutEdge') === 'centerY') {
+                    ctx.fillStyle = "#ffdd00";
+                    if(control.get('end') < constraint.get('referenceElement.start')) {
+                        var endX = constraint.get('referenceElement.start') - control.get('end') + plus*2;
+                        ctx.fillRect(control.get('end') - plus, control.get('centerY'), endX, 2);
+                    } else  {
+                        var endX = control.get('start') - constraint.get('referenceElement.end') + plus*2;
+                        ctx.fillRect(constraint.get('referenceElement.end') - plus, control.get('centerY'), endX, 2);
+                    }
+                } else if(constraint.get('layoutEdge') === 'centerX') {
+                    ctx.fillStyle = "#ffdd00";
+                    if(control.get('bottom') < constraint.get('referenceElement.top')) {
+                        var endY = constraint.get('referenceElement.top') - control.get('bottom') + plus*2;
+                        ctx.fillRect(control.get('centerX'), control.get('bottom') - plus, 2, endY);
+                    } else {
+                        var endY = control.get('top') - constraint.get('referenceElement.bottom') + plus*2;
+                        ctx.fillRect(control.get('centerX'), constraint.get('referenceElement.bottom') - plus, 2, endY);
+                    }
                 }
-                this.drawCircle(x, y, r, color);
                 if(constraint.get('referenceLayoutEdge') === 'top' || constraint.get('referenceLayoutEdge') === 'bottom') {
-                    x = constraint.get('referenceElement.start') + (constraint.get('referenceElement.computedWidth') / 2);
+                    x = constraint.get('referenceElement.centerX');
                     y = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge'));
+                    this.drawCircle(x, y, r, color);
                 } else if(constraint.get('referenceLayoutEdge') === 'start' || constraint.get('referenceLayoutEdge') === 'end') {
                     x = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge'));
-                    y = constraint.get('referenceElement.top') + (constraint.get('referenceElement.computedHeight') / 2);
+                    y = constraint.get('referenceElement.centerY');
+                    this.drawCircle(x, y, r, color);
                 }
-                this.drawCircle(x, y, r, color);
             }
         }
     },

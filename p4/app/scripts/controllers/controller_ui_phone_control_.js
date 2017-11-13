@@ -35,7 +35,6 @@ App.UiPhoneControlController = Ember.ObjectController.extend(App.Saveable, {
                 withParent: false,
                 referenceElement: null,
                 referenceLayoutEdge: null,
-                value: 0,
                 valid: false
             });
 

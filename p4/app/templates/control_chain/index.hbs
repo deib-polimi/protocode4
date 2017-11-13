@@ -26,7 +26,7 @@
                         optionValuePath="content" selection=axis prompt="Select axis"}}
                     {{input-select label="Type:" content=controller.types optionLabelPath="content"
                         optionValuePath="content" selection=type prompt="Select type"}}
-                    {{input-number label="Spacing:" min="0" value=spacing}}
+                    {{input-number label="Spacing:" min="0" value=spacing disabled=spacingCantBeChanged}}
                     {{input-number label="Byas:" min="0" max="1" step="0.1" value=byas disabled=byasCantBeChanged}}
                 </div>
                 <div class="tab-pane fade form-horizontal" id="elements">

@@ -64,9 +64,15 @@
                     <div class="col-sm-11">
                         <ul class="collapse in">
                             {{#each item in controlChains}}
-                                <li class="list-item-simple">
-                                    {{#link-to "controlChain" item}}{{item.name}}{{/link-to}}
-                                </li>
+                                {{#if item.valid}}
+                                    <li class="list-item-simple">
+                                        {{#link-to "controlChain" item}}{{item.name}}{{/link-to}}
+                                    </li>
+                                {{else}}
+                                    <li class="list-item-simple-highlight">
+                                        {{#link-to "controlChain" item}}{{item.name}}{{/link-to}}
+                                    </li>
+                                {{/if}}
                             {{/each}}
                         </ul>
                     </div>

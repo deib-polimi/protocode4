@@ -3,15 +3,15 @@ App.ControlChain = DS.Model.extend({
 
     axis: DS.attr('string'),
     type: DS.attr('string'),
-    spacing: DS.attr('number', {defaultValue: 0}),
     byas: DS.attr('number', {defaultValue: 0.5}),
     uiPhoneControls: DS.hasMany('uiPhoneControl', {polymorphic: true}),
+    spacing: DS.attr('number', {defaultValue: 0}),
 
     xmlName: 'controlChain',
 
     valid: function() {
         if(!this.get('isDeleted')) {
-            if(this.get('axis') && this.get('type')) {
+            if(this.get('axis') && this.get('type') && this.get('uiPhoneControls.length') >= 2) {
                 return true;
             } else {
                 return false;
@@ -19,7 +19,7 @@ App.ControlChain = DS.Model.extend({
         } else {
             return false;
         }
-    }.property('axis', 'type'),
+    }.property('axis', 'type', 'uiPhoneControls.@each'),
 
     name: function() {
         var name = 'chain:';
@@ -91,29 +91,63 @@ App.ControlChain = DS.Model.extend({
     availableSpace: function() {
         var controls = this.get('uiPhoneControls');
         var dimension;
-        if(this.get('axis') === 'horizontal') {
-            dimension = 'width';
-        } else if(this.get('axis') === 'vertical') {
-            dimension = 'height';
-        } else {
+        var availableSpace;
+        if(!this.get('valid')) {
             return 0;
         }
-        var spaceForControls = 0;
-        controls.forEach(function(c) {
-            spaceForControls = spaceForControls + parseFloat(c.get(dimension));
-        });
-        if(dimension === 'height') {
-            return this.get('screenHeight') - spaceForControls;
+        if(this.get('axis') === 'horizontal') {
+            dimension = 'width';
+            availableSpace = this.get('viewController.application.smartphone.screenWidth');
         } else {
-            return this.get('viewController.application.smartphone.screenWidth') - spaceForControls;
+            dimension = 'height';
+            availableSpace = this.get('screenHeight');
+        }
+        var firstMargin, lastMargin;
+        if(dimension === 'height') {
+            firstMargin = parseFloat(controls.get('firstObject.marginTop'));
+            lastMargin = parseFloat(controls.get('lastObject.marginBottom'));
+        } else {
+            firstMargin = parseFloat(controls.get('firstObject.marginStart'));
+            lastMargin = parseFloat(controls.get('lastObject.marginEnd'));
+        }
+        availableSpace = availableSpace  - firstMargin - lastMargin;
+        if(this.get('type') === 'weighted') {
+            return availableSpace - ((controls.get('length') + 1) * this.get('spacing'));
+        } else if(this.get('type') === 'packed') {
+            var spaceForControls = 0;
+            controls.forEach(function(c) {
+                spaceForControls = spaceForControls + parseFloat(c.get(dimension));
+            });
+            return availableSpace - ((controls.get('length') - 1) * this.get('spacing')) - spaceForControls;
+        } else {
+            var spaceForControls = 0;
+            controls.forEach(function(c) {
+                spaceForControls = spaceForControls + parseFloat(c.get(dimension));
+            });
+            return availableSpace - spaceForControls;
         }
     }.property(
+        'valid',
+        'type',
         'axis',
         'screenHeight',
+        'spacing',
         'viewController.application.smartphone.screenWidth',
+        'uiPhoneControls.length',
         'uiPhoneControls.@each.width',
-        'uiPhoneControls.@each.height'
+        'uiPhoneControls.@each.height',
+        'uiPhoneControls.@each.marginTop',
+        'uiPhoneControls.@each.marginBottom',
+        'uiPhoneControls.@each.marginStart',
+        'uiPhoneControls.@each.marginEnd'
     ),
+
+    spacingCantBeChanged: function() {
+        if(!this.get('isDeleted')) {
+            return (this.get('type') === 'spread') || (this.get('type') === 'spread_inside');
+        }
+        return false;
+    }.property('type'),
 
     spacingSet: function() {
         if(!(this.get('isDeleted'))) {
@@ -127,7 +161,7 @@ App.ControlChain = DS.Model.extend({
         }
     }.observes('byas'),
 
-    getSpreadSpace: function(dimension, inside) {
+    getSpreadSpace: function(inside) {
         var controls = this.get('uiPhoneControls');
         var spreadSpace, slots;
         if(inside)  {
@@ -143,7 +177,7 @@ App.ControlChain = DS.Model.extend({
         return spreadSpace;
     },
 
-    getPackedSpace: function(dimension, first) {
+    getPackedSpace: function(first) {
         var packedSpace;
         if(first) {
             packedSpace = this.get('availableSpace') * this.get('byas');
@@ -155,8 +189,9 @@ App.ControlChain = DS.Model.extend({
 
     getTopInChain: function(controlId) {
         if(this.get('valid')) {
-            var control = this.get('uiPhoneControls').findBy('id', controlId);
-            var index = this.get('uiPhoneControls').indexOf(control);
+            var controls = this.get('uiPhoneControls');
+            var control = controls.findBy('id', controlId);
+            var index = controls.indexOf(control);
             if(this.get('axis') === 'vertical') {
                 // Case type: weighted
                 if(this.get('type') === 'weighted') {
@@ -164,53 +199,50 @@ App.ControlChain = DS.Model.extend({
                     if(index === 0) {
                         topInChain = this.get('viewTop');
                     } else {
-                        var precedingControl = this.get('uiPhoneControls').objectAt(index - 1);
+                        var precedingControl = controls.objectAt(index - 1);
                         topInChain = parseFloat(precedingControl.get('bottom'));
                     }
                     topInChain = topInChain + this.get('spacing');
                     return topInChain;
                 } else if(this.get('type') === 'spread') {
                     // Case type: spread
-                    var spreadSpace = this.getSpreadSpace('height', false);
+                    var spreadSpace = this.getSpreadSpace(false);
                     var topInChain;
                     if(index === 0) {
                         topInChain = this.get('viewTop') + spreadSpace;
                     } else {
-                        var precedingControl = this.get('uiPhoneControls').objectAt(index - 1);
+                        var precedingControl = controls.objectAt(index - 1);
                         topInChain = parseFloat(precedingControl.get('bottom')) + spreadSpace;
                     }
-                    topInChain = topInChain + this.get('spacing');
                     return topInChain;
                 } else if(this.get('type') === 'spread_inside') {
                     // Case type: spread_inside
-                    var spreadSpace = this.getSpreadSpace('height', true);
+                    var spreadSpace = this.getSpreadSpace(true);
                     var topInChain;
                     if(index === 0) {
                         topInChain = this.get('viewTop');
                     } else {
-                        var precedingControl = this.get('uiPhoneControls').objectAt(index - 1);
+                        var precedingControl = controls.objectAt(index - 1);
                         topInChain = parseFloat(precedingControl.get('bottom')) + spreadSpace;
                     }
-                    topInChain = topInChain + this.get('spacing');
                     return topInChain;
                 } else if(this.get('type') === 'packed') {
                     // Case type: packed
-                    var packedSpaceFirst = this.getPackedSpace('height', true);
+                    var packedSpaceFirst = this.getPackedSpace(true);
                     var topInChain;
                     if(index === 0) {
                         topInChain = this.get('viewTop') + packedSpaceFirst;
                     } else {
-                        var precedingControl = this.get('uiPhoneControls').objectAt(index - 1);
-                        topInChain = parseFloat(precedingControl.get('bottom'));
+                        var precedingControl = controls.objectAt(index - 1);
+                        topInChain = parseFloat(precedingControl.get('bottom')) + this.get('spacing');
                     }
-                    topInChain = topInChain;
                     return topInChain;
                 }
             } else {
                 if(index === 0) {
                     return control.getTop(true);
                 } else {
-                    return this.get('uiPhoneControls.firstObject.top');
+                    return controls.get('firstObject.topWithMargin');
                 }
             }
         } else {
@@ -220,23 +252,25 @@ App.ControlChain = DS.Model.extend({
 
     getBottomInChain: function(controlId, value) {
         if(this.get('valid')) {
-            var control = this.get('uiPhoneControls').findBy('id', controlId);
+            var controls = this.get('uiPhoneControls');
+            var control = controls.findBy('id', controlId);
             if(this.get('axis') === 'vertical') {
                 // Case type: weighted
                 if(this.get('type') === 'weighted') {
-                    var availableSpace = this.get('screenHeight') - ((this.get('uiPhoneControls.length') + 1) * this.get('spacing'));
+                    var availableSpace = this.get('availableSpace');
                     var height = availableSpace / this.get('totalValue') * value;
-                    var bottomInChain = parseFloat(control.get('top')) + height;
+                    var bottomInChain = parseFloat(control.get('top')) + height + parseFloat(control.get('marginBottom'));
+                    control.set('height', height);
                     return bottomInChain;
                 } else if(this.get('type') === 'spread') {
                     // Case type: spread
-                    return (parseFloat(control.get('top')) + parseFloat(control.get('height')));
+                    return (parseFloat(control.get('topWithMargin')) + parseFloat(control.get('outerHeight')));
                 } else if(this.get('type') === 'spread_inside') {
                     // Case type: spread_inside
-                    return (parseFloat(control.get('top')) + parseFloat(control.get('height')));
+                    return (parseFloat(control.get('topWithMargin')) + parseFloat(control.get('outerHeight')));
                 } else if(this.get('type') === 'packed') {
                     // Case type: packed
-                    return (parseFloat(control.get('top')) + parseFloat(control.get('height')));
+                    return (parseFloat(control.get('topWithMargin')) + parseFloat(control.get('outerHeight')));
                 }
             } else {
                 return parseFloat(control.getBottom(true));
@@ -248,8 +282,9 @@ App.ControlChain = DS.Model.extend({
 
     getStartInChain: function(controlId) {
         if(this.get('valid')) {
-            var control = this.get('uiPhoneControls').findBy('id', controlId);
-            var index = this.get('uiPhoneControls').indexOf(control);
+            var controls = this.get('uiPhoneControls');
+            var control = controls.findBy('id', controlId);
+            var index = controls.indexOf(control);
             if(this.get('axis') === 'horizontal') {
                 // Case type: weighted
                 if(this.get('type') === 'weighted') {
@@ -257,53 +292,50 @@ App.ControlChain = DS.Model.extend({
                     if(index === 0) {
                         startInChain = 0;
                     } else {
-                        var precedingControl = this.get('uiPhoneControls').objectAt(index - 1);
+                        var precedingControl = controls.objectAt(index - 1);
                         startInChain = parseFloat(precedingControl.get('end'));
                     }
                     startInChain = startInChain + this.get('spacing');
                     return startInChain;
                 } else if(this.get('type') === 'spread') {
                     // Case type: spread
-                    var spreadSpace = this.getSpreadSpace('width', false);
+                    var spreadSpace = this.getSpreadSpace(false);
                     var startInChain;
                     if(index === 0) {
                         startInChain = spreadSpace;
                     } else {
-                        var precedingControl = this.get('uiPhoneControls').objectAt(index - 1);
+                        var precedingControl = controls.objectAt(index - 1);
                         startInChain = parseFloat(precedingControl.get('end')) + spreadSpace;
                     }
-                    startInChain = startInChain + this.get('spacing');
                     return startInChain;
                 } else if(this.get('type') === 'spread_inside') {
                     // Case type: spread_inside
-                    var spreadSpace = this.getSpreadSpace('width', true);
+                    var spreadSpace = this.getSpreadSpace(true);
                     var startInChain;
                     if(index === 0) {
                         startInChain = 0;
                     } else {
-                        var precedingControl = this.get('uiPhoneControls').objectAt(index - 1);
+                        var precedingControl = controls.objectAt(index - 1);
                         startInChain = parseFloat(precedingControl.get('end')) + spreadSpace;
                     }
-                    startInChain = startInChain + this.get('spacing');
                     return startInChain;
                 } else if(this.get('type') === 'packed') {
                     // Case type: packed
-                    var packedSpaceFirst = this.getPackedSpace('width', true);
+                    var packedSpaceFirst = this.getPackedSpace(true);
                     var startInChain;
                     if(index === 0) {
                         startInChain = packedSpaceFirst;
                     } else {
-                        var precedingControl = this.get('uiPhoneControls').objectAt(index - 1);
-                        startInChain = parseFloat(precedingControl.get('end'));
+                        var precedingControl = controls.objectAt(index - 1);
+                        startInChain = parseFloat(precedingControl.get('end')) + this.get('spacing');
                     }
-                    startInChain = startInChain;
                     return startInChain;
                 }
             } else {
                 if(index === 0) {
                     return control.getStart(true);
                 } else {
-                    return this.get('uiPhoneControls.firstObject.start');
+                    return controls.get('firstObject.startWithMargin');
                 }
             }
         } else {
@@ -313,29 +345,87 @@ App.ControlChain = DS.Model.extend({
 
     getEndInChain: function(controlId, value) {
         if(this.get('valid')) {
-            var control = this.get('uiPhoneControls').findBy('id', controlId);
+            var controls = this.get('uiPhoneControls');
+            var control = controls.findBy('id', controlId);
             if(this.get('axis') === 'horizontal') {
                 // Case type: weighted
                 if(this.get('type') === 'weighted') {
-                    var availableSpace = this.get('viewController.application.smartphone.screenWidth') - ((this.get('uiPhoneControls.length') + 1) * this.get('spacing'));
+                    var availableSpace = this.get('availableSpace');
                     var width = availableSpace / this.get('totalValue') * value;
-                    var endInChain = parseFloat(control.get('start')) + width;
+                    var endInChain = parseFloat(control.get('start')) + width + parseFloat(control.get('marginEnd'));
+                    control.set('width', width);
                     return endInChain;
                 } else if(this.get('type') === 'spread') {
                     // Case type: spread
-                    return (parseFloat(control.get('start')) + parseFloat(control.get('width')));
+                    return (parseFloat(control.get('startWithMargin')) + parseFloat(control.get('outerWidth')));
                 } else if(this.get('type') === 'spread_inside') {
                     // Case type: spread_inside
-                    return (parseFloat(control.get('start')) + parseFloat(control.get('width')));
+                    return (parseFloat(control.get('startWithMargin')) + parseFloat(control.get('outerWidth')));
                 } else if(this.get('type') === 'packed') {
                     // Case type: packed
-                    return (parseFloat(control.get('start')) + parseFloat(control.get('width')));
+                    return (parseFloat(control.get('startWithMargin')) + parseFloat(control.get('outerWidth')));
                 }
             } else {
                 return parseFloat(control.getEnd(true));
             }
         } else {
             return 0;
+        }
+    },
+
+    canMarginTopBeChanged: function(id) {
+        if(this.get('valid')) {
+            if(this.get('type') === 'spread' || this.get('type') === 'packed') {
+                return false;
+            }
+            var controls = this.get('uiPhoneControls');
+            var control = controls.findBy('id', id);
+            var index = controls.indexOf(control);
+            return index === 0;
+        } else {
+            return true;
+        }
+    },
+
+    canMarginBottomBeChanged: function(id) {
+        if(this.get('valid')) {
+            if(this.get('type') === 'spread' || this.get('type') === 'packed') {
+                return false;
+            }
+            var controls = this.get('uiPhoneControls');
+            var control = controls.findBy('id', id);
+            var index = controls.indexOf(control);
+            return index === (controls.get('length') - 1);
+        } else {
+            return true;
+        }
+    },
+
+    canMarginStartBeChanged: function(id) {
+        if(this.get('valid')) {
+            if(this.get('type') === 'spread' || this.get('type') === 'packed') {
+                return false;
+            }
+            var controls = this.get('uiPhoneControls');
+            var control = controls.findBy('id', id);
+            var index = controls.indexOf(control);
+            return index === 0;
+        } else {
+            return true;
+        }
+    },
+
+    canMarginEndBeChanged: function(id) {
+        if(this.get('valid')) {
+            if(this.get('type') === 'spread' || this.get('type') === 'packed') {
+                return false;
+            }
+            var controls = this.get('uiPhoneControls');
+            var control = controls.findBy('id', id);
+            var index = controls.indexOf(control);
+            return index === (controls.get('length') - 1);
+        } else {
+            return true;
         }
     },
 
@@ -347,7 +437,9 @@ App.ControlChain = DS.Model.extend({
         if(this.get('type') === 'packed') {
             chain.setAttribute('byas', this.get('byas'));
         }
-        chain.setAttribute('spacing', this.get('spacing'));
+        if(this.get('type') === 'packed' || this.get('type') === 'weighted') {
+            chain.setAttribute('spacing', this.get('spacing'));
+        }
         var controls = this.get('uiPhoneControls');
         var self = this;
         controls.forEach(function(control, index) {

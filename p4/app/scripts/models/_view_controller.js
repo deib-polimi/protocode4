@@ -86,13 +86,21 @@ App.ViewController = DS.Model.extend({
                 viewController.appendChild(asyncTask.toXml(xmlDoc));
             });
 
-            self.get('controlChains').map(function (controlChain) {
+            self.get('controlChains').filter(function(chain) {
+                return chain.get('valid');
+            }).map(function (controlChain) {
                 viewController.appendChild(controlChain.toXml(xmlDoc));
             });
 
             self.get('uiPhoneControls').then(function (uiPhoneControls) {
 
-                Promise.all(uiPhoneControls.map(function (uiPhoneControl) {
+                Promise.all(uiPhoneControls.filter(function(c) {
+                    if(c.get('controlChain') === null) {
+                        return true;
+                    } else {
+                        return c.get('controlChain.valid');
+                    }
+                }).map(function (uiPhoneControl) {
                     return uiPhoneControl.toXml(xmlDoc);
                 })).then(function (uiPhoneControlXmls) {
 
