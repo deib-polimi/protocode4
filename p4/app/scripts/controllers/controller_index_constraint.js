@@ -19,6 +19,7 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
         10 - Constraint conflict with other constraint on end
         11 - Constraint conflict with other constraint on start
         12 - Constraint puts control overlapped on other control
+        13 - Circular constraints
     */
     areGoodConstraints: function(thisConstraint) {
         // First check: valid properties
@@ -181,6 +182,19 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
                 }
             }
         }
+        // Check circular constraints
+        if(!(thisConstraint.get('withParent'))) {
+            var circularity = false;
+            var referenceElementConstraints = thisConstraint.get('referenceElement.constraints');
+            referenceElementConstraints.forEach(function(c) {
+                if(c.get('referenceElement') === control) {
+                    circularity = true;
+                }
+            });
+            if(circularity) {
+                return 13;
+            }
+        }
         return 0;
     },
 
@@ -237,6 +251,10 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
 
                     case 12:
                         message = "This constraint puts the control overlapped on another control.\nIt will not be active nor it will be exported in the model.";
+                        break;
+
+                    case 13:
+                        message = "This constraint's reference element has a constraint with this constraint's control (circularity).\nIt will not be active nor it will be exported in the model.";
                         break;
                 }
                 alert(message);

@@ -1,9 +1,234 @@
 @import "../bower_components/font-awesome/scss/font-awesome";
 @import "variables";
 
-/*============ IOS ============*/
+// APP MENU
 
-.app-menu.ios {
+.iPhone7Plus .app-menu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    align-items: flex-start;
+    background-color: #F9F9F9;
+    width: 67%;
+    //(px = points iphone)
+    height: 711px; // screenHeight - status_bar - command_bar
+    top: 25px;
+}
+
+.iPhone7Plus .app-menu-shadow {
+    position: absolute;
+    background-color: #00000060;
+    width: 33%;
+    //(px = points iphone)
+    height: 711px; // screenHeight - status_bar - command_bar
+    top: 25px;
+    left: 67%;
+}
+
+.iPhone7 .app-menu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    align-items: flex-start;
+    background-color: #F9F9F9;
+    width: 67%;
+    //(px = points iphone)
+    height: 642px; // screenHeight - status_bar - command_bar
+    top: 25px;
+}
+
+.iPhone7 .app-menu-shadow {
+    position: absolute;
+    background-color: #00000060;
+    width: 33%;
+    //(px = points iphone)
+    height: 642px; // screenHeight - status_bar - command_bar
+    top: 25px;
+    left: 67%;
+}
+
+.iPhone6Plus .app-menu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    align-items: flex-start;
+    background-color: #F9F9F9;
+    width: 67%;
+    //(px = points iphone)
+    height: 711px; // screenHeight - status_bar - command_bar
+    top: 25px;
+}
+
+.iPhone6Plus .app-menu-shadow {
+    position: absolute;
+    background-color: #00000060;
+    width: 33%;
+    //(px = points iphone)
+    height: 711px; // screenHeight - status_bar - command_bar
+    top: 25px;
+    left: 67%;
+}
+
+.iPhone6 .app-menu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    align-items: flex-start;
+    background-color: #F9F9F9;
+    width: 67%;
+    //(px = points iphone)
+    height: 642px; // screenHeight - status_bar - command_bar
+    top: 25px;
+}
+
+.iPhone6 .app-menu-shadow {
+    position: absolute;
+    background-color: #00000060;
+    width: 33%;
+    //(px = points iphone)
+    height: 642px; // screenHeight - status_bar - command_bar
+    top: 25px;
+    left: 67%;
+}
+
+.iPhone5 .app-menu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    align-items: flex-start;
+    background-color: #F9F9F9;
+    width: 67%;
+    //(px = points iphone)
+    height: 543px; // screenHeight - status_bar - command_bar
+    top: 25px;
+}
+
+.iPhone5 .app-menu-shadow {
+    position: absolute;
+    background-color: #00000060;
+    width: 33%;
+    //(px = points iphone)
+    height: 543px; // screenHeight - status_bar - command_bar
+    top: 25px;
+    left: 67%;
+}
+
+.GooglePixel .app-menu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    align-items: flex-start;
+    background-color: #F9F9F9;
+    width: 67%;
+    //(px = points iphone)
+    height: 598px; // screenHeight - status_bar - command_bar
+    top: 27px;
+}
+
+.GooglePixel .app-menu-shadow {
+    position: absolute;
+    background-color: #00000060;
+    width: 33%;
+    //(px = points iphone)
+    height: 598px; // screenHeight - status_bar - command_bar
+    top: 27px;
+    left: 67%;
+}
+
+.Nexus6P .app-menu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    align-items: flex-start;
+    background-color: #F9F9F9;
+    width: 67%;
+    //(px = points iphone)
+    height: 649px; // screenHeight - status_bar - command_bar
+    top: 27px;
+}
+
+.Nexus6P .app-menu-shadow {
+    position: absolute;
+    background-color: #00000060;
+    width: 33%;
+    //(px = points iphone)
+    height: 649px; // screenHeight - status_bar - command_bar
+    top: 27px;
+    left: 67%;
+}
+
+.Nexus5 .app-menu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    align-items: flex-start;
+    background-color: #F9F9F9;
+    width: 67%;
+    //(px = points iphone)
+    height: 570px; // screenHeight - status_bar - command_bar
+    top: 23px;
+}
+
+.Nexus5 .app-menu-shadow {
+    position: absolute;
+    background-color: #00000060;
+    width: 33%;
+    //(px = points iphone)
+    height: 570px; // screenHeight - status_bar - command_bar
+    top: 23px;
+    left: 67%;
+}
+
+.app-menu-item.ios {
+    position: relative;
+    color: $ios-color;
+    align-self: auto;
+    padding-left: 40px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+    width: 100%;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.app-menu-item.android {
+    position: relative;
+    color: #444444;
+    align-self: auto;
+    padding-left: 40px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    width: 100%;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.app-menu-header.ios {
+    position: relative;
+    width: 100%;
+    padding-bottom: 0px;
+    border-bottom: 1px solid #ddd;
+}
+
+.app-menu-header.android {
+    position: relative;
+    width: 100%;
+    padding-bottom: 20px;
+}
+
+// TAB MENU
+
+.tab-menu.ios {
     position: absolute;
     display: flex;
     justify-content: space-around;
@@ -17,7 +242,20 @@
     bottom: 0;
 }
 
-.Nexus6P .app-menu {
+.GooglePixel .tab-menu {
+    position: absolute;
+    display: flex;
+    justify-content: space-around;
+    align-content: center;
+    align-items: flex-end;
+    background-color: #3F51B5;
+    width: 100%;
+    //(px = points iphone)
+    height: 48px; // +1 border top
+    top: 91px;
+}
+
+.Nexus6P .tab-menu {
     position: absolute;
     display: flex;
     justify-content: space-around;
@@ -30,7 +268,7 @@
     top: 93px;
 }
 
-.Nexus5 .app-menu {
+.Nexus5 .tab-menu {
     position: absolute;
     display: flex;
     justify-content: space-around;
@@ -43,7 +281,7 @@
     top: 79px;
 }
 
-.app-menu-item.ios {
+.tab-menu-item.ios {
     position: relative;
     color: $ios-color;
     flex: 0 1 auto;
@@ -53,7 +291,7 @@
     cursor: pointer;
 }
 
-.app-menu-item.android {
+.tab-menu-item.android {
     position: relative;
     color: #ffffff;
     text-transform: uppercase;
@@ -67,7 +305,7 @@
     cursor: pointer;
 }
 
-.app-menu-item.android .control-content {
+.tab-menu-item.android .control-content {
     text-overflow: ellipsis;
     overflow: hidden;
 }

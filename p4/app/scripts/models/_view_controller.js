@@ -16,13 +16,13 @@ App.ViewController = DS.Model.extend({
 
     hasMenu: function() {
         var hasMenu = false;
-        var viewControllerName = this.get('name');
+        /*var viewControllerName = this.get('name');
         var menuItems = this.get('application.menu.menuItems');
         menuItems.forEach(function (menuItem) {
             if (viewControllerName === menuItem.get('navigation.destination.name')) {
                 hasMenu = true;
             }
-        });
+        });*/
         return hasMenu;
     }.property(
         'name',

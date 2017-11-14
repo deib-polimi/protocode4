@@ -7,16 +7,7 @@ App.MenuItemView = Ember.View.extend({
   attributeBindings: ['style'],
 
   style: function() {
-    var isAndroid = this.get('controller.controllers.editor.smartphone.platform') === 'android';
-    var menuItemDestination = this.get('context.navigation.destination.name');
-    var viewControllerName = this.get('controller.name');
-    var currentViewControllerIsMenuItem = menuItemDestination === viewControllerName;
-
     var style = "";
-
-    if(isAndroid && currentViewControllerIsMenuItem) {
-        style += "border-bottom: 2px solid #FF4081";
-    }
 
     return style;
   }.property(
