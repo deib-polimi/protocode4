@@ -140,19 +140,19 @@ App.ApplicationRoute = Ember.Route.extend({
             var self = this;
 
             this.store.createRecord('smartphone', {
-                name: 'iPhone7Plus',
-                label: 'iOS (414x736) iPhone 7 Plus',
+                name: 'iPhoneX',
+                label: 'iOS (375x812) iPhone X',
                 platform: 'ios',
                 //Altezza status bar in points
-                viewTop: 64,
+                viewTop: 50, // 87 - 37 status_bar
                 //Altezza schermo in points
-                viewBottom: 736,
+                viewBottom: 775, // 812 - 37 status bar
                 //Dimensioni in points
-                screenWidth: 414,
-                screenHeight: 736,
+                screenWidth: 375,
+                screenHeight: 775, // 812 - 37 status bar
                 //Dimensioni in px - padding css
-                cssWidth: 414,
-                cssHeight: 736
+                cssWidth: 375,
+                cssHeight: 775 // 812 - 37 status bar
             }).save().then(function (smartphone) {
                 self.store.createRecord('smartwatch', {
                     name: 'AppleWatch',
@@ -221,6 +221,22 @@ App.ApplicationRoute = Ember.Route.extend({
                     }
                 );
             });
+
+            this.store.createRecord('smartphone', {
+                name: 'iPhone7Plus',
+                label: 'iOS (414x736) iPhone 7 Plus',
+                platform: 'ios',
+                //Altezza status bar in points
+                viewTop: 64,
+                //Altezza schermo in points
+                viewBottom: 736,
+                //Dimensioni in points
+                screenWidth: 414,
+                screenHeight: 736,
+                //Dimensioni in px - padding css
+                cssWidth: 414,
+                cssHeight: 736
+            }).save();
 
             this.store.createRecord('smartphone', {
                 name: 'iPhone7',
@@ -293,7 +309,7 @@ App.ApplicationRoute = Ember.Route.extend({
                 //Altezza status bar(30) + toolbar(64) in dp
                 viewTop: 93,
                 //Altezza schermo (731) - altezza command bar(55) in dp
-                viewBottom: 675,
+                viewBottom: 586,
                 //Dimensioni in dp
                 screenWidth: 387,
                 screenHeight: 641,

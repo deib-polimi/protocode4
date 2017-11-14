@@ -31,6 +31,12 @@ App.UiMoveable = Ember.Mixin.create({
       if(posX < 0) {
         posX = 0;
       }
+      if((posX + self.get('context.outerWidth')) > self.get('smartphone.screenWidth')) {
+          posX = self.get('smartphone.screenWidth') - self.get('context.outerWidth');
+      }
+      if((posY + self.get('context.outerHeight')) > (self.get('smartphone.viewBottom') - self.get('smartphone.viewTop'))) {
+          posY = self.get('smartphone.viewBottom') - self.get('smartphone.viewTop') - self.get('context.outerHeight');
+      }
 
       self.set('context.posX', posX);
       self.set('context.posY', posY);

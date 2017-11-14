@@ -53,6 +53,37 @@
     width: 41%;
 }
 
+/*============ IPHONE X ============*/
+
+.smartphone-view.iPhoneX {
+    //Padding per centrare lo schermo
+    //dimensione schermo in pixel = dimensione in dp 375x812
+    padding: 123px 66px 102px 60px;
+    background-image: url("../img/smartphones/ios/iPhone_X.png");
+}
+
+.iPhoneX {
+
+    .smartphone-screen-view .status-bar {
+        background-image: url("../img/ui_phone_controls/ios/status_bar_x.png");
+        //Altezza status bar in pixel = altezza in points
+        height: 50px; //+1 border bottom
+        border-bottom: solid 1px #ccc;
+    }
+
+    .control-grid-view-cell,
+    .control-grid-view-cell .grid-image,
+    .control-grid-view-cell .grid-image-empty {
+        height: 185px;
+        width: 185px;
+    }
+
+    .control-card .card-buttons {
+        padding-top: 18px;
+    }
+
+}
+
 /*============ IPHONE 7 PLUS ============*/
 
 .smartphone-view.iPhone7Plus {
@@ -68,7 +99,7 @@
         background-image: url("../img/ui_phone_controls/ios/status_bar6plus.png");
         //Altezza status bar in pixel = altezza in points
         height: 63px; //+1 border bottom
-        border-bottom: solid 1px rgb(247, 247, 247);
+        border-bottom: solid 1px #ccc;
     }
 
     .control-grid-view-cell,
@@ -130,7 +161,7 @@
         background-image: url("../img/ui_phone_controls/ios/status_bar6plus.png");
         //Altezza status bar in pixel = altezza in points
         height: 63px; //+1 border bottom
-        border-bottom: solid 1px rgb(247, 247, 247);
+        border-bottom: solid 1px #ccc;
     }
 
     .control-grid-view-cell,
