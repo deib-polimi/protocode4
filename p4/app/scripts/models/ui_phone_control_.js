@@ -307,13 +307,13 @@ App.UiPhoneControl = App.UiControl.extend({
                         result = parseFloat(self.get('marginTop'));
                     } else {
                         // Check tab bar for menu in Android
-                        var isAndroid = self.get('viewController.application.smartphone.platform') === 'android';
+                        var isAndroid = self.get('viewController.application.device.platform') === 'android';
                         var currentViewControllerIsMenu = self.get('viewController.hasMenu');
                         // Offset from tab bar for menu in Android
                         if (isAndroid && currentViewControllerIsMenu) {
-                            result = self.get('viewController.application.smartphone.viewTop') + 48;
+                            result = self.get('viewController.application.device.viewTop') + 48;
                         } else {
-                            result = self.get('viewController.application.smartphone.viewTop');
+                            result = self.get('viewController.application.device.viewTop');
                         }
                     }
                 }
@@ -337,18 +337,18 @@ App.UiPhoneControl = App.UiControl.extend({
                             result = (self.get('parentContainer.height') / 2) - (self.get('outerHeight') / 2);
                         } else {
                             // Check tab bar for menu in Android
-                            var isAndroid = self.get('viewController.application.smartphone.platform') === 'android';
+                            var isAndroid = self.get('viewController.application.device.platform') === 'android';
                             var currentViewControllerIsMenu = self.get('viewController.hasMenu');
 
                             if (isAndroid && currentViewControllerIsMenu) {
-                                result = self.get('viewController.application.smartphone.viewTop') + 48 +
-                                    ((self.get('viewController.application.smartphone.viewBottom') -
-                                    self.get('viewController.application.smartphone.viewTop') - 48) / 2) -
+                                result = self.get('viewController.application.device.viewTop') + 48 +
+                                    ((self.get('viewController.application.device.viewBottom') -
+                                    self.get('viewController.application.device.viewTop') - 48) / 2) -
                                     (self.get('outerHeight') / 2);
                             } else {
-                                result = self.get('viewController.application.smartphone.viewTop') +
-                                    ((self.get('viewController.application.smartphone.viewBottom') -
-                                    self.get('viewController.application.smartphone.viewTop')) / 2) -
+                                result = self.get('viewController.application.device.viewTop') +
+                                    ((self.get('viewController.application.device.viewBottom') -
+                                    self.get('viewController.application.device.viewTop')) / 2) -
                                     (self.get('outerHeight') / 2);
                             }
                         }
@@ -385,7 +385,7 @@ App.UiPhoneControl = App.UiControl.extend({
                 return parseFloat(self.get('posY'));
             } else {
                 // Offset of top bar
-                return parseFloat(self.get('posY')) + self.get('viewController.application.smartphone.viewTop');
+                return parseFloat(self.get('posY')) + self.get('viewController.application.device.viewTop');
             }
         }
     },
@@ -420,9 +420,9 @@ App.UiPhoneControl = App.UiControl.extend({
         'constraints.@each.referenceElement.marginBottom',
         'constraints.@each.referenceLayoutEdge',
         'constraints.@each.valid',
-        'viewController.application.smartphone.viewTop',
-        'viewController.application.smartphone.viewBottom',
-        'viewController.application.smartphone.platform',
+        'viewController.application.device.viewTop',
+        'viewController.application.device.viewBottom',
+        'viewController.application.device.platform',
         'bottomWithMargin',
         'parentContainer',
         'parentContainer.height'),
@@ -451,13 +451,13 @@ App.UiPhoneControl = App.UiControl.extend({
                         result = self.get('parentContainer.height');
                     } else {
                         // Check tab bar for menu in iOS
-                        var isIOS = self.get('viewController.application.smartphone.platform') === 'ios';
+                        var isIOS = self.get('viewController.application.device.platform') === 'ios';
                         var currentViewControllerIsMenu = self.get('viewController.hasMenu');
                         // Offset from tab bar for menu in iOS
                         if (isIOS && currentViewControllerIsMenu) {
-                            result = self.get('viewController.application.smartphone.viewBottom') - 48;
+                            result = self.get('viewController.application.device.viewBottom') - 48;
                         } else {
-                            result = self.get('viewController.application.smartphone.viewBottom');
+                            result = self.get('viewController.application.device.viewBottom');
                         }
                     }
                 }
@@ -481,18 +481,18 @@ App.UiPhoneControl = App.UiControl.extend({
                             result = (self.get('parentContainer.height') / 2) + (self.get('outerHeight') / 2);
                         } else {
                             // Check tab bar for menu in iOS
-                            var isIOS = self.get('viewController.application.smartphone.platform') === 'ios';
+                            var isIOS = self.get('viewController.application.device.platform') === 'ios';
                             var currentViewControllerIsMenu = self.get('viewController.hasMenu');
                             // Offset from tab bar for menu in iOS
                             if (isIOS && currentViewControllerIsMenu) {
-                                result = self.get('viewController.application.smartphone.viewBottom') - 48 -
-                                    ((self.get('viewController.application.smartphone.viewBottom') -
-                                    self.get('viewController.application.smartphone.viewTop' - 48)) / 2) +
+                                result = self.get('viewController.application.device.viewBottom') - 48 -
+                                    ((self.get('viewController.application.device.viewBottom') -
+                                    self.get('viewController.application.device.viewTop' - 48)) / 2) +
                                     (self.get('outerHeight') / 2);
                             }
-                            result = self.get('viewController.application.smartphone.viewBottom') -
-                                ((self.get('viewController.application.smartphone.viewBottom') -
-                                self.get('viewController.application.smartphone.viewTop')) / 2) +
+                            result = self.get('viewController.application.device.viewBottom') -
+                                ((self.get('viewController.application.device.viewBottom') -
+                                self.get('viewController.application.device.viewTop')) / 2) +
                                 (self.get('outerHeight') / 2);
                         }
                     }
@@ -558,9 +558,9 @@ App.UiPhoneControl = App.UiControl.extend({
         'topWithMargin',
         'viewController.hasMenu',
         'outerHeight',
-        'viewController.application.smartphone.platform',
-        'viewController.application.smartphone.viewBottom',
-        'viewController.application.smartphone.viewTop',
+        'viewController.application.device.platform',
+        'viewController.application.device.viewBottom',
+        'viewController.application.device.viewTop',
         'parentContainer',
         'parentContainer.height'
     ),
@@ -602,7 +602,7 @@ App.UiPhoneControl = App.UiControl.extend({
                         if(self.get('parentContainer') !== null) {
                             result = (self.get('parentContainer.width') / 2) - (self.get('outerWidth') / 2);
                         } else {
-                            result = (self.get('viewController.application.smartphone.screenWidth') / 2) - (self.get('outerWidth') / 2);
+                            result = (self.get('viewController.application.device.screenWidth') / 2) - (self.get('outerWidth') / 2);
                         }
                     }
                 }
@@ -668,7 +668,7 @@ App.UiPhoneControl = App.UiControl.extend({
         'parentContainer',
         'parentContainer.width',
         'endWithMargin',
-        'viewController.application.smartphone.screenWidth'),
+        'viewController.application.device.screenWidth'),
 
     start: function () {
         return this.get('startWithMargin') + parseFloat(this.get('marginStart'));
@@ -693,7 +693,7 @@ App.UiPhoneControl = App.UiControl.extend({
                     if (self.get('parentContainer') !== null) {
                         result = self.get('parentContainer.width');
                     } else {
-                        result = self.get('viewController.application.smartphone.screenWidth');
+                        result = self.get('viewController.application.device.screenWidth');
                     }
                 }
             }
@@ -711,7 +711,7 @@ App.UiPhoneControl = App.UiControl.extend({
                         if(self.get('parentContainer') !== null) {
                             result = (self.get('parentContainer.width') / 2) + (self.get('outerWidth') / 2);
                         } else {
-                            result = (self.get('viewController.application.smartphone.screenWidth') / 2) + (self.get('outerWidth') / 2);
+                            result = (self.get('viewController.application.device.screenWidth') / 2) + (self.get('outerWidth') / 2);
                         }
                     }
                 }
@@ -776,7 +776,7 @@ App.UiPhoneControl = App.UiControl.extend({
         'parentContainer',
         'parentContainer.width',
         'outerWidth',
-        'viewController.application.smartphone.screenWidth'),
+        'viewController.application.device.screenWidth'),
 
     end: function () {
         return this.get('endWithMargin') - parseFloat(this.get('marginEnd'));
@@ -1004,7 +1004,7 @@ App.UiPhoneControl = App.UiControl.extend({
         mustUpdateWidth = mustUpdateWidth && !this.widthIsBindedByConstraints(this.get('constraints'));
         if(mustUpdateWidth) {
             if(this.get('isWidthPercentConstrained')) {
-                this.set('width', this.get('widthPercent') * this.get('viewController.application.smartphone.screenWidth'));
+                this.set('width', this.get('widthPercent') * this.get('viewController.application.device.screenWidth'));
             }
         }
         mustUpdateWidth = mustUpdateWidth && !this.get('isRatioConstrained');
@@ -1012,7 +1012,7 @@ App.UiPhoneControl = App.UiControl.extend({
             if(this.get('isWidthConstrained')) {
 
             } else if(this.get('isWidthPercentConstrained')) {
-                this.set('width', this.get('widthPercent') * this.get('viewController.application.smartphone.screenWidth'));
+                this.set('width', this.get('widthPercent') * this.get('viewController.application.device.screenWidth'));
             } else if(!this.get('isWidthConstrained')) {
                 this.set('width', this.get('defaultWidth'));
             } else if(!this.get('isWidthPercentConstrained')) {
@@ -1020,7 +1020,7 @@ App.UiPhoneControl = App.UiControl.extend({
             }
         }
     }.observes(
-        'viewController.application.smartphone.screenWidth',
+        'viewController.application.device.screenWidth',
         'widthPercent',
         'isWidthConstrained',
         'isWidthPercentConstrained',
@@ -1033,7 +1033,7 @@ App.UiPhoneControl = App.UiControl.extend({
         mustUpdateHeight = mustUpdateHeight && !this.heightIsBindedByConstraints(this.get('constraints'));
         if(mustUpdateHeight) {
             if(this.get('isHeightPercentConstrained')) {
-                var screenHeight = this.get('viewController.application.smartphone.viewBottom') - this.get('viewController.application.smartphone.viewTop');
+                var screenHeight = this.get('viewController.application.device.viewBottom') - this.get('viewController.application.device.viewTop');
                 if(this.get('viewController.hasMenu')) {
                     screenHeight = screenHeight - 48;
                 }
@@ -1045,7 +1045,7 @@ App.UiPhoneControl = App.UiControl.extend({
             if(this.get('isHeightConstrained')) {
 
             } else if(this.get('isHeightPercentConstrained')) {
-                var screenHeight = this.get('viewController.application.smartphone.viewBottom') - this.get('viewController.application.smartphone.viewTop');
+                var screenHeight = this.get('viewController.application.device.viewBottom') - this.get('viewController.application.device.viewTop');
                 if(this.get('viewController.hasMenu')) {
                     screenHeight = screenHeight - 48;
                 }
@@ -1057,8 +1057,8 @@ App.UiPhoneControl = App.UiControl.extend({
             }
         }
     }.observes(
-        'viewController.application.smartphone.viewTop',
-        'viewController.application.smartphone.viewBottom',
+        'viewController.application.device.viewTop',
+        'viewController.application.device.viewBottom',
         'viewController.hasMenu',
         'heightPercent',
         'isHeightConstrained',

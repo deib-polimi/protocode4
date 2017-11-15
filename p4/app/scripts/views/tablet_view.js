@@ -1,15 +1,15 @@
-App.SmartphoneView = Ember.View.extend({
+App.TabletView = Ember.View.extend({
   tagName: 'div',
   attributeBindings: ['style'],
-  classNames: ['smartphone-view'],
-  classNameBindings: ['platform', 'smartphoneModel'],
-  templateName: 'views/smartphone_view',
+  classNames: ['tablet-view'],
+  classNameBindings: ['platform', 'tabletModel'],
+  templateName: 'views/tablet_view',
 
   platform: function () {
     return this.get('controller.controllers.editor.device.platform');
   }.property('controller.controllers.editor.device'),
 
-  smartphoneModel: function() {
+  tabletModel: function() {
     return this.get('controller.controllers.editor.device.name');
   }.property('controller.controllers.editor.device'),
 

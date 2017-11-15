@@ -1,12 +1,12 @@
 App.UiEditTextView = Ember.View.extend({
   tagName: 'div',
   classNames: ['control-edit-text', 'expanded'],
-  classNameBindings: ['controller.controllers.editor.smartphone.platform'],
+  classNameBindings: ['controller.controllers.editor.device.platform'],
   templateName: 'views/ui_phone_control_view_edit_text',
 
   attributeBindings: ['style'],
 
-  smartphone: Ember.computed.alias('controller.controllers.editor.smartphone'),
+  smartphone: Ember.computed.alias('controller.controllers.editor.device'),
 
   style: function () {
 

@@ -1,12 +1,12 @@
 App.UiLabelView = Ember.View.extend({
   tagName: 'div',
   classNames: ['control-label', 'expanded'],
-  classNameBindings: ['controller.controllers.editor.smartphone.platform', 'context.textAlign'],
+  classNameBindings: ['controller.controllers.editor.device.platform', 'context.textAlign'],
   templateName: 'views/ui_phone_control_view_label',
 
   attributeBindings: ['style'],
 
-  smartphone: Ember.computed.alias('controller.controllers.editor.smartphone'),
+  smartphone: Ember.computed.alias('controller.controllers.editor.device'),
 
   style: function () {
 

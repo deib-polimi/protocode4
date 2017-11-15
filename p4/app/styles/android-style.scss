@@ -135,6 +135,42 @@
         background-repeat: no-repeat;
     }
 
+    .tablet-screen-view {
+        background-color: #f9f9f9;
+        font: 16px "Roboto", ".Helvetica NeueUI", "Helvetica Neue", sans-serif;
+    }
+
+    .tablet-screen-view .action-bar {
+        position: absolute;
+        width: 100%;
+        left: 0;
+        background-color: #3F51B5;
+        padding-left: 8px;
+    }
+
+    .tablet-screen-view .action-bar:before {
+        border-bottom: solid 1px #d2d2d2;
+        padding-bottom: 1px;
+    }
+
+    .tablet-screen-view .status-bar {
+        position: absolute;
+        width: 100%;
+        top: 0;
+        left: 0;
+        background-size: 100% auto;
+        background-repeat: no-repeat;
+    }
+
+    .tablet-screen-view .command-bar {
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+        left: 0;
+        background-size: 100% auto;
+        background-repeat: no-repeat;
+    }
+
     /*============ BUTTON ============*/
 
     .control-button {

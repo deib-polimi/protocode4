@@ -1,7 +1,7 @@
 App.MenuItemView = Ember.View.extend({
   tagName: 'div',
   classNames: ['app-menu-item'],
-  classNameBindings: ['controller.controllers.editor.smartphone.platform'],
+  classNameBindings: ['controller.controllers.editor.device.platform'],
   templateName: 'views/menu_item_view',
 
   attributeBindings: ['style'],
@@ -11,7 +11,7 @@ App.MenuItemView = Ember.View.extend({
 
     return style;
   }.property(
-    'controller.controllers.editor.smartphone.platform',
+    'controller.controllers.editor.device.platform',
     'context.navigation.destination.name',
     'controller.name'
   )

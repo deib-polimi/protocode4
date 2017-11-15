@@ -1,7 +1,7 @@
 App.MenuViewShadow = Ember.View.extend({
   tagName: 'div',
   classNames: ['app-menu-shadow'],
-  classNameBindings: ['controller.controllers.editor.smartphone.platform'],
+  classNameBindings: ['controller.controllers.editor.device.platform'],
   urlBinding: 'controller.target.location.lastSetURL',
 
   attributeBindings: ['style'],

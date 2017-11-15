@@ -54,34 +54,34 @@ App.ControlChain = DS.Model.extend({
     }.property('type', 'valid'),
 
     viewTop: function() {
-        var isAndroid = this.get('viewController.application.smartphone.platform') === 'android';
+        var isAndroid = this.get('viewController.application.device.platform') === 'android';
         // Compute if the viewController has the menu bar
         var currentViewControllerIsMenu = this.get('viewController.hasMenu');
         if(isAndroid && currentViewControllerIsMenu) {
-            return this.get('viewController.application.smartphone.viewTop') + 48;
+            return this.get('viewController.application.device.viewTop') + 48;
         } else {
-            return this.get('viewController.application.smartphone.viewTop');
+            return this.get('viewController.application.device.viewTop');
         }
     }.property(
-        'viewController.application.smartphone.platform',
+        'viewController.application.device.platform',
         'viewController.hasMenu',
-        'viewController.application.smartphone.viewTop'
+        'viewController.application.device.viewTop'
     ),
 
     viewBottom: function() {
-        var isAndroid = this.get('viewController.application.smartphone.platform') === 'android';
+        var isAndroid = this.get('viewController.application.device.platform') === 'android';
         // Compute if the viewController has the menu bar
         var currentViewControllerIsMenu = this.get('viewController.hasMenu');
         if(!isAndroid && currentViewControllerIsMenu) {
-            return this.get('viewController.application.smartphone.viewBottom') - 48;
+            return this.get('viewController.application.device.viewBottom') - 48;
         } else {
-            return this.get('viewController.application.smartphone.viewBottom');
+            return this.get('viewController.application.device.viewBottom');
         }
     }.property(
-        'viewController.application.smartphone.platform',
+        'viewController.application.device.platform',
         'viewController.hasMenu',
         'viewController.application.menu.menuItems.@each',
-        'viewController.application.smartphone.viewBottom'
+        'viewController.application.device.viewBottom'
     ),
 
     screenHeight: function() {
@@ -97,7 +97,7 @@ App.ControlChain = DS.Model.extend({
         }
         if(this.get('axis') === 'horizontal') {
             dimension = 'width';
-            availableSpace = this.get('viewController.application.smartphone.screenWidth');
+            availableSpace = this.get('viewController.application.device.screenWidth');
         } else {
             dimension = 'height';
             availableSpace = this.get('screenHeight');
@@ -132,7 +132,7 @@ App.ControlChain = DS.Model.extend({
         'axis',
         'screenHeight',
         'spacing',
-        'viewController.application.smartphone.screenWidth',
+        'viewController.application.device.screenWidth',
         'uiPhoneControls.length',
         'uiPhoneControls.@each.width',
         'uiPhoneControls.@each.height',

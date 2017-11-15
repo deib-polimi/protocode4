@@ -31,7 +31,7 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
         }
         var control = thisConstraint.get('uiPhoneControl');
         var constraints = thisConstraint.get('uiPhoneControl.constraints').without(thisConstraint);
-        var isIOS = thisConstraint.get('uiPhoneControl.viewController.application.smartphone.platform') === 'ios';
+        var isIOS = thisConstraint.get('uiPhoneControl.viewController.application.device.platform') === 'ios';
         // Compute if the viewController has the menu bar
         var currentViewControllerIsMenu = thisConstraint.get('uiPhoneControl.viewController.hasMenu');
         // Check x position over-constrained
@@ -92,7 +92,7 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
             }
         }
         // Check boundaries: top
-        var minTop = thisConstraint.get('uiPhoneControl.viewController.application.smartphone.viewTop');
+        var minTop = thisConstraint.get('uiPhoneControl.viewController.application.device.viewTop');
         if(currentViewControllerIsMenu && !isIOS) {
             minTop = minTop + 48;
         }
@@ -100,7 +100,7 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
             return 4;
         }
         // Check boundaries: bottom
-        var maxBottom = thisConstraint.get('uiPhoneControl.viewController.application.smartphone.viewBottom');
+        var maxBottom = thisConstraint.get('uiPhoneControl.viewController.application.device.viewBottom');
         if(currentViewControllerIsMenu && isIOS) {
             maxBottom = maxBottom - 48;
         }
@@ -113,7 +113,7 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
             return 6;
         }
         // Check boundaries: end
-        var maxEnd = thisConstraint.get('uiPhoneControl.viewController.application.smartphone.screenWidth');
+        var maxEnd = thisConstraint.get('uiPhoneControl.viewController.application.device.screenWidth');
         if(control.getEnd(false) > maxEnd) {
             return 7;
         }

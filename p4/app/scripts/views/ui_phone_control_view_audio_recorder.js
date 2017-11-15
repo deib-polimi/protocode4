@@ -1,12 +1,12 @@
 App.UiAudioRecorderView = Ember.View.extend({
   tagName: 'div',
   classNames: ['control-audio-recorder-view', 'control-button', 'expanded'],
-  classNameBindings: ['controller.controllers.editor.smartphone.platform'],
+  classNameBindings: ['controller.controllers.editor.device.platform'],
   templateName: 'views/ui_phone_control_view_audio_recorder',
   attributeBindings: ['style'],
 
   style: function() {
-    var isAndroid = this.get('controller.controllers.editor.smartphone.platform') === 'android';
+    var isAndroid = this.get('controller.controllers.editor.device.platform') === 'android';
     var parentWidth = this.get("parentView.context.computedWidth");
     var parentHeight = this.get("parentView.context.computedHeight");
 
@@ -22,7 +22,7 @@ App.UiAudioRecorderView = Ember.View.extend({
   }.property(
     'context.computedWidth',
     'context.computedHeight',
-    'controller.controllers.editor.smartphone.platform'
+    'controller.controllers.editor.device.platform'
   )
 
 });

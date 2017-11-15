@@ -313,6 +313,40 @@ App.ApplicationRoute = Ember.Route.extend({
                 cssHeight: 568
             }).save();
 
+            this.store.createRecord('tablet', {
+                name: 'iPad12_9',
+                label: 'iOS (1366x1024) iPad Pro 12.9\"',
+                type: 'tablet',
+                platform: 'ios',
+                //Altezza status bar in points
+                viewTop: 65,
+                //Altezza schermo in points
+                viewBottom: 1024,
+                //Dimensioni in points
+                screenWidth: 1366,
+                screenHeight: 1024,
+                //Dimensioni in px - padding css
+                cssWidth: 1366,
+                cssHeight: 1024
+            }).save();
+
+            this.store.createRecord('tablet', {
+                name: 'iPad9_7',
+                label: 'iOS (1024x768) iPad Air/Pro 9.7\"',
+                type: 'tablet',
+                platform: 'ios',
+                //Altezza status bar in points
+                viewTop: 65,
+                //Altezza schermo in points
+                viewBottom: 768,
+                //Dimensioni in points
+                screenWidth: 1024,
+                screenHeight: 768,
+                //Dimensioni in px - padding css
+                cssWidth: 1024,
+                cssHeight: 768
+            }).save();
+
             this.store.createRecord('smartphone', {
                 name: 'GooglePixel',
                 label: 'Android (411x731) Google Pixel ',

@@ -7,9 +7,14 @@ App.ViewControllerController = Ember.ObjectController.extend({
     zoomLevel: 1,
 
     menu: Ember.computed.alias('controllers.editor.menu'),
+    device: Ember.computed.alias('controllers.editor.device'),
 
     hasMenu: function () {
         return this.get('menu.menuItems.length') > 0;
-    }.property('menu.menuItems.@each')
+    }.property('menu.menuItems.@each'),
+
+    currentDeviceIsSmartphone: function() {
+        return this.get('device.type') === 'smartphone';
+    }.property('device.type')
 
 });

@@ -239,6 +239,68 @@
 
 }
 
+/*============ IPAD PRO 12.9 ============*/
+
+.tablet-view.iPad12_9 {
+    //Padding per centrare lo schermo
+    //dimensione schermo in pixel = dimensione in dp 1366x1024
+    padding: 87px 118px 89px 116px;
+    background-image: url("../img/tablets/ios/iPad_12_9.png");
+}
+
+.iPad12_9 {
+
+    .tablet-screen-view .status-bar {
+        background-image: url("../img/ui_phone_controls/ios/status_bar_ipad12_9.png");
+        //Altezza status bar in pixel = altezza in points
+        height: 64px; //+1 border bottom
+        border-bottom: solid 1px #ccc;
+    }
+
+    .control-grid-view-cell,
+    .control-grid-view-cell .grid-image,
+    .control-grid-view-cell .grid-image-empty {
+        height: 185px;
+        width: 185px;
+    }
+
+    .control-card .card-buttons {
+        padding-top: 18px;
+    }
+
+}
+
+/*============ IPAD 9.7 ============*/
+
+.tablet-view.iPad9_7 {
+    //Padding per centrare lo schermo
+    //dimensione schermo in pixel = dimensione in dp 1024x768
+    padding: 101px 428px 331px 148px;
+    background-image: url("../img/tablets/ios/iPad_9_7.png");
+}
+
+.iPad9_7 {
+
+    .tablet-screen-view .status-bar {
+        background-image: url("../img/ui_phone_controls/ios/status_bar_ipad9_7.png");
+        //Altezza status bar in pixel = altezza in points
+        height: 64px; //+1 border bottom
+        border-bottom: solid 1px #ccc;
+    }
+
+    .control-grid-view-cell,
+    .control-grid-view-cell .grid-image,
+    .control-grid-view-cell .grid-image-empty {
+        height: 185px;
+        width: 185px;
+    }
+
+    .control-card .card-buttons {
+        padding-top: 18px;
+    }
+
+}
+
 /*============ Google Pixel ============*/
 
 .smartphone-view.GooglePixel {

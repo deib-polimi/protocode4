@@ -27,8 +27,8 @@ App.ScreenCanvasComponent = Ember.Component.extend({
     ctx: null,
 
     device: function() {
-        return this.get('model.application.smartphone');
-    }.property('model.application.smartphone'),
+        return this.get('model.application.device');
+    }.property('model.application.device'),
 
     width: function() {
         return this.get('device.screenWidth');
@@ -191,7 +191,7 @@ App.ScreenCanvasComponent = Ember.Component.extend({
             ctx.fillStyle = "#00ff00";
             var plus = 7
             if(constraint.get('withParent')) {
-                var isIOS = this.get('model.application.smartphone.platform') === 'ios';
+                var isIOS = this.get('model.application.device.platform') === 'ios';
                 // Compute if the viewController has the menu bar
                 var currentViewControllerIsMenu = this.get('model.hasMenu');
                 var viewTop = this.get('device.viewTop');

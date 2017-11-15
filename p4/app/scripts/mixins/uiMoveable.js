@@ -15,14 +15,15 @@ App.UiMoveable = Ember.Mixin.create({
 
     var self = this;
 
+    // For smartphone's view
     $('.smartphone-screen-view').on('mousemove', function(event) {
       var element = self.get('element');
       var parentOffset = $(self.get('parentView.element')).offset();
-      var posX = (event.pageX - parentOffset.left - self.get('offsetMouseX')) / self.get('controller.zoomLevel') * self.get('smartphone.screenWidth') / self.get('smartphone.cssWidth');
-      var posY = (event.pageY - parentOffset.top - self.get('offsetMouseY')) / self.get('controller.zoomLevel') * self.get('smartphone.screenHeight') / self.get('smartphone.cssHeight');
+      var posX = (event.pageX - parentOffset.left - self.get('offsetMouseX')) / self.get('controller.zoomLevel') * self.get('device.screenWidth') / self.get('device.cssWidth');
+      var posY = (event.pageY - parentOffset.top - self.get('offsetMouseY')) / self.get('controller.zoomLevel') * self.get('device.screenHeight') / self.get('device.cssHeight');
 
       if (self.get('context.parentContainer') === null) {
-        posY -= self.get('smartphone.viewTop');
+        posY -= self.get('device.viewTop');
       }
 
       if(posY < 0) {
@@ -31,11 +32,39 @@ App.UiMoveable = Ember.Mixin.create({
       if(posX < 0) {
         posX = 0;
       }
-      if((posX + self.get('context.outerWidth')) > self.get('smartphone.screenWidth')) {
-          posX = self.get('smartphone.screenWidth') - self.get('context.outerWidth');
+      if((posX + self.get('context.outerWidth')) > self.get('device.screenWidth')) {
+          posX = self.get('device.screenWidth') - self.get('context.outerWidth');
       }
-      if((posY + self.get('context.outerHeight')) > (self.get('smartphone.viewBottom') - self.get('smartphone.viewTop'))) {
-          posY = self.get('smartphone.viewBottom') - self.get('smartphone.viewTop') - self.get('context.outerHeight');
+      if((posY + self.get('context.outerHeight')) > (self.get('device.viewBottom') - self.get('device.viewTop'))) {
+          posY = self.get('device.viewBottom') - self.get('device.viewTop') - self.get('context.outerHeight');
+      }
+
+      self.set('context.posX', posX);
+      self.set('context.posY', posY);
+    });
+
+    // For tablet's view
+    $('.tablet-screen-view').on('mousemove', function(event) {
+      var element = self.get('element');
+      var parentOffset = $(self.get('parentView.element')).offset();
+      var posX = (event.pageX - parentOffset.left - self.get('offsetMouseX')) / self.get('controller.zoomLevel') * self.get('device.screenWidth') / self.get('device.cssWidth');
+      var posY = (event.pageY - parentOffset.top - self.get('offsetMouseY')) / self.get('controller.zoomLevel') * self.get('device.screenHeight') / self.get('device.cssHeight');
+
+      if (self.get('context.parentContainer') === null) {
+        posY -= self.get('device.viewTop');
+      }
+
+      if(posY < 0) {
+        posY = 0;
+      }
+      if(posX < 0) {
+        posX = 0;
+      }
+      if((posX + self.get('context.outerWidth')) > self.get('device.screenWidth')) {
+          posX = self.get('device.screenWidth') - self.get('context.outerWidth');
+      }
+      if((posY + self.get('context.outerHeight')) > (self.get('device.viewBottom') - self.get('device.viewTop'))) {
+          posY = self.get('device.viewBottom') - self.get('device.viewTop') - self.get('context.outerHeight');
       }
 
       self.set('context.posX', posX);
@@ -49,6 +78,9 @@ App.UiMoveable = Ember.Mixin.create({
     event.preventDefault();
     this.set('isMoving', false);
     this.get('context').save();
+    // For smartphone's view
     $('.smartphone-screen-view').off('mousemove');
+    // For tablet's view
+    $('.tablet-screen-view').off('mousemove');
   }
 });

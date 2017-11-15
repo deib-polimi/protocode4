@@ -119,6 +119,24 @@
         background-repeat: no-repeat;
     }
 
+    .tablet-screen-view {
+        background-color: #ffffff;
+        font: 15px -apple-system-font, ".Helvetica NeueUI", "Helvetica Neue", sans-serif;
+    }
+
+    .tablet-screen-view .action-bar, .tablet-screen-view .command-bar {
+        display: none;
+    }
+
+    .tablet-screen-view .status-bar {
+        position: absolute;
+        width: 100%;
+        top: 0;
+        left: 0;
+        background-size: 100% auto;
+        background-repeat: no-repeat;
+    }
+
     /*============ BUTTONS ============*/
 
     .control-button {

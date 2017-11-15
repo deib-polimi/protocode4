@@ -6,9 +6,11 @@ App.EditorRoute = Ember.Route.extend({
     setupController: function (controller, model) {
         this._super(controller, model);
         controller.set('model', model.application);
-        controller.set('smartphones', model.smartphones);
+        var devices = (model.smartphones).addObjects(model.tablets);
+        controller.set('devices', devices);
         controller.set('smartwatches', model.smartwatches);
         controller.set('smartphoneModel', model.smartphones.findBy('id', this.get('smartphoneId')));
+        controller.set('tabletModel', model.tablets.findBy('id', this.get('tabletId')));
         controller.set('smartwatchModel', model.smartwatches.findBy('id', this.get('smartwatchId')));
     },
 
@@ -22,7 +24,8 @@ App.EditorRoute = Ember.Route.extend({
              watchControllers: this.store.find('watchController'),
              */
             smartphones: this.store.find('smartphone'),
-            smartwatches: this.store.find('smartwatch')
+            tablets: this.store.find('tablet'),
+            smartwatches: this.store.find('smartwatch'),
             /*
              menu: this.store.find('menu'),
              menuItems: this.store.find('menuItem'),
