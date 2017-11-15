@@ -1,6 +1,7 @@
 App.Device = DS.Model.extend({
     name: DS.attr('string'),
     label: DS.attr('string'),
+    type: DS.attr('string'),
     platform: DS.attr('string'),
     viewTop: DS.attr('number'),
     viewBottom: DS.attr('number'),

@@ -37,6 +37,7 @@ App.ApplicationRoute = Ember.Route.extend({
 
             smartphones: this.store.find('smartphone'),
             smartwatches: this.store.find('smartwatch'),
+            tablets: this.store.find('tablet'),
 
             menu: this.store.find('menu'),
             menuItems: this.store.find('menuItem'),
@@ -109,6 +110,7 @@ App.ApplicationRoute = Ember.Route.extend({
                     'objectAttribute',
                     'container',
                     'smartphone',
+                    'tablet',
                     'viewController',
                     'watchController',
                     'smartwatch',
@@ -142,6 +144,7 @@ App.ApplicationRoute = Ember.Route.extend({
             this.store.createRecord('smartphone', {
                 name: 'iPhoneX',
                 label: 'iOS (375x812) iPhone X',
+                type: 'smartphone',
                 platform: 'ios',
                 //Altezza status bar in points
                 viewTop: 50, // 87 - 37 status_bar
@@ -157,6 +160,7 @@ App.ApplicationRoute = Ember.Route.extend({
                 self.store.createRecord('smartwatch', {
                     name: 'AppleWatch',
                     label: 'WatchOS (156x195) Apple Watch 42mm',
+                    type: 'smartwatch',
                     platform: 'watchos',
                     viewTop: 22,
                     viewBottom: 195,
@@ -187,6 +191,7 @@ App.ApplicationRoute = Ember.Route.extend({
                                                 self.store.createRecord('smartwatch', {
                                                     name: 'AsusZenWatch',
                                                     label: 'AndroidWear (213x213) Asus Zen Watch',
+                                                    type: 'smartwatch',
                                                     platform: 'androidwear',
                                                     viewTop: 0,
                                                     viewBottom: 213,
@@ -201,6 +206,7 @@ App.ApplicationRoute = Ember.Route.extend({
                                                 self.store.createRecord('smartwatch', {
                                                     name: 'Moto360',
                                                     label: 'AndroidWear (241x248) Moto 360',
+                                                    type: 'smartwatch',
                                                     platform: 'androidwear',
                                                     viewTop: 0,
                                                     viewBottom: 248,
@@ -225,6 +231,7 @@ App.ApplicationRoute = Ember.Route.extend({
             this.store.createRecord('smartphone', {
                 name: 'iPhone7Plus',
                 label: 'iOS (414x736) iPhone 7 Plus',
+                type: 'smartphone',
                 platform: 'ios',
                 //Altezza status bar in points
                 viewTop: 64,
@@ -241,6 +248,7 @@ App.ApplicationRoute = Ember.Route.extend({
             this.store.createRecord('smartphone', {
                 name: 'iPhone7',
                 label: 'iOS (375x667) iPhone 7',
+                type: 'smartphone',
                 platform: 'ios',
                 //Altezza status bar in points
                 viewTop: 65,
@@ -257,6 +265,7 @@ App.ApplicationRoute = Ember.Route.extend({
             this.store.createRecord('smartphone', {
                 name: 'iPhone6Plus',
                 label: 'iOS (414x736) iPhone 6 Plus',
+                type: 'smartphone',
                 platform: 'ios',
                 //Altezza status bar in points
                 viewTop: 64,
@@ -273,6 +282,7 @@ App.ApplicationRoute = Ember.Route.extend({
             this.store.createRecord('smartphone', {
                 name: 'iPhone6',
                 label: 'iOS (375x667) iPhone 6',
+                type: 'smartphone',
                 platform: 'ios',
                 //Altezza status bar in points
                 viewTop: 65,
@@ -289,6 +299,7 @@ App.ApplicationRoute = Ember.Route.extend({
             this.store.createRecord('smartphone', {
                 name: 'iPhone5',
                 label: 'iOS (320x568) iPhone 5',
+                type: 'smartphone',
                 platform: 'ios',
                 //Altezza status bar in points
                 viewTop: 65,
@@ -305,6 +316,7 @@ App.ApplicationRoute = Ember.Route.extend({
             this.store.createRecord('smartphone', {
                 name: 'GooglePixel',
                 label: 'Android (411x731) Google Pixel ',
+                type: 'smartphone',
                 platform: 'android',
                 //Altezza status bar(30) + toolbar(64) in dp
                 viewTop: 93,
@@ -321,6 +333,7 @@ App.ApplicationRoute = Ember.Route.extend({
             this.store.createRecord('smartphone', {
                 name: 'Nexus6P',
                 label: 'Android (411x731) Nexus 6P ',
+                type: 'smartphone',
                 platform: 'android',
                 //Altezza status bar(30) + toolbar(64) in dp
                 viewTop: 93,
@@ -337,6 +350,7 @@ App.ApplicationRoute = Ember.Route.extend({
             this.store.createRecord('smartphone', {
                 name: 'Nexus5',
                 label: 'Android (360x640) Nexus 5 ',
+                type: 'smartphone',
                 platform: 'android',
                 //Altezza status bar(23) + toolbar(56) in dp
                 viewTop: 79,
