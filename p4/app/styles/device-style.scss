@@ -58,7 +58,7 @@
 .smartphone-view.iPhoneX {
     //Padding per centrare lo schermo
     //dimensione schermo in pixel = dimensione in dp 375x812
-    padding: 123px 66px 102px 60px;
+    padding: 123px 67px 102px 60px;
     background-image: url("../img/smartphones/ios/iPhone_X.png");
 }
 
@@ -243,8 +243,8 @@
 
 .smartphone-view.GooglePixel {
     //Padding per centrare lo schermo
-    //dimensione schermo in pixel = dimensione in dp 387x641
-    padding: 154px 61px 166px 63px;
+    //dimensione schermo in pixel = dimensione in dp 411x731
+    padding: 124px 43px 141px 46px;
     background-image: url("../img/smartphones/android/google_pixel.png");
 }
 
@@ -370,7 +370,7 @@
 .smartphone-view.Nexus5 {
     //Padding per centrare lo schermo
     //dimensione schermo in pixel = dimensione in dp 360x640
-    padding: 156px 70px 204px 70px;
+    padding: 156px 70px 204px 69px;
     background-image: url("../img/smartphones/android/nexus_5.png");
 }
 
@@ -392,7 +392,7 @@
     */
 
     .action-bar {
-        top: 23px;
+        top: 22px;
         height: 56px;
         line-height: 56px;
     }

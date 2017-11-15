@@ -3,6 +3,30 @@
 
 // APP MENU
 
+.iPhoneX .app-menu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    align-items: flex-start;
+    background-color: #F9F9F9;
+    width: 67%;
+    //(px = points iphone)
+    height: 787px; // screenHeight - status_bar
+    top: 2px;
+}
+
+.iPhoneX .app-menu-shadow {
+    position: absolute;
+    background-color: #000000;
+    opacity: 0.5;
+    width: 33%;
+    //(px = points iphone)
+    height: 787px; // screenHeight - status_bar
+    top: 2px;
+    left: 67%;
+}
+
 .iPhone7Plus .app-menu {
     position: absolute;
     display: flex;
@@ -12,16 +36,17 @@
     background-color: #F9F9F9;
     width: 67%;
     //(px = points iphone)
-    height: 711px; // screenHeight - status_bar - command_bar
+    height: 711px; // screenHeight - status_bar
     top: 25px;
 }
 
 .iPhone7Plus .app-menu-shadow {
     position: absolute;
-    background-color: #00000060;
+    background-color: #000000;
+    opacity: 0.5;
     width: 33%;
     //(px = points iphone)
-    height: 711px; // screenHeight - status_bar - command_bar
+    height: 711px; // screenHeight - status_bar
     top: 25px;
     left: 67%;
 }
@@ -35,16 +60,17 @@
     background-color: #F9F9F9;
     width: 67%;
     //(px = points iphone)
-    height: 642px; // screenHeight - status_bar - command_bar
+    height: 642px; // screenHeight - status_bar
     top: 25px;
 }
 
 .iPhone7 .app-menu-shadow {
     position: absolute;
-    background-color: #00000060;
+    background-color: #000000;
+    opacity: 0.5;
     width: 33%;
     //(px = points iphone)
-    height: 642px; // screenHeight - status_bar - command_bar
+    height: 642px; // screenHeight - status_bar
     top: 25px;
     left: 67%;
 }
@@ -58,16 +84,17 @@
     background-color: #F9F9F9;
     width: 67%;
     //(px = points iphone)
-    height: 711px; // screenHeight - status_bar - command_bar
+    height: 711px; // screenHeight - status_bar
     top: 25px;
 }
 
 .iPhone6Plus .app-menu-shadow {
     position: absolute;
-    background-color: #00000060;
+    background-color: #000000;
+    opacity: 0.5;
     width: 33%;
     //(px = points iphone)
-    height: 711px; // screenHeight - status_bar - command_bar
+    height: 711px; // screenHeight - status_bar
     top: 25px;
     left: 67%;
 }
@@ -81,16 +108,17 @@
     background-color: #F9F9F9;
     width: 67%;
     //(px = points iphone)
-    height: 642px; // screenHeight - status_bar - command_bar
+    height: 642px; // screenHeight - status_bar
     top: 25px;
 }
 
 .iPhone6 .app-menu-shadow {
     position: absolute;
-    background-color: #00000060;
+    background-color: #000000;
+    opacity: 0.5;
     width: 33%;
     //(px = points iphone)
-    height: 642px; // screenHeight - status_bar - command_bar
+    height: 642px; // screenHeight - status_bar
     top: 25px;
     left: 67%;
 }
@@ -104,16 +132,17 @@
     background-color: #F9F9F9;
     width: 67%;
     //(px = points iphone)
-    height: 543px; // screenHeight - status_bar - command_bar
+    height: 543px; // screenHeight - status_bar
     top: 25px;
 }
 
 .iPhone5 .app-menu-shadow {
     position: absolute;
-    background-color: #00000060;
+    background-color: #000000;
+    opacity: 0.5;
     width: 33%;
     //(px = points iphone)
-    height: 543px; // screenHeight - status_bar - command_bar
+    height: 543px; // screenHeight - status_bar
     top: 25px;
     left: 67%;
 }
@@ -127,16 +156,17 @@
     background-color: #F9F9F9;
     width: 67%;
     //(px = points iphone)
-    height: 598px; // screenHeight - status_bar - command_bar
+    height: 649px; // screenHeight - status_bar - command_bar
     top: 27px;
 }
 
 .GooglePixel .app-menu-shadow {
     position: absolute;
-    background-color: #00000060;
+    background-color: #000000;
+    opacity: 0.5;
     width: 33%;
     //(px = points iphone)
-    height: 598px; // screenHeight - status_bar - command_bar
+    height: 654px; // screenHeight - status_bar - command_bar
     top: 27px;
     left: 67%;
 }
@@ -156,7 +186,8 @@
 
 .Nexus6P .app-menu-shadow {
     position: absolute;
-    background-color: #00000060;
+    background-color: #000000;
+    opacity: 0.5;
     width: 33%;
     //(px = points iphone)
     height: 649px; // screenHeight - status_bar - command_bar
@@ -179,7 +210,8 @@
 
 .Nexus5 .app-menu-shadow {
     position: absolute;
-    background-color: #00000060;
+    background-color: #000000;
+    opacity: 0.5;
     width: 33%;
     //(px = points iphone)
     height: 570px; // screenHeight - status_bar - command_bar

@@ -304,18 +304,18 @@ App.ApplicationRoute = Ember.Route.extend({
 
             this.store.createRecord('smartphone', {
                 name: 'GooglePixel',
-                label: 'Android (387x641) Google Pixel ',
+                label: 'Android (411x731) Google Pixel ',
                 platform: 'android',
                 //Altezza status bar(30) + toolbar(64) in dp
                 viewTop: 93,
                 //Altezza schermo (731) - altezza command bar(55) in dp
-                viewBottom: 586,
+                viewBottom: 675,
                 //Dimensioni in dp
-                screenWidth: 387,
-                screenHeight: 641,
+                screenWidth: 411,
+                screenHeight: 731,
                 //Dimensioni in px - padding css
-                cssWidth: 387,
-                cssHeight: 641
+                cssWidth: 411,
+                cssHeight: 731
             }).save();
 
             this.store.createRecord('smartphone', {
