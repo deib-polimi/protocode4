@@ -5,14 +5,13 @@
     {{view App.UiPhoneControlView}}
 {{/each}}
 
+<div class="status-bar"></div>
 {{#if hasMenu}}
-    <div class="status-bar-menu"></div>
     <div class="action-bar">
-        <div class="icon-menu"></div>
+        {{#link-to "appMenu" menu}}<div class="icon-menu"></div>{{/link-to}}
         <div class="bar-content-menu">{{controllers.editor.name}}</div>
     </div>
 {{else}}
-    <div class="status-bar"></div>
     <div class="action-bar">
         <div class="bar-content">{{controllers.editor.name}}</div>
     </div>
@@ -20,6 +19,6 @@
 
 {{#if hasMenu}}
     {{view App.MenuView}}
-    {{view App.MenuViewShadow}}
+    {{#link-to "viewController" model}}{{view App.MenuViewShadow}}{{/link-to}}
 {{/if}}
 <div class="command-bar"></div>

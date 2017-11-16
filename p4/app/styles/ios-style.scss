@@ -106,8 +106,33 @@
         font: 15px -apple-system-font, ".Helvetica NeueUI", "Helvetica Neue", sans-serif;
     }
 
-    .smartphone-screen-view .action-bar, .smartphone-screen-view .command-bar {
+    .smartphone-screen-view .command-bar {
         display: none;
+    }
+
+    .smartphone-screen-view .action-bar {
+        position: absolute;
+        width: 100%;
+        left: 0;
+        padding-left: 15px;
+        padding-top: 30px;
+    }
+
+    .smartphone-screen-view .action-bar .bar-content {
+        margin-left: 64px;
+        opacity: 0;
+    }
+
+    .smartphone-screen-view .action-bar .bar-content-menu {
+        margin-left: 64px;
+        opacity: 0;
+    }
+
+    .smartphone-screen-view .action-bar .icon-menu {
+        background-image: url("../img/ui_phone_controls/ios/icon_menu.png");
+        float: left;
+        width: 35px;
+        height: 27px;
     }
 
     .smartphone-screen-view .status-bar {
@@ -124,8 +149,34 @@
         font: 15px -apple-system-font, ".Helvetica NeueUI", "Helvetica Neue", sans-serif;
     }
 
-    .tablet-screen-view .action-bar, .tablet-screen-view .command-bar {
+    .tablet-screen-view .command-bar {
         display: none;
+    }
+
+    .tablet-screen-view .action-bar {
+        position: absolute;
+        width: 100%;
+        left: 0;
+        padding-left: 15px;
+        padding-top: 18px;
+    }
+
+    .tablet-screen-view .action-bar .bar-content {
+        margin-left: 64px;
+        opacity: 0;
+    }
+
+    .tablet-screen-view .action-bar .bar-content-menu {
+        margin-left: 64px;
+        opacity: 0;
+    }
+
+    .tablet-screen-view .action-bar .icon-menu {
+        background-image: url("../img/ui_phone_controls/ios/icon_menu.png");
+        float: left;
+        margin-top: 10px;
+        width: 35px;
+        height: 27px;
     }
 
     .tablet-screen-view .status-bar {

@@ -12,7 +12,7 @@
     background-color: #F9F9F9;
     width: 67%;
     //(px = points iphone)
-    height: 787px; // screenHeight - status_bar
+    height: 100%; // screenHeight - status_bar
     top: 2px;
 }
 
@@ -22,7 +22,7 @@
     opacity: 0.5;
     width: 33%;
     //(px = points iphone)
-    height: 787px; // screenHeight - status_bar
+    height: 100%; // screenHeight - status_bar
     top: 2px;
     left: 67%;
 }
@@ -36,7 +36,7 @@
     background-color: #F9F9F9;
     width: 67%;
     //(px = points iphone)
-    height: 711px; // screenHeight - status_bar
+    height: 100%; // screenHeight - status_bar
     top: 25px;
 }
 
@@ -46,7 +46,7 @@
     opacity: 0.5;
     width: 33%;
     //(px = points iphone)
-    height: 711px; // screenHeight - status_bar
+    height: 100%; // screenHeight - status_bar
     top: 25px;
     left: 67%;
 }
@@ -60,7 +60,7 @@
     background-color: #F9F9F9;
     width: 67%;
     //(px = points iphone)
-    height: 642px; // screenHeight - status_bar
+    height: 100%; // screenHeight - status_bar
     top: 25px;
 }
 
@@ -70,7 +70,7 @@
     opacity: 0.5;
     width: 33%;
     //(px = points iphone)
-    height: 642px; // screenHeight - status_bar
+    height: 100%; // screenHeight - status_bar
     top: 25px;
     left: 67%;
 }
@@ -84,7 +84,7 @@
     background-color: #F9F9F9;
     width: 67%;
     //(px = points iphone)
-    height: 711px; // screenHeight - status_bar
+    height: 100%; // screenHeight - status_bar
     top: 25px;
 }
 
@@ -94,7 +94,7 @@
     opacity: 0.5;
     width: 33%;
     //(px = points iphone)
-    height: 711px; // screenHeight - status_bar
+    height: 100%; // screenHeight - status_bar
     top: 25px;
     left: 67%;
 }
@@ -108,7 +108,7 @@
     background-color: #F9F9F9;
     width: 67%;
     //(px = points iphone)
-    height: 642px; // screenHeight - status_bar
+    height: 100%; // screenHeight - status_bar
     top: 25px;
 }
 
@@ -118,7 +118,7 @@
     opacity: 0.5;
     width: 33%;
     //(px = points iphone)
-    height: 642px; // screenHeight - status_bar
+    height: 100%; // screenHeight - status_bar
     top: 25px;
     left: 67%;
 }
@@ -132,7 +132,7 @@
     background-color: #F9F9F9;
     width: 67%;
     //(px = points iphone)
-    height: 543px; // screenHeight - status_bar
+    height: 100%; // screenHeight - status_bar
     top: 25px;
 }
 
@@ -142,7 +142,7 @@
     opacity: 0.5;
     width: 33%;
     //(px = points iphone)
-    height: 543px; // screenHeight - status_bar
+    height: 100%; // screenHeight - status_bar
     top: 25px;
     left: 67%;
 }
@@ -156,7 +156,7 @@
     background-color: #F9F9F9;
     width: 67%;
     //(px = points iphone)
-    height: 999px; // screenHeight - status_bar
+    height: 100%; // screenHeight - status_bar
     top: 25px;
 }
 
@@ -166,7 +166,7 @@
     opacity: 0.5;
     width: 33%;
     //(px = points iphone)
-    height: 999px; // screenHeight - status_bar
+    height: 100%; // screenHeight - status_bar
     top: 25px;
     left: 67%;
 }
@@ -180,7 +180,7 @@
     background-color: #F9F9F9;
     width: 67%;
     //(px = points iphone)
-    height: 743px; // screenHeight - status_bar
+    height: 100%; // screenHeight - status_bar
     top: 25px;
 }
 
@@ -190,7 +190,7 @@
     opacity: 0.5;
     width: 33%;
     //(px = points iphone)
-    height: 743px; // screenHeight - status_bar
+    height: 100%; // screenHeight - status_bar
     top: 25px;
     left: 67%;
 }
@@ -204,7 +204,7 @@
     background-color: #F9F9F9;
     width: 67%;
     //(px = points iphone)
-    height: 649px; // screenHeight - status_bar - command_bar
+    height: 654px; // screenHeight - status_bar - command_bar
     top: 27px;
 }
 
@@ -265,6 +265,150 @@
     height: 570px; // screenHeight - status_bar - command_bar
     top: 23px;
     left: 67%;
+}
+
+.Nexus7 .app-menu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    align-items: flex-start;
+    background-color: #F9F9F9;
+    width: 643px;
+    //(px = points iphone)
+    height: 530px; // screenHeight - status_bar - command_bar
+    top: 23px;
+}
+
+.Nexus7 .app-menu-shadow {
+    position: absolute;
+    background-color: #000000;
+    opacity: 0.5;
+    width: 318px;
+    //(px = points iphone)
+    height: 530px; // screenHeight - status_bar - command_bar
+    top: 23px;
+    left: 643px;
+}
+
+.Nexus7.rotated .app-menu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    align-items: flex-start;
+    background-color: #F9F9F9;
+    width: 402px;
+    //(px = points iphone)
+    height: 890px; // screenHeight - status_bar - command_bar
+    top: 23px;
+}
+
+.Nexus7.rotated .app-menu-shadow {
+    position: absolute;
+    background-color: #000000;
+    opacity: 0.5;
+    width: 198px;
+    //(px = points iphone)
+    height: 890px; // screenHeight - status_bar - command_bar
+    top: 23px;
+    left: 402px;
+}
+
+.Nexus9 .app-menu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    align-items: flex-start;
+    background-color: #F9F9F9;
+    width: 686px;
+    //(px = points iphone)
+    height: 699px; // screenHeight - status_bar - command_bar
+    top: 23px;
+}
+
+.Nexus9 .app-menu-shadow {
+    position: absolute;
+    background-color: #000000;
+    opacity: 0.5;
+    width: 339px;
+    //(px = points iphone)
+    height: 699px; // screenHeight - status_bar - command_bar
+    top: 23px;
+    left: 686px;
+}
+
+.Nexus9.rotated .app-menu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    align-items: flex-start;
+    background-color: #F9F9F9;
+    width: 514px;
+    //(px = points iphone)
+    height: 955px; // screenHeight - status_bar - command_bar
+    top: 23px;
+}
+
+.Nexus9.rotated .app-menu-shadow {
+    position: absolute;
+    background-color: #000000;
+    opacity: 0.5;
+    width: 255px;
+    //(px = points iphone)
+    height: 955px; // screenHeight - status_bar - command_bar
+    top: 23px;
+    left: 514px;
+}
+
+.Nexus10 .app-menu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    align-items: flex-start;
+    background-color: #F9F9F9;
+    width: 857px;
+    //(px = points iphone)
+    height: 730px; // screenHeight - status_bar - command_bar
+    top: 23px;
+}
+
+.Nexus10 .app-menu-shadow {
+    position: absolute;
+    background-color: #000000;
+    opacity: 0.5;
+    width: 423px;
+    //(px = points iphone)
+    height: 730px; // screenHeight - status_bar - command_bar
+    top: 23px;
+    left: 857px;
+}
+
+.Nexus10.rotated .app-menu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    align-items: flex-start;
+    background-color: #F9F9F9;
+    width: 536px;
+    //(px = points iphone)
+    height: 1210px; // screenHeight - status_bar - command_bar
+    top: 23px;
+}
+
+.Nexus10.rotated .app-menu-shadow {
+    position: absolute;
+    background-color: #000000;
+    opacity: 0.5;
+    width: 264px;
+    //(px = points iphone)
+    height: 1210px; // screenHeight - status_bar - command_bar
+    top: 23px;
+    left: 536px;
 }
 
 .app-menu-item.ios {

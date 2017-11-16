@@ -211,14 +211,29 @@ body,
     height: 1200px;
 }
 
-.tablet-view .tablet-screen-view {
+.tablet-view.rotated {
+    margin: 0 auto;
+    -moz-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+    transition: transform 0.3s ease-out;
+    transition: -webkit-transform 0.3s ease-out;
+    background: no-repeat center center;
+    background-size: 100%;
+    //Dimensione immagine dispositivo originale
+    width: 1200px;
+    height: 1600px;
+}
+
+.tablet-view .tablet-screen-view,
+.tablet-view.rotated .tablet-screen-view {
     overflow: hidden;
     position: relative;
     width: 100%;
     height: 100%;
 }
 
-.tablet-view .tablet-screen-view .expanded-area {
+.tablet-view .tablet-screen-view .expanded-area,
+.tablet-view.rotated .tablet-screen-view .expanded-area {
     position: absolute;
     top: 0;
     left: 0;
@@ -226,7 +241,8 @@ body,
     height: 100%;
 }
 
-.tablet-view .tablet-screen-view.dragging-over {
+.tablet-view .tablet-screen-view.dragging-over,
+.tablet-view.rotated .tablet-screen-view.dragging-over {
     box-shadow: 0 0 5px 5px #cc181e;
 }
 

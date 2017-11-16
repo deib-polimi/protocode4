@@ -2,7 +2,7 @@ App.TabletView = Ember.View.extend({
   tagName: 'div',
   attributeBindings: ['style'],
   classNames: ['tablet-view'],
-  classNameBindings: ['platform', 'tabletModel'],
+  classNameBindings: ['platform', 'tabletModel', 'isRotated'],
   templateName: 'views/tablet_view',
 
   platform: function () {
@@ -12,6 +12,14 @@ App.TabletView = Ember.View.extend({
   tabletModel: function() {
     return this.get('controller.controllers.editor.device.name');
   }.property('controller.controllers.editor.device'),
+
+  isRotated: function() {
+      if(this.get('context.isRotated')) {
+          return 'rotated';
+      } else {
+          return '';
+      }
+  }.property('context.isRotated'),
 
   zoomLevelStyle: function() {
     var zoomLevel = this.get('context.zoomLevel');

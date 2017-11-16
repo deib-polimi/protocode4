@@ -143,7 +143,7 @@ App.ApplicationRoute = Ember.Route.extend({
 
             this.store.createRecord('smartphone', {
                 name: 'iPhoneX',
-                label: 'iOS (375x812) iPhone X',
+                label: 'Phone: iOS (375x812) iPhone X',
                 type: 'smartphone',
                 platform: 'ios',
                 //Altezza status bar in points
@@ -230,7 +230,7 @@ App.ApplicationRoute = Ember.Route.extend({
 
             this.store.createRecord('smartphone', {
                 name: 'iPhone7Plus',
-                label: 'iOS (414x736) iPhone 7 Plus',
+                label: 'Phone: iOS (414x736) iPhone 7 Plus',
                 type: 'smartphone',
                 platform: 'ios',
                 //Altezza status bar in points
@@ -247,7 +247,7 @@ App.ApplicationRoute = Ember.Route.extend({
 
             this.store.createRecord('smartphone', {
                 name: 'iPhone7',
-                label: 'iOS (375x667) iPhone 7',
+                label: 'Phone: iOS (375x667) iPhone 7',
                 type: 'smartphone',
                 platform: 'ios',
                 //Altezza status bar in points
@@ -264,7 +264,7 @@ App.ApplicationRoute = Ember.Route.extend({
 
             this.store.createRecord('smartphone', {
                 name: 'iPhone6Plus',
-                label: 'iOS (414x736) iPhone 6 Plus',
+                label: 'Phone: iOS (414x736) iPhone 6 Plus',
                 type: 'smartphone',
                 platform: 'ios',
                 //Altezza status bar in points
@@ -281,7 +281,7 @@ App.ApplicationRoute = Ember.Route.extend({
 
             this.store.createRecord('smartphone', {
                 name: 'iPhone6',
-                label: 'iOS (375x667) iPhone 6',
+                label: 'Phone: iOS (375x667) iPhone 6',
                 type: 'smartphone',
                 platform: 'ios',
                 //Altezza status bar in points
@@ -298,7 +298,7 @@ App.ApplicationRoute = Ember.Route.extend({
 
             this.store.createRecord('smartphone', {
                 name: 'iPhone5',
-                label: 'iOS (320x568) iPhone 5',
+                label: 'Phone: iOS (320x568) iPhone 5',
                 type: 'smartphone',
                 platform: 'ios',
                 //Altezza status bar in points
@@ -315,7 +315,7 @@ App.ApplicationRoute = Ember.Route.extend({
 
             this.store.createRecord('tablet', {
                 name: 'iPad12_9',
-                label: 'iOS (1366x1024) iPad Pro 12.9\"',
+                label: 'Tablet: iOS (1366x1024) iPad Pro 12.9\"',
                 type: 'tablet',
                 platform: 'ios',
                 //Altezza status bar in points
@@ -332,7 +332,7 @@ App.ApplicationRoute = Ember.Route.extend({
 
             this.store.createRecord('tablet', {
                 name: 'iPad9_7',
-                label: 'iOS (1024x768) iPad Air/Pro 9.7\"',
+                label: 'Tablet: iOS (1024x768) iPad Air/Pro 9.7\"',
                 type: 'tablet',
                 platform: 'ios',
                 //Altezza status bar in points
@@ -349,7 +349,7 @@ App.ApplicationRoute = Ember.Route.extend({
 
             this.store.createRecord('smartphone', {
                 name: 'GooglePixel',
-                label: 'Android (411x731) Google Pixel ',
+                label: 'Phone: Android (411x731) Google Pixel ',
                 type: 'smartphone',
                 platform: 'android',
                 //Altezza status bar(30) + toolbar(64) in dp
@@ -366,7 +366,7 @@ App.ApplicationRoute = Ember.Route.extend({
 
             this.store.createRecord('smartphone', {
                 name: 'Nexus6P',
-                label: 'Android (411x731) Nexus 6P ',
+                label: 'Phone: Android (411x731) Nexus 6P ',
                 type: 'smartphone',
                 platform: 'android',
                 //Altezza status bar(30) + toolbar(64) in dp
@@ -383,7 +383,7 @@ App.ApplicationRoute = Ember.Route.extend({
 
             this.store.createRecord('smartphone', {
                 name: 'Nexus5',
-                label: 'Android (360x640) Nexus 5 ',
+                label: 'Phone: Android (360x640) Nexus 5 ',
                 type: 'smartphone',
                 platform: 'android',
                 //Altezza status bar(23) + toolbar(56) in dp
@@ -396,6 +396,57 @@ App.ApplicationRoute = Ember.Route.extend({
                 //Dimensioni in px - padding css
                 cssWidth: 360,
                 cssHeight: 640
+            }).save();
+
+            this.store.createRecord('tablet', {
+                name: 'Nexus7',
+                label: 'Tablet: Android (960x600) Nexus 7 ',
+                type: 'tablet',
+                platform: 'android',
+                //Altezza status bar(24) + toolbar(64) in dp
+                viewTop: 88,
+                //Altezza schermo (600) - altezza command bar(47) in dp
+                viewBottom: 553,
+                //Dimensioni in points
+                screenWidth: 960,
+                screenHeight: 600,
+                //Dimensioni in px - padding css
+                cssWidth: 960,
+                cssHeight: 600
+            }).save();
+
+            this.store.createRecord('tablet', {
+                name: 'Nexus9',
+                label: 'Tablet: Android (1024x768) Nexus 9 ',
+                type: 'tablet',
+                platform: 'android',
+                //Altezza status bar(24) + toolbar(64) in dp
+                viewTop: 88,
+                //Altezza schermo (768) - altezza command bar(47) in dp
+                viewBottom: 721,
+                //Dimensioni in points
+                screenWidth: 1024,
+                screenHeight: 768,
+                //Dimensioni in px - padding css
+                cssWidth: 1024,
+                cssHeight: 768
+            }).save();
+
+            this.store.createRecord('tablet', {
+                name: 'Nexus10',
+                label: 'Tablet: Android (1280x800) Nexus 10 ',
+                type: 'tablet',
+                platform: 'android',
+                //Altezza status bar(24) + toolbar(64) in dp
+                viewTop: 88,
+                //Altezza schermo (800) - altezza command bar(47) in dp
+                viewBottom: 753,
+                //Dimensioni in points
+                screenWidth: 1280,
+                screenHeight: 800,
+                //Dimensioni in px - padding css
+                cssWidth: 1280,
+                cssHeight: 800
             }).save();
 
             this.store.createRecord('uiPhoneControlTemplate', {

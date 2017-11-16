@@ -78,6 +78,10 @@
         border-bottom: solid 1px #ccc;
     }
 
+    .smartphone-screen-view .action-bar {
+        padding-top: 15px;
+    }
+
     .control-grid-view-cell,
     .control-grid-view-cell .grid-image,
     .control-grid-view-cell .grid-image-empty {
@@ -290,6 +294,11 @@
     background-image: url("../img/tablets/ios/iPad_12_9.png");
 }
 
+.tablet-view.iPad12_9.rotated {
+    padding: 116px 87px 118px 89px;
+    background-image: url("../img/tablets/ios/iPad_12_9_rotated.png");
+}
+
 .iPad12_9 {
 
     .tablet-screen-view .status-bar {
@@ -299,8 +308,22 @@
         border-bottom: solid 1px #ccc;
     }
 
+    .tablet-screen-view.rotated .status-bar {
+        background-image: url("../img/ui_phone_controls/ios/status_bar_ipad12_9_rotated.png");
+        //Altezza status bar in pixel = altezza in points
+        height: 64px; //+1 border bottom
+        border-bottom: solid 1px #ccc;
+    }
+
     .tablet-screen-view .status-bar-menu {
         background-image: url("../img/ui_phone_controls/ios/status_bar_ipad12_9_menu.png");
+        //Altezza status bar in pixel = altezza in points
+        height: 64px; //+1 border bottom
+        border-bottom: solid 1px #ccc;
+    }
+
+    .tablet-screen-view.rotated .status-bar-menu {
+        background-image: url("../img/ui_phone_controls/ios/status_bar_ipad12_9_menu_rotated.png");
         //Altezza status bar in pixel = altezza in points
         height: 64px; //+1 border bottom
         border-bottom: solid 1px #ccc;
@@ -328,6 +351,11 @@
     background-image: url("../img/tablets/ios/iPad_9_7.png");
 }
 
+.tablet-view.iPad9_7.rotated {
+    padding: 145px 337px 433px 99px;
+    background-image: url("../img/tablets/ios/iPad_9_7_rotated.png");
+}
+
 .iPad9_7 {
 
     .tablet-screen-view .status-bar {
@@ -337,8 +365,22 @@
         border-bottom: solid 1px #ccc;
     }
 
+    .tablet-screen-view.rotated .status-bar {
+        background-image: url("../img/ui_phone_controls/ios/status_bar_ipad9_7_rotated.png");
+        //Altezza status bar in pixel = altezza in points
+        height: 64px; //+1 border bottom
+        border-bottom: solid 1px #ccc;
+    }
+
     .tablet-screen-view .status-bar-menu {
         background-image: url("../img/ui_phone_controls/ios/status_bar_ipad9_7_menu.png");
+        //Altezza status bar in pixel = altezza in points
+        height: 64px; //+1 border bottom
+        border-bottom: solid 1px #ccc;
+    }
+
+    .tablet-screen-view.rotated .status-bar-menu {
+        background-image: url("../img/ui_phone_controls/ios/status_bar_ipad9_7_menu_rotated.png");
         //Altezza status bar in pixel = altezza in points
         height: 64px; //+1 border bottom
         border-bottom: solid 1px #ccc;
@@ -568,6 +610,276 @@
 
     .control-card .card-image {
         height: 193px;
+    }
+
+}
+
+/*============ NEXUS 7 ============*/
+
+.tablet-view.Nexus7 {
+    //Padding per centrare lo schermo
+    //dimensione schermo in pixel = dimensione in dp 960x600
+    padding: 100px 443px 500px 197px;
+    background-image: url("../img/tablets/android/nexus_7.png");
+}
+
+.tablet-view.Nexus7.rotated {
+    padding: 192px 489px 448px 111px;
+    background-image: url("../img/tablets/android/nexus_7_rotated.png");
+}
+
+.Nexus7 {
+    /*
+      .app-menu.android {
+        top: 33px;
+      }
+
+      .app-menu.android:before {
+        font-size : 22px;
+        top: 16px;
+      }
+
+      .app-menu-item.android {
+        padding: 20px;
+      }
+    */
+    .action-bar {
+        top: 23px;
+        height: 64px;
+        line-height: 64px;
+    }
+
+    .action-bar .bar-content {
+        margin-left: 10px;
+        background-size: auto 93%;
+        color: #FFFFFF;
+        font-size: 22px;
+    }
+
+    .action-bar .bar-content-menu {
+        margin-left: 68px;
+        background-size: auto 93%;
+        color: #FFFFFF;
+        font-size: 22px;
+    }
+
+    .tablet-screen-view .status-bar,
+    .tablet-screen-view .status-bar-menu {
+        //Altezza status bar in pixel = altezza in points
+        //960 X 24
+        height: 24px;
+        background-image: url("../img/ui_phone_controls/android/status_bar7.png");
+    }
+
+    .tablet-screen-view.rotated .status-bar,
+    .tablet-screen-view.rotated .status-bar-menu {
+        //Altezza status bar in pixel = altezza in points
+        //600 X 24
+        height: 24px;
+        background-image: url("../img/ui_phone_controls/android/status_bar7_rotated.png");
+    }
+
+    .tablet-screen-view .command-bar {
+        //960 X 47
+        height: 47px;
+        background-image: url("../img/ui_phone_controls/android/command_bar7.png");
+    }
+
+    .tablet-screen-view.rotated .command-bar {
+        //600 X 47
+        height: 47px;
+        background-image: url("../img/ui_phone_controls/android/command_bar7_rotated.png");
+    }
+
+    .control-grid-view-cell,
+    .control-grid-view-cell .grid-image,
+    .control-grid-view-cell .grid-image-empty {
+        height: 203px;
+        width: 203px;
+    }
+
+    .control-card .card-image {
+        height: 222px;
+    }
+
+}
+
+/*============ NEXUS 9 ============*/
+
+.tablet-view.Nexus9 {
+    //Padding per centrare lo schermo
+    //dimensione schermo in pixel = dimensione in dp 1024x768
+    padding: 98px 397px 334px 179px;
+    background-image: url("../img/tablets/android/nexus_9.png");
+}
+
+.tablet-view.Nexus9.rotated {
+    padding: 174px 323px 402px 109px;
+    background-image: url("../img/tablets/android/nexus_9_rotated.png");
+}
+
+.Nexus9 {
+    /*
+      .app-menu.android {
+        top: 33px;
+      }
+
+      .app-menu.android:before {
+        font-size : 22px;
+        top: 16px;
+      }
+
+      .app-menu-item.android {
+        padding: 20px;
+      }
+    */
+    .action-bar {
+        top: 23px;
+        height: 64px;
+        line-height: 64px;
+    }
+
+    .action-bar .bar-content {
+        margin-left: 10px;
+        background-size: auto 93%;
+        color: #FFFFFF;
+        font-size: 22px;
+    }
+
+    .action-bar .bar-content-menu {
+        margin-left: 68px;
+        background-size: auto 93%;
+        color: #FFFFFF;
+        font-size: 22px;
+    }
+
+    .tablet-screen-view .status-bar,
+    .tablet-screen-view .status-bar-menu {
+        //Altezza status bar in pixel = altezza in points
+        //1024 X 24
+        height: 24px;
+        background-image: url("../img/ui_phone_controls/android/status_bar9.png");
+    }
+
+    .tablet-screen-view.rotated .status-bar,
+    .tablet-screen-view.rotated .status-bar-menu {
+        //Altezza status bar in pixel = altezza in points
+        //768 X 24
+        height: 24px;
+        background-image: url("../img/ui_phone_controls/android/status_bar9_rotated.png");
+    }
+
+    .tablet-screen-view .command-bar {
+        //1024 X 47
+        height: 47px;
+        background-image: url("../img/ui_phone_controls/android/command_bar9.png");
+    }
+
+    .tablet-screen-view.rotated .command-bar {
+        //768 X 47
+        height: 47px;
+        background-image: url("../img/ui_phone_controls/android/command_bar9_rotated.png");
+    }
+
+    .control-grid-view-cell,
+    .control-grid-view-cell .grid-image,
+    .control-grid-view-cell .grid-image-empty {
+        height: 203px;
+        width: 203px;
+    }
+
+    .control-card .card-image {
+        height: 222px;
+    }
+
+}
+
+/*============ NEXUS 10 ============*/
+
+.tablet-view.Nexus10 {
+    //Padding per centrare lo schermo
+    //dimensione schermo in pixel = dimensione in dp 1280x800
+    padding: 197px 163px 203px 157px;
+    background-image: url("../img/tablets/android/nexus_10.png");
+}
+
+.tablet-view.Nexus10.rotated {
+    padding: 158px 197px 162px 203px;
+    background-image: url("../img/tablets/android/nexus_10_rotated.png");
+}
+
+.Nexus10 {
+    /*
+      .app-menu.android {
+        top: 33px;
+      }
+
+      .app-menu.android:before {
+        font-size : 22px;
+        top: 16px;
+      }
+
+      .app-menu-item.android {
+        padding: 20px;
+      }
+    */
+    .action-bar {
+        top: 23px;
+        height: 64px;
+        line-height: 64px;
+    }
+
+    .action-bar .bar-content {
+        margin-left: 10px;
+        background-size: auto 93%;
+        color: #FFFFFF;
+        font-size: 22px;
+    }
+
+    .action-bar .bar-content-menu {
+        margin-left: 68px;
+        background-size: auto 93%;
+        color: #FFFFFF;
+        font-size: 22px;
+    }
+
+    .tablet-screen-view .status-bar,
+    .tablet-screen-view .status-bar-menu {
+        //Altezza status bar in pixel = altezza in points
+        //1280 X 24
+        height: 24px;
+        background-image: url("../img/ui_phone_controls/android/status_bar10.png");
+    }
+
+    .tablet-screen-view.rotated .status-bar,
+    .tablet-screen-view.rotated .status-bar-menu {
+        //Altezza status bar in pixel = altezza in points
+        //800 X 24
+        height: 24px;
+        background-image: url("../img/ui_phone_controls/android/status_bar10_rotated.png");
+    }
+
+    .tablet-screen-view .command-bar {
+        //1280 X 47
+        height: 47px;
+        background-image: url("../img/ui_phone_controls/android/command_bar10.png");
+    }
+
+    .tablet-screen-view.rotated .command-bar {
+        //800 X 47
+        height: 47px;
+        background-image: url("../img/ui_phone_controls/android/command_bar10_rotated.png");
+    }
+
+    .control-grid-view-cell,
+    .control-grid-view-cell .grid-image,
+    .control-grid-view-cell .grid-image-empty {
+        height: 203px;
+        width: 203px;
+    }
+
+    .control-card .card-image {
+        height: 222px;
     }
 
 }

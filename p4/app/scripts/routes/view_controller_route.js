@@ -5,9 +5,19 @@ App.ViewControllerRoute = Ember.Route.extend({
         increaseZoom: function () {
             this.set('controller.zoomLevel', Math.round((this.get('controller.zoomLevel') + 0.2) * 100) / 100);
         },
+
         decreaseZoom: function () {
             this.set('controller.zoomLevel', Math.round((this.get('controller.zoomLevel') - 0.2) * 100) / 100);
         },
+
+        rotate: function() {
+            if(this.get('controller.isRotated')) {
+                this.set('controller.isRotated', false);
+            } else {
+                this.set('controller.isRotated', true);
+            }
+        },
+
         addUiPhoneControl: function (controlType, receiver) {
             console.log('Receiver of drop event: ' + receiver.get('context.name'));
             console.log('Type of receiver: ' + receiver.get('context').constructor.toString());
