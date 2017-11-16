@@ -147,6 +147,54 @@
     left: 67%;
 }
 
+.iPad12_9 .app-menu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    align-items: flex-start;
+    background-color: #F9F9F9;
+    width: 67%;
+    //(px = points iphone)
+    height: 999px; // screenHeight - status_bar
+    top: 25px;
+}
+
+.iPad12_9 .app-menu-shadow {
+    position: absolute;
+    background-color: #000000;
+    opacity: 0.5;
+    width: 33%;
+    //(px = points iphone)
+    height: 999px; // screenHeight - status_bar
+    top: 25px;
+    left: 67%;
+}
+
+.iPad9_7 .app-menu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    align-items: flex-start;
+    background-color: #F9F9F9;
+    width: 67%;
+    //(px = points iphone)
+    height: 743px; // screenHeight - status_bar
+    top: 25px;
+}
+
+.iPad9_7 .app-menu-shadow {
+    position: absolute;
+    background-color: #000000;
+    opacity: 0.5;
+    width: 33%;
+    //(px = points iphone)
+    height: 743px; // screenHeight - status_bar
+    top: 25px;
+    left: 67%;
+}
+
 .GooglePixel .app-menu {
     position: absolute;
     display: flex;

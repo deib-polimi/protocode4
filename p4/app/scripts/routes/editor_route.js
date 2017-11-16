@@ -8,6 +8,8 @@ App.EditorRoute = Ember.Route.extend({
         controller.set('model', model.application);
         var devices = (model.smartphones).addObjects(model.tablets);
         controller.set('devices', devices);
+        /*controller.set('smartphones', model.smartphones);
+        controller.set('tablets', model.tablets);*/
         controller.set('smartwatches', model.smartwatches);
         controller.set('smartphoneModel', model.smartphones.findBy('id', this.get('smartphoneId')));
         controller.set('tabletModel', model.tablets.findBy('id', this.get('tabletId')));

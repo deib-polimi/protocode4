@@ -71,6 +71,13 @@
         border-bottom: solid 1px #ccc;
     }
 
+    .smartphone-screen-view .status-bar-menu {
+        background-image: url("../img/ui_phone_controls/ios/status_bar_x_menu.png");
+        //Altezza status bar in pixel = altezza in points
+        height: 50px; //+1 border bottom
+        border-bottom: solid 1px #ccc;
+    }
+
     .control-grid-view-cell,
     .control-grid-view-cell .grid-image,
     .control-grid-view-cell .grid-image-empty {
@@ -97,6 +104,13 @@
 
     .smartphone-screen-view .status-bar {
         background-image: url("../img/ui_phone_controls/ios/status_bar6plus.png");
+        //Altezza status bar in pixel = altezza in points
+        height: 63px; //+1 border bottom
+        border-bottom: solid 1px #ccc;
+    }
+
+    .smartphone-screen-view .status-bar-menu {
+        background-image: url("../img/ui_phone_controls/ios/status_bar6plus_menu.png");
         //Altezza status bar in pixel = altezza in points
         height: 63px; //+1 border bottom
         border-bottom: solid 1px #ccc;
@@ -133,6 +147,13 @@
         border-bottom: solid 1px #ccc;
     }
 
+    .smartphone-screen-view .status-bar-menu {
+        background-image: url("../img/ui_phone_controls/ios/status_bar7_menu.png");
+        //Altezza status bar in pixel = altezza in points
+        height: 64px; //+1 border bottom
+        border-bottom: solid 1px #ccc;
+    }
+
     .control-grid-view-cell,
     .control-grid-view-cell .grid-image,
     .control-grid-view-cell .grid-image-empty {
@@ -159,6 +180,13 @@
 
     .smartphone-screen-view .status-bar {
         background-image: url("../img/ui_phone_controls/ios/status_bar6plus.png");
+        //Altezza status bar in pixel = altezza in points
+        height: 63px; //+1 border bottom
+        border-bottom: solid 1px #ccc;
+    }
+
+    .smartphone-screen-view .status-bar-menu {
+        background-image: url("../img/ui_phone_controls/ios/status_bar6plus_menu.png");
         //Altezza status bar in pixel = altezza in points
         height: 63px; //+1 border bottom
         border-bottom: solid 1px #ccc;
@@ -195,6 +223,13 @@
         border-bottom: solid 1px #ccc;
     }
 
+    .smartphone-screen-view .status-bar-menu {
+        background-image: url("../img/ui_phone_controls/ios/status_bar6_menu.png");
+        //Altezza status bar in pixel = altezza in points
+        height: 64px; //+1 border bottom
+        border-bottom: solid 1px #ccc;
+    }
+
     .control-grid-view-cell,
     .control-grid-view-cell .grid-image,
     .control-grid-view-cell .grid-image-empty {
@@ -221,6 +256,13 @@
 
     .smartphone-screen-view .status-bar {
         background-image: url("../img/ui_phone_controls/ios/status_bar5.png");
+        //Altezza status bar in pixel = altezza in points
+        height: 64px; //+1 border bottom
+        border-bottom: solid 1px #ccc;
+    }
+
+    .smartphone-screen-view .status-bar-menu {
+        background-image: url("../img/ui_phone_controls/ios/status_bar5_menu.png");
         //Altezza status bar in pixel = altezza in points
         height: 64px; //+1 border bottom
         border-bottom: solid 1px #ccc;
@@ -257,6 +299,13 @@
         border-bottom: solid 1px #ccc;
     }
 
+    .tablet-screen-view .status-bar-menu {
+        background-image: url("../img/ui_phone_controls/ios/status_bar_ipad12_9_menu.png");
+        //Altezza status bar in pixel = altezza in points
+        height: 64px; //+1 border bottom
+        border-bottom: solid 1px #ccc;
+    }
+
     .control-grid-view-cell,
     .control-grid-view-cell .grid-image,
     .control-grid-view-cell .grid-image-empty {
@@ -283,6 +332,13 @@
 
     .tablet-screen-view .status-bar {
         background-image: url("../img/ui_phone_controls/ios/status_bar_ipad9_7.png");
+        //Altezza status bar in pixel = altezza in points
+        height: 64px; //+1 border bottom
+        border-bottom: solid 1px #ccc;
+    }
+
+    .tablet-screen-view .status-bar-menu {
+        background-image: url("../img/ui_phone_controls/ios/status_bar_ipad9_7_menu.png");
         //Altezza status bar in pixel = altezza in points
         height: 64px; //+1 border bottom
         border-bottom: solid 1px #ccc;
@@ -338,7 +394,15 @@
         font-size: 22px;
     }
 
-    .status-bar {
+    .action-bar .bar-content-menu {
+        margin-left: 68px;
+        background-size: auto 93%;
+        color: #FFFFFF;
+        font-size: 22px;
+    }
+
+    .status-bar,
+    .status-bar-menu {
         //Altezza status bar in pixel = altezza in points
         //411 X 30
         height: 30px;
@@ -401,7 +465,15 @@
         font-size: 22px;
     }
 
-    .status-bar {
+    .action-bar .bar-content-menu {
+        margin-left: 68px;
+        background-size: auto 93%;
+        color: #FFFFFF;
+        font-size: 22px;
+    }
+
+    .status-bar,
+    .status-bar-menu {
         //Altezza status bar in pixel = altezza in points
         //411 X 30
         height: 30px;
@@ -466,11 +538,19 @@
         font-size: 18px;
     }
 
-    .status-bar {
+    .status-bar,
+    .status-bar-menu {
         //Altezza status bar in pixel = altezza in points
         //360 X 23
         height: 23px;
         background-image: url("../img/ui_phone_controls/android/status_bar5.png");
+    }
+
+    .action-bar .bar-content-menu {
+        margin-left: 68px;
+        background-size: auto 93%;
+        color: #FFFFFF;
+        font-size: 22px;
     }
 
     .command-bar {

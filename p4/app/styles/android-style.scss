@@ -112,6 +112,14 @@
         padding-left: 8px;
     }
 
+    .smartphone-screen-view .action-bar .icon-menu {
+        background-image: url("../img/ui_phone_controls/android/icon_menu.png");
+        float: left;
+        margin-top: 10px;
+        width: 48px;
+        height: 48px;
+    }
+
     .smartphone-screen-view .action-bar:before {
         border-bottom: solid 1px #d2d2d2;
         padding-bottom: 1px;
@@ -146,6 +154,14 @@
         left: 0;
         background-color: #3F51B5;
         padding-left: 8px;
+    }
+
+    .tablet-screen-view .action-bar .icon-menu {
+        background-image: url("../img/ui_phone_controls/android/icon_menu.png");
+        float: left;
+        margin-top: 10px;
+        width: 48px;
+        height: 48px;
     }
 
     .tablet-screen-view .action-bar:before {
