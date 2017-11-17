@@ -240,7 +240,7 @@ App.ControlChain = DS.Model.extend({
                 }
             } else {
                 if(index === 0) {
-                    return control.getTop(true);
+                    return control.getTopWithMargin(true);
                 } else {
                     return controls.get('firstObject.topWithMargin');
                 }
@@ -273,7 +273,7 @@ App.ControlChain = DS.Model.extend({
                     return (parseFloat(control.get('topWithMargin')) + parseFloat(control.get('outerHeight')));
                 }
             } else {
-                return parseFloat(control.getBottom(true));
+                return parseFloat(control.getBottomWithMargin(true));
             }
         } else {
             return 0;
@@ -333,7 +333,7 @@ App.ControlChain = DS.Model.extend({
                 }
             } else {
                 if(index === 0) {
-                    return control.getStart(true);
+                    return control.getStartWithMargin(true);
                 } else {
                     return controls.get('firstObject.startWithMargin');
                 }

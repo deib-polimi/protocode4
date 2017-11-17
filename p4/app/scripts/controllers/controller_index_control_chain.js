@@ -16,15 +16,15 @@ App.ControlChainIndexController = Ember.ObjectController.extend(App.Saveable, {
         'imageView',
         'videoView',
         'audioPlayer',
-        'listView',
-        'gridView',
         'photocameraController',
         'videocameraController',
         'audioRecorder',
         'map',
         'datepicker',
-        'timepicker',
-        'card'
+        'timepicker'/*,
+        'listView',
+        'gridView',
+        'card'*/
     ],
     newControlType: null,
 

@@ -18,8 +18,8 @@ App.UiPhoneControl = App.UiControl.extend({
     isHeightConstrained: DS.attr('boolean', {defaultValue: false}),
     isWidthPercentConstrained: DS.attr('boolean', {defaultValue: false}),
     isHeightPercentConstrained: DS.attr('boolean', {defaultValue: false}),
-    widthPercent: DS.attr('number', {defaultValue: 0.3}),
-    heightPercent: DS.attr('number', {defaultValue: 0.3}),
+    widthPercent: DS.attr('number', {defaultValue: 1}),
+    heightPercent: DS.attr('number', {defaultValue: 1}),
     isRatioConstrained: DS.attr('boolean', {defaultValue: false}),
     ratioWidth: DS.attr('number', {defaultValue: 1}),
     ratioHeight: DS.attr('number', {defaultValue: 1}),
@@ -267,6 +267,36 @@ App.UiPhoneControl = App.UiControl.extend({
         return !this.get('ratioCanBeConstrained');
     }.property('ratioCanBeConstrained'),
 
+    widthPercentMin: function() {
+        var i;
+        var flag = true;
+        for(i = 0.1; i < 1 && flag; i = i+0.1) {
+            if((i * this.get('viewController.application.device.screenWidth')) > this.get('minWidth')) {
+                flag = false;
+            }
+        }
+        return i;
+    }.property('minWidth', 'viewController.application.device.screenWidth'),
+
+    heightPercentMin: function() {
+        var availableHeight = this.get('viewController.application.device.viewBottom') - this.get('viewController.application.device.viewTop');
+        if(this.get('viewController.hasMenu')) {
+            availableHeight = availableHeight - 48;
+        }
+        var i;
+        var flag = true;
+        for(i = 0.1; i < 1 && flag; i = i+0.1) {
+            if((i * availableHeight) > this.get('minHeight')) {
+                flag = false;
+            }
+        }
+        return i;
+    }.property('minHeight',
+        'viewController.hasMenu',
+        'viewController.application.device.viewTop',
+        'viewController.application.device.viewBottom',
+    ),
+
     sameLevelControls: function () {
         var parentContainer = this.get('parentContainer');
 
@@ -287,7 +317,7 @@ App.UiPhoneControl = App.UiControl.extend({
         return null;
     }.property('sameLevelControls'),
 
-    getTop: function(onlyValid) {
+    getTopWithMargin: function(onlyValid) {
         var self = this;
         var result = -1000;
         var constraints = self.get('constraints');
@@ -300,7 +330,11 @@ App.UiPhoneControl = App.UiControl.extend({
         constraints.forEach(function (constraint) {
             if(constraint.get('layoutEdge') === 'top') {
                 if(constraint.get('withParent') === false) {
-                    result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) + parseFloat(constraint.get('referenceElement.marginTop'));
+                    if(constraint.get('referenceLayoutEdge') === 'top') {
+                        result = constraint.get('referenceElement.top');
+                    } else {
+                        result = constraint.get('referenceElement.bottomWithMargin');
+                    }
                 } else {
                     // Case top with parentTop
                     if (self.get('parentContainer') !== null) {
@@ -361,13 +395,12 @@ App.UiPhoneControl = App.UiControl.extend({
                 constraints.forEach(function (constraint) {
                     if(constraint.get('withParent') === false) {
                         if(constraint.get('layoutEdge') === 'bottom') {
-                            result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) -
-                                self.get('outerHeight');
-                            if(constraint.get('referenceLayoutEdge') === 'top') {
-                                result = result + parseFloat(constraint.get('referenceElement.marginTop'));
+                            if(constraint.get('referenceLayoutEdge') === 'bottom') {
+                                result = constraint.get('referenceElement.bottom');
                             } else {
-                                result = result - parseFloat(constraint.get('referenceElement.marginBottom'));
+                                result = constraint.get('referenceElement.topWithMargin');
                             }
+                            result = result - self.get('outerHeight');
                         } else if(constraint.get('layoutEdge') === 'centerY') {
                             result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) -
                                 (self.get('height') / 2);
@@ -395,7 +428,7 @@ App.UiPhoneControl = App.UiControl.extend({
             if(this.get('controlChain') && this.get('controlChain.axis') === 'vertical') {
                 return this.get('controlChain').getTopInChain(this.get('id'));
             } else {
-                return this.getTop(true);
+                return this.getTopWithMargin(true);
             }
         } else {
             return null;
@@ -431,7 +464,7 @@ App.UiPhoneControl = App.UiControl.extend({
         return this.get('topWithMargin') + parseFloat(this.get('marginTop'));
     }.property('topWithMargin'),
 
-    getBottom: function(onlyValid) {
+    getBottomWithMargin: function(onlyValid) {
         var self = this;
         var result = -1000;
         var constraints = self.get('constraints');
@@ -444,7 +477,11 @@ App.UiPhoneControl = App.UiControl.extend({
         constraints.forEach(function (constraint) {
             if(constraint.get('layoutEdge') === 'bottom') {
                 if(constraint.get('withParent') === false) {
-                    result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) - parseFloat(constraint.get('referenceElement.marginBottom'));
+                    if(constraint.get('referenceLayoutEdge') === 'bottom') {
+                        result = constraint.get('referenceElement.bottom');
+                    } else {
+                        result = constraint.get('referenceElement.topWithMargin');
+                    }
                 } else {
                     // Case bottom - parentBottom
                     if (self.get('parentContainer') !== null) {
@@ -504,13 +541,12 @@ App.UiPhoneControl = App.UiControl.extend({
                 constraints.forEach(function (constraint) {
                     if(constraint.get('withParent') === false) {
                         if(constraint.get('layoutEdge') === 'top') {
-                            result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) +
-                                self.get('outerHeight');
                             if(constraint.get('referenceLayoutEdge') === 'top') {
-                                result = result + parseFloat(constraint.get('referenceElement.marginTop'));
+                                result = constraint.get('referenceElement.top');
                             } else {
-                                result = result - parseFloat(constraint.get('referenceElement.marginBottom'));
+                                result = constraint.get('referenceElement.bottomWithMargin');
                             }
+                            result = result + self.get('outerHeight');
                         } else if(constraint.get('layoutEdge') === 'centerY') {
                             result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) +
                                 (self.get('height') / 2);
@@ -533,7 +569,7 @@ App.UiPhoneControl = App.UiControl.extend({
             if(this.get('controlChain') && this.get('controlChain.axis') === 'vertical') {
                 return this.get('controlChain').getBottomInChain(this.get('id'), this.get('valueInChain'));
             } else {
-                return this.getBottom(true);
+                return this.getBottomWithMargin(true);
             }
         } else {
             return null;
@@ -569,7 +605,7 @@ App.UiPhoneControl = App.UiControl.extend({
         return this.get('bottomWithMargin') - parseFloat(this.get('marginBottom'));
     }.property('bottomWithMargin'),
 
-    getStart: function(onlyValid) {
+    getStartWithMargin: function(onlyValid) {
         var self = this;
         var result = -1000;
         var constraints = self.get('constraints');
@@ -582,7 +618,11 @@ App.UiPhoneControl = App.UiControl.extend({
         constraints.forEach(function (constraint) {
             if(constraint.get('layoutEdge') === 'start') {
                 if(constraint.get('withParent') === false) {
-                    result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) + parseFloat(constraint.get('referenceElement.marginStart'));
+                    if(constraint.get('referenceLayoutEdge') === 'start') {
+                        result = constraint.get('referenceElement.start');
+                    } else {
+                        result = constraint.get('referenceElement.endWithMargin');
+                    }
                 } else {
                     // Case start - parentStart
                     result = 0;
@@ -613,13 +653,12 @@ App.UiPhoneControl = App.UiControl.extend({
                 constraints.forEach(function (constraint) {
                     if(constraint.get('withParent') === false) {
                         if(constraint.get('layoutEdge') === 'end') {
-                            result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) -
-                                self.get('outerWidth');
-                            if(constraint.get('referenceLayoutEdge') === 'start') {
-                                result = result + parseFloat(constraint.get('referenceElement.marginStart'));
+                            if(constraint.get('referenceLayoutEdge') === 'end') {
+                                result = constraint.get('referenceElement.end');
                             } else {
-                                result = result - parseFloat(constraint.get('referenceElement.marginEnd'));
+                                result = constraint.get('referenceElement.startWithMargin');
                             }
+                            result = result - self.get('outerWidth');
                         } else if(constraint.get('layoutEdge') === 'centerX') {
                             result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) -
                                 (self.get('width') / 2);
@@ -641,7 +680,7 @@ App.UiPhoneControl = App.UiControl.extend({
             if(this.get('controlChain') && this.get('controlChain.axis') === 'horizontal') {
                 return this.get('controlChain').getStartInChain(this.get('id'));
             } else {
-                return this.getStart(true);
+                return this.getStartWithMargin(true);
             }
         } else {
             return null;
@@ -674,7 +713,7 @@ App.UiPhoneControl = App.UiControl.extend({
         return this.get('startWithMargin') + parseFloat(this.get('marginStart'));
     }.property('startWithMargin'),
 
-    getEnd: function(onlyValid) {
+    getEndWithMargin: function(onlyValid) {
         var self = this;
         var result = -1000;
         var constraints = self.get('constraints');
@@ -687,7 +726,11 @@ App.UiPhoneControl = App.UiControl.extend({
         constraints.forEach(function (constraint) {
             if(constraint.get('layoutEdge') === 'end') {
                 if(constraint.get('withParent') === false) {
-                    result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) - parseFloat(constraint.get('referenceElement.marginEnd'));
+                    if(constraint.get('referenceLayoutEdge') === 'end') {
+                        result = constraint.get('referenceElement.end');
+                    } else {
+                        result = constraint.get('referenceElement.startWithMargin');
+                    }
                 } else {
                     // Case end - parentEnd
                     if (self.get('parentContainer') !== null) {
@@ -722,13 +765,12 @@ App.UiPhoneControl = App.UiControl.extend({
                 constraints.forEach(function (constraint) {
                     if(constraint.get('withParent') === false) {
                         if(constraint.get('layoutEdge') === 'start') {
-                            result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) +
-                                self.get('outerWidth');
                             if(constraint.get('referenceLayoutEdge') === 'start') {
-                                result = result + parseFloat(constraint.get('referenceElement.marginStart'));
+                                result = constraint.get('referenceElement.start');
                             } else {
-                                result = result - parseFloat(constraint.get('referenceElement.marginEnd'));
+                                result = constraint.get('referenceElement.endWithMargin');
                             }
+                            result = result + self.get('outerWidth');
                         } else if(constraint.get('layoutEdge') === 'centerX') {
                             result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) +
                                 (self.get('width') / 2);
@@ -750,7 +792,7 @@ App.UiPhoneControl = App.UiControl.extend({
             if(this.get('controlChain') && this.get('controlChain.axis') === 'horizontal') {
                 return this.get('controlChain').getEndInChain(this.get('id'), this.get('valueInChain'));
             } else {
-                return this.getEnd(true);
+                return this.getEndWithMargin(true);
             }
         } else {
             return null;

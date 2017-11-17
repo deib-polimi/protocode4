@@ -96,7 +96,7 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
         if(currentViewControllerIsMenu && !isIOS) {
             minTop = minTop + 48;
         }
-        if(control.getTop(false) < minTop) {
+        if(control.getTopWithMargin(false) < minTop) {
             return 4;
         }
         // Check boundaries: bottom
@@ -104,17 +104,17 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
         if(currentViewControllerIsMenu && isIOS) {
             maxBottom = maxBottom - 48;
         }
-        if(control.getBottom(false) > maxBottom) {
+        if(control.getBottomWithMargin(false) > maxBottom) {
             return 5;
         }
         // Check boundaries: start
         var minStart = 0;
-        if(control.getStart(false) < minStart) {
+        if(control.getStartWithMargin(false) < minStart) {
             return 6;
         }
         // Check boundaries: end
         var maxEnd = thisConstraint.get('uiPhoneControl.viewController.application.device.screenWidth');
-        if(control.getEnd(false) > maxEnd) {
+        if(control.getEndWithMargin(false) > maxEnd) {
             return 7;
         }
         // Check conflicts between different constraints
@@ -122,7 +122,7 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
         var conflict = false;
         if(thisConstraint.get('layoutEdge') === 'top') {
             constraints.forEach(function(constraint) {
-                if(constraint.get('layoutEdge') === 'bottom' && control.getTop() > control.getBottom()) {
+                if(constraint.get('layoutEdge') === 'bottom' && control.getTopWithMargin() > control.getBottomWithMargin()) {
                     conflict = true;
                 }
             });
@@ -131,7 +131,7 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
             }
         } else if(thisConstraint.get('layoutEdge') === 'bottom') {
             constraints.forEach(function(constraint) {
-                if(constraint.get('layoutEdge') === 'top' && control.getTop() > control.getBottom()) {
+                if(constraint.get('layoutEdge') === 'top' && control.getTopWithMargin() > control.getBottomWithMargin()) {
                     conflict = true;
                 }
             });
@@ -140,7 +140,7 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
             }
         } else if(thisConstraint.get('layoutEdge') === 'start') {
             constraints.forEach(function(constraint) {
-                if(constraint.get('layoutEdge') === 'end' && control.getStart() > control.getEnd()) {
+                if(constraint.get('layoutEdge') === 'end' && control.getStartWithMargin() > control.getEndWithMargin()) {
                     conflict = true;
                 }
             });
@@ -149,7 +149,7 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
             }
         } else if(thisConstraint.get('layoutEdge') === 'end') {
             constraints.forEach(function(constraint) {
-                if(constraint.get('layoutEdge') === 'start' && control.getStart() > control.getEnd()) {
+                if(constraint.get('layoutEdge') === 'start' && control.getStartWithMargin() > control.getEndWithMargin()) {
                     conflict = true;
                 }
             });

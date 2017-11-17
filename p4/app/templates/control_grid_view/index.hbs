@@ -71,36 +71,15 @@
                 </div>
                 <div class="tab-pane fade form-horizontal" id="position">
                     <br>
-                    <div class="form-group">
-                        <label class="col-sm-5" style="padding:8px 10px;text-align:right">Align with parent</label>
-                        <div class="col-sm-7">
-                            <div class="btn-group btn-group-justified">
-                                <label {{bind-attr class=":btn :btn-default :btn-sm alignParentTop:active"}}>
-                                    {{input type="checkbox" checked=alignParentTop class="hidden"}} <i
-                                    class="fa fa-chevron-up"></i>
-                                </label>
-                                <label {{bind-attr class=":btn :btn-default :btn-sm alignParentBottom:active"}}>
-                                    {{input type="checkbox" checked=alignParentBottom class="hidden"}} <i
-                                    class="fa fa-chevron-down"></i>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    {{input-select label="Align with top" content=siblings optionLabelPath="content.name"
-                                   optionValuePath="content" selection=alignTop prompt="Select sibling"}}
-                    {{input-select label="Align with bottom" content=siblings optionLabelPath="content.name"
-                                   optionValuePath="content" selection=alignBottom prompt="Select sibling"}}
-                    {{input-select label="Above to" content=siblings optionLabelPath="content.name"
-                                   optionValuePath="content" selection=above prompt="Select sibling"}} {{input-select
-                    label="Below to" content=siblings optionLabelPath="content.name" optionValuePath="content"
-                    selection=below prompt="Select sibling"}}
-                    {{input-number label="Position Y" min="0" value=posY action='acceptChanges'}}
+                    {{partial "partials/ui_control_position"}}
                 </div>
                 <div class="tab-pane fade form-horizontal" id="dimension">
-        <br>
-                    {{input-number label="Height" min="205" value=height action='acceptChanges' }}
+                    <br>
+                    {{input-checkbox label="Height Fixed" checked=isHeightConstrained disabled=heightCantBeConstrained}}
+                    {{input-number label="Height" disabled=isntHeightConstrained min=minHeight value=height action='acceptChanges' }}
+                    {{input-checkbox label="Height Percent" checked=isHeightPercentConstrained disabled=heightPercentCantBeConstrained}}
+                    {{input-number label="Height %" disabled=isntHeightPercentConstrained min=heightPercentMin max="1" step="0.1" value=heightPercent action='acceptChanges' }}
                 </div>
-
             </div>
         </div>
         <div class="panel-footer">

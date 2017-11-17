@@ -2,15 +2,25 @@ App.GridView = App.UiPhoneControl.extend({
     gridViewCells: DS.hasMany('gridViewCell', {inverse: 'parentGridView'}),
     clickListener: DS.belongsTo('clickListener'),
 
-    width: DS.attr('number', {defaultValue: 204}),
     height: DS.attr('number', {defaultValue: 408}),
-
-    alignParentStart: DS.attr('boolean', {defaultValue: true}),
-    alignParentEnd: DS.attr('boolean', {defaultValue: true}),
+    minHeight: 408,
+    defaultHeight: 408,
 
     gridType: DS.attr('string', {defaultValue: 'simple'}),
 
     xmlName: 'gridViews',
+
+    width: function() {
+        return this.get('viewController.application.device.screenWidth');
+    }.property('viewController.application.device.screenWidth'),
+
+    minWidth: function() {
+        return this.get('width');
+    }.property('width'),
+
+    defaultWidth: function() {
+        return this.get('width');
+    }.property('width'),
 
     deleteRecord: function () {
         var gridViewCells = this.get('gridViewCells');
