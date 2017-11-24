@@ -27,8 +27,8 @@ App.ScreenCanvasComponent = Ember.Component.extend({
     ctx: null,
 
     device: function() {
-        return this.get('model.application.device');
-    }.property('model.application.device'),
+        return this.get('model.scene.application.device');
+    }.property('model.scene.application.device'),
 
     width: function() {
         return this.get('device.screenWidth');
@@ -50,7 +50,6 @@ App.ScreenCanvasComponent = Ember.Component.extend({
             var splittedPath = path.split('/');
             var selectedType = splittedPath[splittedPath.get('length') - 2];
             var selectedId = splittedPath.get('lastObject');
-            //console.log('OOOO ' + path + ' ' + selectedType + ' ' + selectedId + ' ' + this.get('uiControlTypes').find(function(type) {return type === selectedType;}));
             if(this.get('uiControlTypes').find(function(type) {return type === selectedType;}) !== undefined) {
                 this.clear();
                 this.drawAllConstraints(selectedId);
@@ -78,7 +77,11 @@ App.ScreenCanvasComponent = Ember.Component.extend({
         'model.uiPhoneControls.@each.marginEnd',
         'model.controlChains.@each.type',
         'model.controlChains.@each.axis',
-        'model.controlChains.@each.byas'
+        'model.controlChains.@each.byas',
+        'model.hasTabMenu',
+        'model.startInScreen',
+        'model.width',
+        'model.sceneScreen.viewControllers.@each.uiPhoneControls.@each'
     ).on('init'),
 
     drawAllConstraints: function(id) {
@@ -191,9 +194,9 @@ App.ScreenCanvasComponent = Ember.Component.extend({
             ctx.fillStyle = "#00ff00";
             var plus = 7
             if(constraint.get('withParent')) {
-                var isIOS = this.get('model.application.device.platform') === 'ios';
+                var isIOS = this.get('model.scene.application.device.platform') === 'ios';
                 // Compute if the viewController has the menu bar
-                var currentViewControllerIsMenu = this.get('model.hasMenu');
+                var currentViewControllerIsMenu = this.get('model.hasTabMenu');
                 var viewTop = this.get('device.viewTop');
                 if(currentViewControllerIsMenu && !isIOS) {
                     viewTop = viewTop + 48;
@@ -210,7 +213,7 @@ App.ScreenCanvasComponent = Ember.Component.extend({
                     ctx.fillRect(control.get('centerX'), control.get('bottom') - plus, 2, endY);
                 } else if(constraint.get('layoutEdge') === 'start') {
                     var endX = parseFloat(control.get('marginStart')) + plus;
-                    ctx.fillRect(0, control.get('centerY'), endX, 2);
+                    ctx.fillRect(this.get('model.startInScreen'), control.get('centerY'), endX, 2);
                 } else if(constraint.get('layoutEdge') === 'end') {
                     var endX = parseFloat(control.get('marginEnd')) + plus;
                     ctx.fillRect(control.get('end') - plus, control.get('centerY'), endX, 2);
@@ -218,7 +221,7 @@ App.ScreenCanvasComponent = Ember.Component.extend({
                     ctx.fillStyle = "#ffdd00";
                     var endX = control.get('start') + plus;
                     ctx.fillRect(0, control.get('centerY'), endX, 2);
-                    endX = this.get('device.screenWidth') - control.get('end') + plus;
+                    endX = this.get('model.width') - control.get('end') + plus;
                     ctx.fillRect(control.get('end') - plus, control.get('centerY'), endX, 2);
                     ctx.fillStyle = "#00ff00";
                 } else if(constraint.get('layoutEdge') === 'centerY') {

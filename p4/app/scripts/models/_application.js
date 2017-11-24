@@ -8,10 +8,10 @@ App.Application = DS.Model.extend({
     dataHandler: DS.belongsTo('dataHandler'),
 
     watchControllers: DS.hasMany('watchController', {inverse: 'application', async: true}),
-    viewControllers: DS.hasMany('viewController', {inverse: 'application', async: true}),
+    scenes: DS.hasMany('scene', {inverse: 'application', async: true}),
 
     deleteRecord: function () {
-        this.get('watchControllers').forEach(function (watchController) {
+        /*this.get('watchControllers').forEach(function (watchController) {
             Ember.run.once(this, function () {
                 watchController.deleteRecord();
                 watchController.save();
@@ -23,7 +23,7 @@ App.Application = DS.Model.extend({
                 viewController.deleteRecord();
                 viewController.save();
             });
-        });
+        });*/
 
         this._super();
     },
@@ -45,18 +45,18 @@ App.Application = DS.Model.extend({
 
             appModel.appendChild(self.get('dataHandler').toXml(xmlDoc));
 
-            var viewControllers = self.get('viewControllers');
+            var scenes = self.get('scenes');
             var watchControllers = self.get('watchControllers');
 
-            Promise.all(viewControllers.map(function (item_viewControllers) {
-                return item_viewControllers.toXml(xmlDoc);
-            })).then(function (values_viewControllers) {
+            Promise.all(scenes.map(function (item_scenes) {
+                return item_scenes.toXml(xmlDoc);
+            })).then(function (values_scenes) {
 
                 Promise.all(watchControllers.map(function (item_watchControllers) {
                     return item_watchControllers.toXml(xmlDoc);
                 })).then(function (values_watchControllers) {
 
-                    values_viewControllers.map(function (value) {
+                    values_scenes.map(function (value) {
                         appModel.appendChild(value);
                     });
 

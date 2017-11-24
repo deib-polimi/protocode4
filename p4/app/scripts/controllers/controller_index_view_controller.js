@@ -45,9 +45,17 @@ App.ViewControllerIndexController = Ember.ObjectController.extend(App.Saveable, 
         deleteViewController: function () {
             if (confirm('Are you sure to delete?')) {
                 var viewController = this.get('model');
-                var application = viewController.get('application');
-                application.get('viewControllers').removeObject(viewController);
-                application.save();
+                var scene = viewController.get('scene');
+                scene.get('viewControllers').removeObject(viewController);
+                scene.save();
+                var screens = scene.get('sceneScreens');
+                screens.forEach(function(sc) {
+                    var vcs = sc.get('viewControllers');
+                    if(vcs.contains(viewController)) {
+                        vcs.removeObject(viewController);
+                        vcs.save();
+                    }
+                });
                 this.store.find('navigation').then(function (navigations) {
                     navigations.forEach(function (navigation) {
                         if (navigation.get('destination') === viewController) {
@@ -58,7 +66,7 @@ App.ViewControllerIndexController = Ember.ObjectController.extend(App.Saveable, 
                 });
                 viewController.deleteRecord();
                 viewController.save();
-                this.transitionToRoute('/editor/viewControllers');
+                this.transitionToRoute('scene', scene);
             }
         }
 

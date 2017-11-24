@@ -2,7 +2,7 @@
  templates/control_chain/index.hbs
  */
 App.ControlChainIndexController = Ember.ObjectController.extend(App.Saveable, {
-    needs: ['viewControllers'],
+    needs: ['scenes'],
     axises: ['horizontal', 'vertical'],
     types: ['spread', 'spread_inside', 'packed', 'weighted'],
     uiControlTypes: [

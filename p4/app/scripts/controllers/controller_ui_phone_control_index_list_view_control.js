@@ -2,7 +2,7 @@
  templates/control_list_view/index.hbs
  */
 App.ControlListViewIndexController = App.UiPhoneControlController.extend(App.ClickListenable, {
-    needs: ['viewControllers'],
+    needs: ['scenes'],
 
     isCreating: false,
     newNameListViewCell: 'newListItem',

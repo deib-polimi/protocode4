@@ -2,9 +2,11 @@ App.ViewController = DS.Model.extend({
     name: DS.attr('string'),
     backgroundColor: DS.attr('string', {defaultValue: ''}),
     backgroundImage: DS.attr('string', {defaultValue: ''}),
-    launcher: DS.attr('boolean', {defaultValue: false}),
 
-    application: DS.belongsTo('application', {inverse: 'viewControllers'}),
+    scene: DS.belongsTo('scene', {inverse: 'viewControllers'}),
+    sceneScreen: DS.belongsTo('sceneScreen', {inverse: 'viewControllers'}),
+    widthPercentInScreen: DS.attr('number', {defaultValue: 0.35}),
+    /*nameInScreen: DS.attr('string'),*/
 
     uiPhoneControls: DS.hasMany('uiPhoneControl', {polymorphic: true, async: true}),
     controlChains: DS.hasMany('controlChain', {inverse: 'viewController'}),
@@ -12,22 +14,120 @@ App.ViewController = DS.Model.extend({
     progressDialogs: DS.hasMany('progressDialog', {inverse: 'viewController'}),
     asyncTasks: DS.hasMany('asyncTask', {inverse: 'viewController'}),
 
-    xmlName: 'viewControllers',
+    xmlName: 'viewController',
 
-    hasMenu: function() {
-        var hasMenu = false;
-        /*var viewControllerName = this.get('name');
-        var menuItems = this.get('application.menu.menuItems');
-        menuItems.forEach(function (menuItem) {
-            if (viewControllerName === menuItem.get('navigation.destination.name')) {
-                hasMenu = true;
+    hasTabMenu: function() {
+        if(this.get('scene.application.device.type') === 'smartphone') {
+            if(this.get('scene.viewControllers.length') > 1) {
+                return true;
+            } else {
+                return false;
             }
-        });*/
-        return hasMenu;
+        } else {
+            if(this.get('scene.screensNumber') > 1) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }.property(
-        'name',
-        'application.menu.menuItems.@each'
+        'scene.application.device.platform',
+        'scene.viewControllers.length',
+        'scene.screensNumber'
     ),
+
+    maxWidthPercentInScreen: function() {
+        if(this.get('sceneScreen')) {
+            return this.get('sceneScreen').getMaxWidthPercentInScreen(this);
+        }
+        return -1;
+    }.property(
+        'widthPercentInScreen',
+        'sceneScreen',
+        'sceneScreen.viewControllers.@each.widthPercentInScreen'
+    ),
+
+    horizontalMinimumSpace: function() {
+        var minimumSpace = 0;
+        this.get('controlChains').forEach(function(chain) {
+            if(chain.get('axis') === 'horizontal') {
+                var space = chain.getHorizontalSpaceForControls();
+                if(space > minimumSpace) {
+                    minimumSpace = space;
+                }
+            }
+        });
+        /*this.get('uiPhoneControls').then(function(controls) {
+            controls.forEach(function(control) {
+
+            });
+        });*/
+        return minimumSpace;
+    }.property(
+        'controlChains.@each',
+        'uiPhoneControls.@each'
+    ),
+
+    startInScreen: function() {
+        if(this.get('scene.application.device.type') === 'smartphone') {
+            return 0;
+        } else {
+            if(this.get('sceneScreen')) {
+                return this.get('sceneScreen').getPrecedentEnd(this);
+            } else {
+                return 0;
+            }
+        }
+    }.property(
+        'sceneScreen',
+        'sceneScreen.viewControllers.@each.widthPercentInScreen',
+        'scene.application.device.type'
+    ),
+
+    endInScreen: function() {
+        return this.get('startInScreen') + this.get('width');
+    }.property(
+        'width',
+        'startInScreen'
+    ),
+
+    width: function() {
+        var width = this.get('scene.application.device.screenWidth');
+        if(this.get('scene.application.device.type') === 'smartphone') {
+            return width;
+        } else {
+            if(this.get('sceneScreen')) {
+                return width * parseFloat(this.get('widthPercentInScreen'));
+            } else {
+                return width;
+            }
+        }
+    }.property(
+        'sceneScreen',
+        'widthPercentInScreen',
+        'scene.application.device.type',
+        'scene.application.device.screenWidth'
+    ),
+
+    isInAScreen: function() {
+        if(this.get('sceneScreen')) {
+            return true;
+        }
+        return false;
+    }.property('sceneScreen'),
+
+    getWidthFromPercent: function(widthPercent) {
+        var result = this.get('scene.application.device.screenWidth') * widthPercent;
+        if(this.get('scene.application.device.type') === 'smartphone') {
+            return result;
+        } else {
+            if(this.get('sceneScreen')) {
+                return parseFloat(this.get('widthPercentInScreen')) * result;
+            } else {
+                return result;
+            }
+        }
+    },
 
     deleteRecord: function () {
         var self = this;
@@ -72,7 +172,6 @@ App.ViewController = DS.Model.extend({
             viewController.setAttribute('name', self.get('name'));
             viewController.setAttribute('backgroundColor', self.get('backgroundColor'));
             viewController.setAttribute('backgroundImage', self.get('backgroundImage'));
-            viewController.setAttribute('launcher', self.get('launcher'));
 
             self.get('alertDialogs').map(function (alertDialog) {
                 viewController.appendChild(alertDialog.toXml(xmlDoc));

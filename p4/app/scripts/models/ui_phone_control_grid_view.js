@@ -11,8 +11,8 @@ App.GridView = App.UiPhoneControl.extend({
     xmlName: 'gridViews',
 
     width: function() {
-        return this.get('viewController.application.device.screenWidth');
-    }.property('viewController.application.device.screenWidth'),
+        return this.get('viewController.scene.application.device.screenWidth');
+    }.property('viewController.scene.application.device.screenWidth'),
 
     minWidth: function() {
         return this.get('width');

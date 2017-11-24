@@ -6,6 +6,7 @@
 {{/each}}
 
 <div class="status-bar"></div>
+<!-- App Menu Icon -->
 {{#if hasMenu}}
     <div class="action-bar">
         {{#link-to "appMenu" menu}}<div class="icon-menu"></div>{{/link-to}}
@@ -17,8 +18,15 @@
     </div>
 {{/if}}
 
+<!-- Tab Menu (Multiple screens in a scene) -->
+{{#if model.hasTabMenu}}
+    {{view App.MenuTabView}}
+{{/if}}
+
+<!-- App Menu -->
 {{#if hasMenu}}
     {{view App.MenuView}}
     {{#link-to "viewController" model}}{{view App.MenuViewShadow}}{{/link-to}}
 {{/if}}
+
 <div class="command-bar"></div>

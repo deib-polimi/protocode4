@@ -31,6 +31,16 @@ body,
     color: #333333;
 }
 
+.panel-dark {
+    border-color: #ddd;
+}
+
+.panel-dark .panel-heading,
+.panel-dark .panel-footer {
+    background-color: #f1f1f1;
+    color: #333333;
+}
+
 .panel-info {
     border-color: #ddd;
 }
@@ -83,6 +93,16 @@ body,
     list-style: none;
 }
 
+.list-screen-item {
+    margin-top: 10px;
+    margin-bottom: 0;
+    padding-bottom: 10px;
+    padding-left: 5px;
+    border-top: none;
+    border-bottom: 1px solid #ddd;
+    list-style: none;
+}
+
 .tab-pane .list-group-item {
     margin-bottom: -1px;
     border-top: 1px solid #ddd;
@@ -112,7 +132,7 @@ body,
     line-height: 30px;
 }
 
-#view-controllers-panel {
+#scenes-panel {
     border-top-left-radius: 0;
 }
 
@@ -142,6 +162,35 @@ body,
 .btn-chain:hover {
     color: #e0e0e0;
     background-color: #cc181e;
+}
+
+.btn-chain:focus {
+    color: #ffffff;
+    background-color: #f44336;
+}
+
+.btn-add-colored {
+    color: #ffffff;
+    background-color: #669900;
+}
+
+.btn-add-colored:hover {
+    color: #ffffff;
+    background-color: #334d00;
+}
+
+.btn-add-colored:focus {
+    color: #ffffff;
+    background-color: #669900;
+}
+
+.separation-line {
+    position: absolute;
+    display: flex;
+    overflow: hidden;
+    width: 1px;
+    margin: 0px 0px 0px 0px;
+    background-color: #ccc;
 }
 
 /*============ CONTROL PICKER ============*/

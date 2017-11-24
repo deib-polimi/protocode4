@@ -502,20 +502,34 @@
     width: 100%;
     //(px = points iphone)
     height: 48px; // +1 border top
-    top: 79px;
+    top: 78px;
 }
 
-.tab-menu-item.ios {
+.Nexus7 .tab-menu,
+.Nexus9 .tab-menu,
+.Nexus10 .tab-menu {
+    position: absolute;
+    display: flex;
+    justify-content: space-around;
+    align-content: center;
+    align-items: flex-end;
+    background-color: #3F51B5;
+    width: 100%;
+    //(px = points iphone)
+    height: 48px; // +1 border top
+    top: 87px;
+}
+
+.tab-menu-item .ios {
     position: relative;
     color: $ios-color;
     flex: 0 1 auto;
     align-self: auto;
     min-width: 0;
     font-size: 11px;
-    cursor: pointer;
 }
 
-.tab-menu-item.android {
+.tab-menu-item .android {
     position: relative;
     color: #ffffff;
     text-transform: uppercase;
@@ -526,7 +540,8 @@
     text-align: center;
     padding-bottom: 12px;
     border-bottom: 2px solid #3F51B5;
-    cursor: pointer;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .tab-menu-item.android .control-content {

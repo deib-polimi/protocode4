@@ -7,6 +7,7 @@ App.ViewControllerController = Ember.ObjectController.extend({
     zoomLevel: 1,
     isRotated: false,
 
+    scene: Ember.computed.alias('model.scene'),
     menu: Ember.computed.alias('controllers.editor.menu'),
     device: Ember.computed.alias('controllers.editor.device'),
 
@@ -17,6 +18,61 @@ App.ViewControllerController = Ember.ObjectController.extend({
     currentDeviceIsSmartphone: function() {
         return this.get('device.type') === 'smartphone';
     }.property('device.type'),
+
+    tabMenuItems: function() {
+        if(this.get('currentDeviceIsSmartphone')) {
+            return this.get('scene.viewControllers').map(function(vc) {
+                return vc.get('name');
+            });
+        } else {
+            return this.get('scene.sceneScreens').filter(function(sc) {
+                return sc.get('viewControllers.length') > 0;
+            }).map(function(sc) {
+                return sc.get('name');
+            });
+        }
+    }.property(
+        'currentDeviceIsSmartphone',
+        'scene.viewControllers.@each.name',
+        'scene.sceneScreens.@each.name'
+    ),
+
+    haveScreen: function() {
+        if(this.get('model.sceneScreen')) {
+            return true;
+        }
+        return false;
+    }.property('model.sceneScreen'),
+
+    separationLinesStyle: function() {
+        if(this.get('model.sceneScreen')) {
+            var result = [];
+            var top = this.get('device.viewTop');
+            var height = this.get('device.viewBottom') - this.get('device.viewTop');
+            if(this.get('model.hasTabMenu')) {
+                if(this.get('device.platform') === 'android') {
+                    top = top + 48;
+                }
+                height = height - 48;
+            }
+            var vcs = this.get('model.sceneScreen.viewControllers');
+            vcs.without(vcs.get('firstObject')).forEach(function(vc) {
+                var style = "left:" + vc.get('startInScreen') +
+                    "px;top:" + top + "px;height:" + height + "px;";
+                result.pushObject(style);
+            });
+
+            return result;
+        }
+        return [];
+    }.property(
+        'model.sceneScreen',
+        'model.sceneScreen.viewControllers.@each.startInScreen',
+        'model.hasTabMenu',
+        'device.platform',
+        'device.viewTop',
+        'device.viewBottom'
+    ),
 
     isRotatedObserver: function() {
         if(!this.get('isDeleted') && this.get('device.type') === 'tablet') {

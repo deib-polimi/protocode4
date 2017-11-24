@@ -11,7 +11,7 @@ App.Device = DS.Model.extend({
     cssHeight: DS.attr('number'),
 
     centerX: function() {
-        return (this.get('width') / 2);
+        return (this.get('screenWidth') / 2);
     }.property('width'),
 
     centerY: function() {

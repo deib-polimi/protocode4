@@ -72,14 +72,15 @@ App.ViewControllerRoute = Ember.Route.extend({
                     ratioHeight: 1
                 });
 
-                this.get('controller.model').save();
-
                 if (receiver.get('context').constructor.toString() === 'App.Container') {
                     uiPhoneControl.set('parentContainer', receiver.get('context'));
                     receiver.get('context').save();
                 }
 
-                uiPhoneControl.save();
+                uiPhoneControl.save().then(function (control) {
+                    control.get('viewController.uiPhoneControls').addObject(control);
+                    control.get('viewController').save();
+                });
             }
 
 

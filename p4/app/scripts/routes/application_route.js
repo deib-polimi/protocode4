@@ -32,6 +32,8 @@ App.ApplicationRoute = Ember.Route.extend({
             entityRelationships: this.store.find('entityRelationship'),
 
             // view part
+            scenes: this.store.find('scene'),
+            sceneScreens: this.store.find('sceneScreen'),
             viewControllers: this.store.find('viewController'),
             watchControllers: this.store.find('watchController'),
 
@@ -111,7 +113,7 @@ App.ApplicationRoute = Ember.Route.extend({
                     'container',
                     'smartphone',
                     'tablet',
-                    'viewController',
+                    'scene',
                     'watchController',
                     'smartwatch',
                     'menu',

@@ -54,34 +54,34 @@ App.ControlChain = DS.Model.extend({
     }.property('type', 'valid'),
 
     viewTop: function() {
-        var isAndroid = this.get('viewController.application.device.platform') === 'android';
+        var isAndroid = this.get('viewController.scene.application.device.platform') === 'android';
         // Compute if the viewController has the menu bar
-        var currentViewControllerIsMenu = this.get('viewController.hasMenu');
+        var currentViewControllerIsMenu = this.get('viewController.hasTabMenu');
         if(isAndroid && currentViewControllerIsMenu) {
-            return this.get('viewController.application.device.viewTop') + 48;
+            return this.get('viewController.scene.application.device.viewTop') + 48;
         } else {
-            return this.get('viewController.application.device.viewTop');
+            return this.get('viewController.scene.application.device.viewTop');
         }
     }.property(
-        'viewController.application.device.platform',
-        'viewController.hasMenu',
-        'viewController.application.device.viewTop'
+        'viewController.scene.application.device.platform',
+        'viewController.hasTabMenu',
+        'viewController.scene.application.device.viewTop'
     ),
 
     viewBottom: function() {
-        var isAndroid = this.get('viewController.application.device.platform') === 'android';
+        var isAndroid = this.get('viewController.scene.application.device.platform') === 'android';
         // Compute if the viewController has the menu bar
-        var currentViewControllerIsMenu = this.get('viewController.hasMenu');
+        var currentViewControllerIsMenu = this.get('viewController.hasTabMenu');
         if(!isAndroid && currentViewControllerIsMenu) {
-            return this.get('viewController.application.device.viewBottom') - 48;
+            return this.get('viewController.scene.application.device.viewBottom') - 48;
         } else {
-            return this.get('viewController.application.device.viewBottom');
+            return this.get('viewController.scene.application.device.viewBottom');
         }
     }.property(
-        'viewController.application.device.platform',
-        'viewController.hasMenu',
-        'viewController.application.menu.menuItems.@each',
-        'viewController.application.device.viewBottom'
+        'viewController.scene.application.device.platform',
+        'viewController.hasTabMenu',
+        'viewController.scene.application.menu.menuItems.@each',
+        'viewController.scene.application.device.viewBottom'
     ),
 
     screenHeight: function() {
@@ -97,7 +97,7 @@ App.ControlChain = DS.Model.extend({
         }
         if(this.get('axis') === 'horizontal') {
             dimension = 'width';
-            availableSpace = this.get('viewController.application.device.screenWidth');
+            availableSpace = this.get('viewController.width');
         } else {
             dimension = 'height';
             availableSpace = this.get('screenHeight');
@@ -111,6 +111,8 @@ App.ControlChain = DS.Model.extend({
             lastMargin = parseFloat(controls.get('lastObject.marginEnd'));
         }
         availableSpace = availableSpace  - firstMargin - lastMargin;
+        // WEIGHTED case: availableSpace is the space available for controls
+        // ALL other cases: availableSpace is the space available to distribute the controls (empty space)
         if(this.get('type') === 'weighted') {
             return availableSpace - ((controls.get('length') + 1) * this.get('spacing'));
         } else if(this.get('type') === 'packed') {
@@ -132,7 +134,7 @@ App.ControlChain = DS.Model.extend({
         'axis',
         'screenHeight',
         'spacing',
-        'viewController.application.device.screenWidth',
+        'viewController.width',
         'uiPhoneControls.length',
         'uiPhoneControls.@each.width',
         'uiPhoneControls.@each.height',
@@ -427,6 +429,18 @@ App.ControlChain = DS.Model.extend({
         } else {
             return true;
         }
+    },
+
+    getHorizontalSpaceForControls: function() {
+        var controls = this.get('uiPhoneControls');
+        var spaceForControls = 0;
+        controls.forEach(function(c) {
+            spaceForControls = spaceForControls + parseFloat(c.get('outerWidth'));
+        });
+        if(this.get('type') === 'weighted' || this.get('type') === 'packed') {
+            spaceForControls = spaceForControls - ((controls.get('length') + 1) * this.get('spacing'));
+        }
+        return spaceForControls;
     },
 
     toXml: function (xmlDoc) {

@@ -4,7 +4,7 @@
 App.AppMenuIndexController = Ember.ObjectController.extend({
     isCreating: false,
     newNameMenuItem: 'newMenuItem',
-    needs: ['viewController'],
+    needs: ['scene'],
 
     actions: {
         setCreating: function (value) {
@@ -19,7 +19,7 @@ App.AppMenuIndexController = Ember.ObjectController.extend({
             }
 
             var navigation = this.store.createRecord('navigation', {
-                destination: this.get('controllers.viewController.model')
+                destination: this.get('controllers.scene.model')
             });
 
             navigation.save();

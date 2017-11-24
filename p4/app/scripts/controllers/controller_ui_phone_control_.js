@@ -40,7 +40,10 @@ App.UiPhoneControlController = Ember.ObjectController.extend(App.Saveable, {
 
             this.set('number', this.get('number') + 1);
 
-            constraint.save();
+            constraint.save().then(function (cons) {
+                cons.get('uiPhoneControl.constraints').addObject(cons);
+                cons.get('uiPhoneControl').save();
+            });;
 
             this.transitionToRoute('constraint', constraint);
         },

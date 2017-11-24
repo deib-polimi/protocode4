@@ -2,7 +2,7 @@
  templates/control_grid_view/index.hbs
  */
 App.ControlGridViewIndexController = App.UiPhoneControlController.extend(App.ClickListenable, {
-    needs: ['viewControllers'],
+    needs: ['scenes'],
 
     isCreating: false,
     newNameGridViewCell: 'newGridCell',
