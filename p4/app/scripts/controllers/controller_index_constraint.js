@@ -30,10 +30,10 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
             return 1;
         }
         var control = thisConstraint.get('uiPhoneControl');
-        var constraints = thisConstraint.get('uiPhoneControl.constraints').without(thisConstraint);
-        var isIOS = thisConstraint.get('uiPhoneControl.viewController.scene.application.device.platform') === 'ios';
+        var constraints = control.get('constraints').without(thisConstraint);
+        var isIOS = control.get('viewController.scene.application.device.platform') === 'ios';
         // Compute if the viewController has the menu bar
-        var currentViewControllerIsMenu = thisConstraint.get('uiPhoneControl.viewController.hasTabMenu');
+        var currentViewControllerIsMenu = control.get('viewController.hasTabMenu');
         // Check x position over-constrained
         var constrainedX;
         if(thisConstraint.get('layoutEdge') === 'start' || thisConstraint.get('layoutEdge') === 'end') {
@@ -92,7 +92,7 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
             }
         }
         // Check boundaries: top
-        var minTop = thisConstraint.get('uiPhoneControl.viewController.scene.application.device.viewTop');
+        var minTop = control.get('viewController.scene.application.device.viewTop');
         if(currentViewControllerIsMenu && !isIOS) {
             minTop = minTop + 48;
         }
@@ -100,7 +100,7 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
             return 4;
         }
         // Check boundaries: bottom
-        var maxBottom = thisConstraint.get('uiPhoneControl.viewController.scene.application.device.viewBottom');
+        var maxBottom = control.get('viewController.scene.application.device.viewBottom');
         if(currentViewControllerIsMenu && isIOS) {
             maxBottom = maxBottom - 48;
         }
@@ -108,12 +108,12 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
             return 5;
         }
         // Check boundaries: start
-        var minStart = 0;
+        var minStart = control.get('viewController.startInScreen');
         if(control.getStartWithMargin(false) < minStart) {
             return 6;
         }
         // Check boundaries: end
-        var maxEnd = thisConstraint.get('uiPhoneControl.viewController.scene.application.device.screenWidth');
+        var maxEnd = control.get('viewController.endInScreen');
         if(control.getEndWithMargin(false) > maxEnd) {
             return 7;
         }

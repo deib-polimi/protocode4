@@ -12,7 +12,7 @@ App.ScenesController = Ember.ArrayController.extend({
         }
     }),
     scenesCount: Ember.computed.alias('content.length'),
-    needs: ['uiPhoneControlTemplates', 'editor'],
+    needs: ['editor'],
 
     actions: {
         setCreating: function (value) {

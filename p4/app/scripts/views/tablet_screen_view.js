@@ -1,6 +1,5 @@
-App.TabletScreenView = Ember.View.extend(App.UiDroppable, {
+App.TabletScreenView = Ember.View.extend({
   tagName: 'div',
-  attributeBindings: ['style'],
   classNames: ['tablet-screen-view'],
   classNameBindings: ['isRotated'],
   templateName: 'views/tablet_screen_view',
@@ -11,14 +10,6 @@ App.TabletScreenView = Ember.View.extend(App.UiDroppable, {
       } else {
           return '';
       }
-  }.property('context.isRotated'),
-
-  style: function() {
-    var style = "";
-    style += 'background-color: ' + this.get('context.backgroundColor') + ";";
-  	return style;
-  }.property(
-  	'context.backgroundColor'
-  )
+  }.property('context.isRotated')
 
 });

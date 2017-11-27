@@ -32,13 +32,11 @@ App.ImageView = App.UiPhoneControl.extend({
         var self = this;
 
         if (viewController) {
-            viewController.get('uiPhoneControls').then(function (uiPhoneControls) {
-                uiPhoneControls.forEach(function (uiPhoneControl) {
-                    if (uiPhoneControl.get('imageView') === self) {
-                        uiPhoneControl.set('imageView', null);
-                        uiPhoneControl.save();
-                    }
-                });
+            viewController.get('uiPhoneControls').forEach(function (uiPhoneControl) {
+                if (uiPhoneControl.get('imageView') === self) {
+                    uiPhoneControl.set('imageView', null);
+                    uiPhoneControl.save();
+                }
             });
         }
 

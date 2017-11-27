@@ -1,9 +1,9 @@
 App.SceneRoute = Ember.Route.extend({
 
-    /*actions: {
+    actions: {
 
         refreshModel: function () {
             this.refresh();
         }
-    }*/
+    }
 });

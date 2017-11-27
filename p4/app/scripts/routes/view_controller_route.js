@@ -1,6 +1,11 @@
 App.ViewControllerRoute = Ember.Route.extend({
     zIndex: 5,
 
+    init: function () {
+        this._super();
+        this.generateController('uiPhoneControlTemplates', []).set('model', this.store.find('uiPhoneControlTemplate'));
+    },
+
     actions: {
         increaseZoom: function () {
             this.set('controller.zoomLevel', Math.round((this.get('controller.zoomLevel') + 0.2) * 100) / 100);
@@ -18,9 +23,15 @@ App.ViewControllerRoute = Ember.Route.extend({
             }
         },
 
-        addUiPhoneControl: function (controlType, receiver) {
-            console.log('Receiver of drop event: ' + receiver.get('context.name'));
-            console.log('Type of receiver: ' + receiver.get('context').constructor.toString());
+        addUiPhoneControl: function (receiver, controlType) {
+            var container;
+            if(receiver.constructor.toString() === 'App.ViewControllerController') {
+                container = receiver.get('model');
+            } else if(receiver.constructor.toString() === 'App.ViewController') {
+                container = receiver;
+            }
+            console.log('Receiver of drop event: ' + container.get('name'));
+            console.log('Type of receiver: ' + container.constructor.toString());
 
             /*
              Multiple VideoViews or AudioPlayers
@@ -28,7 +39,7 @@ App.ViewControllerRoute = Ember.Route.extend({
              */
             var videoViewAlert = false;
             var audioPlayerAlert = false;
-            this.get('context').get('uiPhoneControls').forEach(function (item) {
+            container.get('uiPhoneControls').forEach(function (item) {
                 if (item.toString().indexOf('VideoView') > -1 && controlType === 'videoView') {
                     videoViewAlert = true;
                 } else if (item.toString().indexOf('AudioPlayer') > -1 && controlType === 'audioPlayer') {
@@ -48,7 +59,7 @@ App.ViewControllerRoute = Ember.Route.extend({
              Photo/Videocamera Controller, Audio Recorder and Map
              Must be instantiated at most once per ViewController
              */
-            this.get('context').get('uiPhoneControls').forEach(function (item) {
+            container.get('uiPhoneControls').forEach(function (item) {
                 if (item.toString().indexOf('PhotocameraController') > -1 && controlType === 'photocameraController') {
                     alert('Only a single Photocamera Controller per each view is allowed!');
                     canInstantiate = false;
@@ -66,24 +77,21 @@ App.ViewControllerRoute = Ember.Route.extend({
 
             if (canInstantiate) {
                 var uiPhoneControl = this.store.createRecord(controlType, {
-                    viewController: this.get('controller.model'),
+                    viewController: container,
                     valueInChain: 1,
                     ratioWidth: 1,
                     ratioHeight: 1
                 });
 
-                if (receiver.get('context').constructor.toString() === 'App.Container') {
-                    uiPhoneControl.set('parentContainer', receiver.get('context'));
-                    receiver.get('context').save();
+                if (container.constructor.toString() === 'App.Container') {
+                    uiPhoneControl.set('parentContainer', container);
                 }
 
                 uiPhoneControl.save().then(function (control) {
-                    control.get('viewController.uiPhoneControls').addObject(control);
-                    control.get('viewController').save();
+                    container.get('uiPhoneControls').addObject(control);
+                    container.save();
                 });
             }
-
-
         }
     }
 });

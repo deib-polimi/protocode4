@@ -86,7 +86,14 @@ App.ScreenCanvasComponent = Ember.Component.extend({
 
     drawAllConstraints: function(id) {
         var self = this;
-        var controls = this.get('model.uiPhoneControls').then(function(controls) {
+        var controlsArray = [];
+        controlsArray.pushObject(this.get('model.uiPhoneControls'));
+        if(this.get('model.sceneScreen')) {
+            this.get('model.sceneScreen.viewControllers').forEach(function(vc) {
+                controlsArray.pushObject(vc.get('uiPhoneControls'));
+            });
+        }
+        controlsArray.forEach(function(controls) {
             var control = controls.find(function(control) {return control.get('id') === id});
             if(control !== undefined) {
                 var constraints = control.get('constraints').filter(function(c) {
@@ -213,15 +220,14 @@ App.ScreenCanvasComponent = Ember.Component.extend({
                     ctx.fillRect(control.get('centerX'), control.get('bottom') - plus, 2, endY);
                 } else if(constraint.get('layoutEdge') === 'start') {
                     var endX = parseFloat(control.get('marginStart')) + plus;
-                    ctx.fillRect(this.get('model.startInScreen'), control.get('centerY'), endX, 2);
+                    ctx.fillRect(control.get('viewController.startInScreen'), control.get('centerY'), endX, 2);
                 } else if(constraint.get('layoutEdge') === 'end') {
                     var endX = parseFloat(control.get('marginEnd')) + plus;
                     ctx.fillRect(control.get('end') - plus, control.get('centerY'), endX, 2);
                 } else if(constraint.get('layoutEdge') === 'centerX') {
                     ctx.fillStyle = "#ffdd00";
-                    var endX = control.get('start') + plus;
-                    ctx.fillRect(0, control.get('centerY'), endX, 2);
-                    endX = this.get('model.width') - control.get('end') + plus;
+                    var endX = control.get('start') - control.get('viewController.startInScreen') + plus;
+                    ctx.fillRect(control.get('viewController.startInScreen'), control.get('centerY'), endX, 2);
                     ctx.fillRect(control.get('end') - plus, control.get('centerY'), endX, 2);
                     ctx.fillStyle = "#00ff00";
                 } else if(constraint.get('layoutEdge') === 'centerY') {
@@ -231,7 +237,6 @@ App.ScreenCanvasComponent = Ember.Component.extend({
                     endY = this.get('device.viewBottom') - control.get('bottom') + plus;
                     ctx.fillRect(control.get('centerX'), control.get('bottom') - plus, 2, endY);
                     ctx.fillStyle = "#00ff00";
-                    //console.log('AAAA ' + startX + ' ' + control.get('top') + ' ' + control.get('bottom') + ' ' + this.get('device.viewTop') + ' ' + this.get('device.viewBottom'));
                 }
             } else {
                 var x, y;

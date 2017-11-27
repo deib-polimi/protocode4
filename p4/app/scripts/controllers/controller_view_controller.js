@@ -2,7 +2,7 @@
  templates/view_controller.hbs
  */
 App.ViewControllerController = Ember.ObjectController.extend({
-    needs: ['editor'],
+    needs: ['uiPhoneControlTemplates', 'editor'],
     isActive: false,
     zoomLevel: 1,
     isRotated: false,
@@ -20,16 +20,20 @@ App.ViewControllerController = Ember.ObjectController.extend({
     }.property('device.type'),
 
     tabMenuItems: function() {
-        if(this.get('currentDeviceIsSmartphone')) {
-            return this.get('scene.viewControllers').map(function(vc) {
-                return vc.get('name');
-            });
+        if(this.get('scene.viewControllers')) {
+            if(this.get('currentDeviceIsSmartphone')) {
+                return this.get('scene.viewControllers').map(function(vc) {
+                    return vc.get('name');
+                });
+            } else {
+                return this.get('scene.sceneScreens').filter(function(sc) {
+                    return sc.get('viewControllers.length') > 0;
+                }).map(function(sc) {
+                    return sc.get('name');
+                });
+            }
         } else {
-            return this.get('scene.sceneScreens').filter(function(sc) {
-                return sc.get('viewControllers.length') > 0;
-            }).map(function(sc) {
-                return sc.get('name');
-            });
+            return null;
         }
     }.property(
         'currentDeviceIsSmartphone',

@@ -586,7 +586,7 @@ App.UiPhoneControl = App.UiControl.extend({
                         if(self.get('parentContainer') !== null) {
                             result = (self.get('parentContainer.width') / 2) - (self.get('outerWidth') / 2);
                         } else {
-                            result = (self.get('viewController.width') / 2) - (self.get('outerWidth') / 2);
+                            result = self.get('viewController.startInScreen') + (self.get('viewController.width') / 2) - (self.get('outerWidth') / 2);
                         }
                     }
                 }
@@ -697,9 +697,9 @@ App.UiPhoneControl = App.UiControl.extend({
                     } else if(constraint.get('referenceLayoutEdge') === 'centerX') {
                         // Case centerX - parentCenterX
                         if(self.get('parentContainer') !== null) {
-                            result = (self.get('parentContainer.width') / 2) + (self.get('outerWidth') / 2);
+                            result = self.get('startWithMargin') + self.get('outerWidth');
                         } else {
-                            result = (self.get('viewController.width') / 2) + (self.get('outerWidth') / 2);
+                            result = self.get('startWithMargin') + self.get('outerWidth');
                         }
                     }
                 }
@@ -1078,16 +1078,6 @@ App.UiPhoneControl = App.UiControl.extend({
             uiPhoneControls.pushObject(self);
             this.get('parentContainer').save();
         }
-        else {
-            var viewController = this.get('viewController');
-            viewController.get('uiPhoneControls').then(function (uiPhoneControls) {
-                uiPhoneControls.pushObject(self);
-                viewController.save();
-            });
-
-            this.save();
-
-        }
     },
 
     deleteRecord: function () {
@@ -1095,21 +1085,19 @@ App.UiPhoneControl = App.UiControl.extend({
         var self = this;
 
         if (viewController) {
-            viewController.get('uiPhoneControls').then(function (uiPhoneControls) {
-                uiPhoneControls.forEach(function (uiPhoneControl) {
-                    var constraints = uiPhoneControl.get('constraints');
-                    constraints.forEach(function (constraint) {
-                        if (constraint.get('referenceElement') === self) {
-                            //Ember.run.once(self, function () {
-                                if(constraint) {
-                                    constraint.set('referenceElement', null);
-                                    constraint.save();
-                                    uiPhoneControl.get('bindedControls').removeObject(self);
-                                    uiPhoneControl.save();
-                                }
-                            //});
-                        }
-                    });
+            viewController.get('uiPhoneControls').forEach(function (uiPhoneControl) {
+                var constraints = uiPhoneControl.get('constraints');
+                constraints.forEach(function (constraint) {
+                    if (constraint.get('referenceElement') === self) {
+                        //Ember.run.once(self, function () {
+                            if(constraint) {
+                                constraint.set('referenceElement', null);
+                                constraint.save();
+                                uiPhoneControl.get('bindedControls').removeObject(self);
+                                uiPhoneControl.save();
+                            }
+                        //});
+                    }
                 });
             });
         }

@@ -1,3 +1,15 @@
+<div class="col-md-12">
+    <div class="panel panel-default">
+        <div class="panel-heading collapsed" data-toggle="collapse" data-target="#collapse-ui-phone-control" style="cursor:pointer">
+            UIPhoneControls (Drag and drop) <span style="float:right">&#9660;</span>
+        </div>
+        <div class="panel-body collapse" id="collapse-ui-phone-control">
+            {{#each controllers.uiPhoneControlTemplates itemController="uiPhoneControlTemplate" }}
+                {{view App.UiPhoneControlTemplateView}}
+            {{/each}}
+        </div>
+    </div>
+</div>
 <!-- Preview ViewController -->
 {{#if controller.currentDeviceIsSmartphone}}
     <div class="col-md-9">

@@ -10,6 +10,12 @@ App.SceneScreen = DS.Model.extend({
         return this.get('viewControllers.length') > 0;
     }.property('viewControllers.length'),
 
+    viewControllersObserver: function() {
+        if(!this.get('isDeleted')) {
+            this.save();
+        }
+    }.observes('viewControllers.[]'),
+
     getPrecedentEnd: function(vc) {
         var index = this.get('viewControllers').indexOf(vc);
         if(index === 0) {
@@ -28,12 +34,13 @@ App.SceneScreen = DS.Model.extend({
     },
 
     toXml: function (xmlDoc) {
-        var sceneScreen = xmlDoc.createElement(this.get('screen'));
+        var sceneScreen = xmlDoc.createElement(this.get('xmlName'));
         sceneScreen.setAttribute('name', this.get('name'));
         sceneScreen.setAttribute('number', this.get('viewControllers.length'));
 
-        this.get('viewControllers').map(function (vc) {
-            sceneScreen.setAttribute('dimension', vc.get('widthPercentInScreen'));
+        this.get('viewControllers').forEach(function (vc, index) {
+            sceneScreen.setAttribute('viewController' + (index + 1), vc.getRefPath(''));
+            sceneScreen.setAttribute('dimension' + (index + 1), vc.get('widthPercentInScreen'));
         });
 
         return sceneScreen;

@@ -8,7 +8,7 @@ App.ViewController = DS.Model.extend({
     widthPercentInScreen: DS.attr('number', {defaultValue: 0.35}),
     /*nameInScreen: DS.attr('string'),*/
 
-    uiPhoneControls: DS.hasMany('uiPhoneControl', {polymorphic: true, async: true}),
+    uiPhoneControls: DS.hasMany('uiPhoneControl', {polymorphic: true}),
     controlChains: DS.hasMany('controlChain', {inverse: 'viewController'}),
     alertDialogs: DS.hasMany('alertDialog', {inverse: 'viewController'}),
     progressDialogs: DS.hasMany('progressDialog', {inverse: 'viewController'}),
@@ -132,12 +132,10 @@ App.ViewController = DS.Model.extend({
     deleteRecord: function () {
         var self = this;
 
-        this.get('uiPhoneControls').then(function (uiPhoneControls) {
-            uiPhoneControls.forEach(function (uiPhoneControl) {
-                Ember.run.once(self, function () {
-                    uiPhoneControl.deleteRecord();
-                    uiPhoneControl.save();
-                });
+        this.get('uiPhoneControls').forEach(function (uiPhoneControl) {
+            Ember.run.once(self, function () {
+                uiPhoneControl.deleteRecord();
+                uiPhoneControl.save();
             });
         });
 
@@ -165,55 +163,40 @@ App.ViewController = DS.Model.extend({
     },
 
     toXml: function (xmlDoc) {
-        var self = this;
+        var viewController = xmlDoc.createElement(this.get('xmlName'));
+        viewController.setAttribute('name', this.get('name'));
+        viewController.setAttribute('backgroundColor', this.get('backgroundColor'));
+        viewController.setAttribute('backgroundImage', this.get('backgroundImage'));
 
-        return new Promise(function (resolve) {
-            var viewController = xmlDoc.createElement(self.get('xmlName'));
-            viewController.setAttribute('name', self.get('name'));
-            viewController.setAttribute('backgroundColor', self.get('backgroundColor'));
-            viewController.setAttribute('backgroundImage', self.get('backgroundImage'));
-
-            self.get('alertDialogs').map(function (alertDialog) {
-                viewController.appendChild(alertDialog.toXml(xmlDoc));
-            });
-
-            self.get('progressDialogs').map(function (progressDialog) {
-                viewController.appendChild(progressDialog.toXml(xmlDoc));
-            });
-
-            self.get('asyncTasks').map(function (asyncTask) {
-                viewController.appendChild(asyncTask.toXml(xmlDoc));
-            });
-
-            self.get('controlChains').filter(function(chain) {
-                return chain.get('valid');
-            }).map(function (controlChain) {
-                viewController.appendChild(controlChain.toXml(xmlDoc));
-            });
-
-            self.get('uiPhoneControls').then(function (uiPhoneControls) {
-
-                Promise.all(uiPhoneControls.filter(function(c) {
-                    if(c.get('controlChain') === null) {
-                        return true;
-                    } else {
-                        return c.get('controlChain.valid');
-                    }
-                }).map(function (uiPhoneControl) {
-                    return uiPhoneControl.toXml(xmlDoc);
-                })).then(function (uiPhoneControlXmls) {
-
-                    uiPhoneControlXmls.map(function (xml) {
-
-                        viewController.appendChild(xml);
-
-                    });
-
-                    resolve(viewController);
-
-                });
-            });
+        this.get('alertDialogs').map(function (alertDialog) {
+            viewController.appendChild(alertDialog.toXml(xmlDoc));
         });
+
+        this.get('progressDialogs').map(function (progressDialog) {
+            viewController.appendChild(progressDialog.toXml(xmlDoc));
+        });
+
+        this.get('asyncTasks').map(function (asyncTask) {
+            viewController.appendChild(asyncTask.toXml(xmlDoc));
+        });
+
+        this.get('controlChains').filter(function(chain) {
+            return chain.get('valid');
+        }).map(function (controlChain) {
+            viewController.appendChild(controlChain.toXml(xmlDoc));
+        });
+
+        this.get('uiPhoneControls').filter(function(c) {
+            if(c.get('controlChain') === null) {
+                return true;
+            } else {
+                return c.get('controlChain.valid');
+            }
+        }).map(function (uiPhoneControl) {
+            viewController.appendChild(uiPhoneControl.toXml(xmlDoc));
+        });
+
+        return viewController;
     },
 
     getRefPath: function (path) {

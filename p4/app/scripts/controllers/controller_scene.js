@@ -28,37 +28,21 @@ App.SceneController = Ember.ObjectController.extend(App.Saveable, {
         'model.viewControllers.@each.name'
     ),
 
-    screen1: function() {
-        return this.get('screens').objectAt(0);
-    }.property('screens.@each'),
-
-    screen2: function() {
-        return this.get('screens').objectAt(1);
-    }.property('screens.@each'),
-
-    screen3: function() {
-        return this.get('screens').objectAt(2);
-    }.property('screens.@each'),
-
-    screen4: function() {
-        return this.get('screens').objectAt(3);
-    }.property('screens.@each'),
-
     availableViewControllers: function() {
         var self = this;
-        if(self.get('screen1.viewControllers') && self.get('screen2.viewControllers') &&
-            self.get('screen3.viewControllers') && self.get('screen4.viewControllers')) {
+        if(self.get('screens.content.0.viewControllers') && self.get('screens.content.1.viewControllers') &&
+            self.get('screens.content.2.viewControllers') && self.get('screens.content.3.viewControllers')) {
             return this.get('viewControllers').filter(function(vc) {
-                if(self.get('screen1.viewControllers').contains(vc)) {
+                if(self.get('screens.content.0.viewControllers').contains(vc)) {
                     return false;
                 }
-                if(self.get('screen2.viewControllers').contains(vc)) {
+                if(self.get('screens.content.1.viewControllers').contains(vc)) {
                     return false;
                 }
-                if(self.get('screen3.viewControllers').contains(vc)) {
+                if(self.get('screens.content.2.viewControllers').contains(vc)) {
                     return false;
                 }
-                if(self.get('screen4.viewControllers').contains(vc)) {
+                if(self.get('screens.content.3.viewControllers').contains(vc)) {
                     return false;
                 }
                 return true;
@@ -67,10 +51,7 @@ App.SceneController = Ember.ObjectController.extend(App.Saveable, {
         return [];
     }.property(
         'viewControllers.@each',
-        'screen1.viewControllers.@each',
-        'screen2.viewControllers.@each',
-        'screen3.viewControllers.@each',
-        'screen4.viewControllers.@each'
+        'screens.content.@each.viewControllers.[]'
     ),
 
     isDirtyOverride: function() {
@@ -86,12 +67,12 @@ App.SceneController = Ember.ObjectController.extend(App.Saveable, {
             return true;
         }
         return false;
-    }.property('model.isDirty', 'screens.@each.isDirty'),
+    }.property('model.isDirty', 'screens.@each.isDirty', 'screens.@each.viewControllers.@each.isDirty'),
 
     varyForTabletsObserver: function() {
         if(!this.get('model.isDeleted') && !this.get('model.varyForTablets')) {
             // Remove all view controllers from screens
-            this.get('screens').forEach(function(sc) {
+            this.get('model.sceneScreens').forEach(function(sc) {
                 var vcs = sc.get('viewControllers');
                 vcs.forEach(function(vc) {
                     vcs.removeObject(vc);
@@ -104,9 +85,7 @@ App.SceneController = Ember.ObjectController.extend(App.Saveable, {
     actions: {
         acceptChanges: function() {
             this.get('screens').forEach(function(sc) {
-                sc.get('viewControllers').forEach(function(vc) {
-                    vc.save();
-                });
+                sc.save();
             });
             this._super();
         },
@@ -118,12 +97,12 @@ App.SceneController = Ember.ObjectController.extend(App.Saveable, {
             var viewController = this.store.createRecord('viewController', {
                 scene: this.get('model'),
                 name: name
+            }).save().then(function(vc) {
+                vc.get('scene.viewControllers').addObject(vc);
+                vc.get('scene').save();
             });
 
             this.set('number', this.get('number') + 1);
-
-            viewController.save();
-            this.get('model').save();
 
             this.transitionToRoute('viewController', viewController);
         },
@@ -143,15 +122,14 @@ App.SceneController = Ember.ObjectController.extend(App.Saveable, {
         },
 
         addViewController: function(index) {
-            if(this.get('addedViewController') && this.get('screens').objectAt(index).get('viewControllers.length') <= 4) {
-                this.set('addedViewController.sceneScreen', this.get('screens').objectAt(index));
-                var screenViewControllers = this.get('screens').objectAt(index).get('viewControllers');
+            if(this.get('addedViewController') && this.get('screens.content.' + index + '.viewControllers.length') <= 4) {
+                this.set('addedViewController.sceneScreen', this.get('screens.content.' + index));
+                var screenViewControllers = this.get('screens.content.' + index + '.viewControllers');
                 screenViewControllers.addObject(this.get('addedViewController'));
                 screenViewControllers.forEach(function(vc) {
                     vc.set('widthPercentInScreen', 1 / screenViewControllers.get('length'));
                     vc.save();
                 });
-                this.get('addedViewController.sceneScreen').save();
             }
         },
 
@@ -163,7 +141,6 @@ App.SceneController = Ember.ObjectController.extend(App.Saveable, {
                 vc.set('widthPercentInScreen', 1 / screenViewControllers.get('length'));
                 vc.save();
             });
-            this.get('addedViewController.sceneScreen').save();
         }
     }
 

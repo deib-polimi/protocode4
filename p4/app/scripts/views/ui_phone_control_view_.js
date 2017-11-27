@@ -100,6 +100,14 @@ App.UiPhoneControlView = Ember.View.extend(App.UiMoveable, {
     }
   }.property(),
 
+  vcStart: function() {
+    return this.computeVerticalAxis(this.get('context.viewController.startInScreen'));
+  }.property('context.viewController.startInScreen', 'device'),
+
+  vcWidth: function() {
+    return this.computeVerticalAxis(this.get('context.viewController.width'));
+}.property('context.viewController.width', 'device'),
+
   top: function() {
     return this.computeVerticalAxis(this.get('context.topWithMargin') + parseFloat(this.get('context.marginTop')));
   }.property('context.top', 'context.marginTop', 'device'),
@@ -167,19 +175,21 @@ App.UiPhoneControlView = Ember.View.extend(App.UiMoveable, {
     //This changes the height of the card according to platform
     //It's ok because height will be evaluated dinamically later
     var controlType = this.get('uiPhoneControlType').toString();
-    var platform = this.get('device.platform').toString();
-    if(controlType === 'App.UiCardView') {
-        //Card always squared in ios
-        if(platform === 'ios') {
-          //this.set('computedHeight', this.get('computedWidth'));
-          this.set('context.height', this.get('computedWidth'));
+    if(this.get('device.platform')) {
+        var platform = this.get('device.platform').toString();
+        if(controlType === 'App.UiCardView') {
+            //Card always squared in ios
+            if(platform === 'ios') {
+              //this.set('computedHeight', this.get('computedWidth'));
+              this.set('context.height', this.get('computedWidth'));
+            }
+            //Card height is always 175 + dynamic image height in android
+            else if(platform === 'android') {
+              //this.set('computedHeight', ((this.get('computedWidth')*9/16)+174));
+              this.set('context.height', ((this.get('computedWidth')*9/16)+174));
+            }
+            console.log(this.get('context.width'));
         }
-        //Card height is always 175 + dynamic image height in android
-        else if(platform === 'android') {
-          //this.set('computedHeight', ((this.get('computedWidth')*9/16)+174));
-          this.set('context.height', ((this.get('computedWidth')*9/16)+174));
-        }
-        console.log(this.get('context.width'));
     }
 
     result += 'height: ' + this.get('computedHeight') + 'px;';

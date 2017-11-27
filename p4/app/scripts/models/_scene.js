@@ -57,30 +57,26 @@ App.Scene = DS.Model.extend({
     },
 
     toXml: function (xmlDoc) {
-        var self = this;
-        return new Promise(function (resolve) {
-            var scene = xmlDoc.createElement(self.get('xmlName'));
-            scene.setAttribute('name', self.get('name'));
-            scene.setAttribute('launcher', self.get('launcher'));
-            scene.setAttribute('varyForTablets', self.get('varyForTablets'));
+        var scene = xmlDoc.createElement(this.get('xmlName'));
+        scene.setAttribute('name', this.get('name'));
+        scene.setAttribute('launcher', this.get('launcher'));
+        scene.setAttribute('varyForTablets', this.get('varyForTablets'));
 
-            var vcs = xmlDoc.createElement('viewControllers');
-            scene.appendChild(vcs);
-            Promise.all(self.get('viewControllers').map(function (item_vcs) {
-                return item_vcs.toXml(xmlDoc);
-            })).then(function (values_vcs) {
-                values_vcs.map(function (vc) {
-                    vcs.appendChild(vc);
-                });
+        var vcs = xmlDoc.createElement('viewControllers');
+        scene.appendChild(vcs);
 
-                var screens = xmlDoc.createElement('screens');
-                scene.appendChild(screens);
-                self.get('sceneScreens').map(function (s) {
-                    screens.appendChild(s.toXml(xmlDoc));
-                });
-
-                resolve(scene);
-            });
+        this.get('viewControllers').map(function (vc) {
+            return vcs.appendChild(vc.toXml(xmlDoc));
         });
+
+        var screens = xmlDoc.createElement('screens');
+        scene.appendChild(screens);
+        this.get('sceneScreens').map(function (s) {
+            if(s.get('viewControllers.length') > 0) {
+                screens.appendChild(s.toXml(xmlDoc));
+            }
+        });
+
+        return scene;
     }
 });

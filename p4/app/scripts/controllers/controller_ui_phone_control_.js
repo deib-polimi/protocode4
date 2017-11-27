@@ -57,10 +57,9 @@ App.UiPhoneControlController = Ember.ObjectController.extend(App.Saveable, {
                 this.get('parentContainer').save();
             } else {
                 var viewController = this.get('viewController');
-                viewController.get('uiPhoneControls').then(function (uiPhoneControls) {
-                    uiPhoneControls.removeObject(controlToDelete);
-                    viewController.save();
-                });
+                var uiPhoneControls = viewController.get('uiPhoneControls');
+                uiPhoneControls.removeObject(controlToDelete);
+                viewController.save();
 
             }
 

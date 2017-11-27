@@ -31,13 +31,11 @@ App.AudioPlayer = App.UiPhoneControl.extend({
         var self = this;
 
         if (viewController) {
-            viewController.get('uiPhoneControls').then(function (uiPhoneControls) {
-                uiPhoneControls.forEach(function (uiPhoneControl) {
-                    if (uiPhoneControl.get('audioPlayer') === self) {
-                        uiPhoneControl.set('audioPlayer', null);
-                        uiPhoneControl.save();
-                    }
-                });
+            viewController.get('uiPhoneControls').forEach(function (uiPhoneControl) {
+                if (uiPhoneControl.get('audioPlayer') === self) {
+                    uiPhoneControl.set('audioPlayer', null);
+                    uiPhoneControl.save();
+                }
             });
         }
 

@@ -1,24 +1,24 @@
-{{screen-canvas model=model}}
-{{#link-to "viewController" model tagName="div" class="expanded-area"}}{{/link-to}}
-
-<!-- Others uiPhoneControls in the same screen (others viewControllers in the same screen) -->
 {{#if haveScreen}}
-    {{#each vc in sceneScreen.viewControllers}}
-        {{#each vc.uiPhoneControls}}
+    <!-- MULTIPLE viewController in screen -->
+    <!-- Separation Lines -->
+    {{#each st in separationLinesStyle}}
+        <div class="separation-line" {{bind-attr style=st}}></div>
+    {{/each}}
+    {{#each sceneScreen.viewControllers}}
+        <!-- Screen view -->
+        {{#link-to "viewController" this}}{{view App.TabletScreenViewController}}{{/link-to}}
+        <!-- All uiPhoneControls in the same screen -->
+        {{#each this.uiPhoneControls}}
             {{view App.UiPhoneControlView}}
         {{/each}}
     {{/each}}
 {{else}}
+    <!-- SINGLE viewController in screen -->
+    <!-- Screen view -->
+    {{#link-to "viewController" model}}{{view App.TabletScreenViewController}}{{/link-to}}
     <!-- UiPhoneControls -->
     {{#each uiPhoneControls}}
         {{view App.UiPhoneControlView}}
-    {{/each}}
-{{/if}}
-
-<!-- View controllers separation lines -->
-{{#if haveScreen}}
-    {{#each st in separationLinesStyle}}
-        <div class="separation-line" {{bind-attr style=st}}></div>
     {{/each}}
 {{/if}}
 
@@ -47,3 +47,4 @@
 {{/if}}
 
 <div class="command-bar"></div>
+{{screen-canvas model=model}}
