@@ -111,13 +111,13 @@ App.ApplicationRoute = Ember.Route.extend({
                     'entityAttribute',
                     'objectAttribute',
                     'container',
-                    'smartphone',
-                    'tablet',
                     'scene',
                     'watchController',
-                    'smartwatch',
                     'menu',
                     'menuItem',
+                    'smartphone',
+                    'tablet',
+                    'smartwatch',
                     'uiPhoneControlTemplate',
                     'uiWatchControlTemplate'
                 ];

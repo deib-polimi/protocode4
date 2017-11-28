@@ -38,6 +38,44 @@ App.ScreenCanvasComponent = Ember.Component.extend({
         return this.get('device.screenHeight');
     }.property('device.screenHeight'),
 
+    uiPhoneControlsToDraw: function() {
+        var controls = [];
+        this.get('model.uiPhoneControls').forEach(function(c) {
+            controls.pushObject(c);
+        });
+        if(this.get('model.sceneScreen')) {
+            this.get('model.sceneScreen.viewControllers').forEach(function(vc) {
+                vc.get('uiPhoneControls').forEach(function(c) {
+                    controls.pushObject(c);
+                });
+            });
+        }
+        return controls;
+    }.property(
+        'model.uiPhoneControls.[]',
+        'model.sceneScreen',
+        'model.sceneScreen.viewControllers.@each.uiPhoneControls.[]'
+    ),
+
+    /*controlChainsToDraw: function() {
+        var chains = [];
+        this.get('model.controlChains').forEach(function(c) {
+            chains.pushObject(c);
+        });
+        if(this.get('model.sceneScreen')) {
+            this.get('model.sceneScreen.viewControllers').forEach(function(vc) {
+                vc.get('controlChains').forEach(function(c) {
+                    chains.pushObject(c);
+                });
+            });
+        }
+        return chains;
+    }.property(
+        'model.controlChains.[]',
+        'model.sceneScreen',
+        'model.sceneScreen.viewControllers.@each.controlChains.[]'
+    ),*/
+
     didInsertElement: function() {
         this.set('ctx', this.get('element').getContext('2d'));
         this.clear();
@@ -61,138 +99,129 @@ App.ScreenCanvasComponent = Ember.Component.extend({
         }
     }.observes(
         'router.location.lastSetURL',
-        'model.uiPhoneControls.@each.isWidthConstrained',
-        'model.uiPhoneControls.@each.isHeightConstrained',
-        'model.uiPhoneControls.@each.isRatioConstrained',
-        'model.uiPhoneControls.@each.posX',
-        'model.uiPhoneControls.@each.posY',
-        'model.uiPhoneControls.@each.width',
-        'model.uiPhoneControls.@each.height',
-        'model.uiPhoneControls.@each.ratioWidth',
-        'model.uiPhoneControls.@each.ratioHeight',
-        'model.uiPhoneControls.@each.valueInChain',
-        'model.uiPhoneControls.@each.marginTop',
-        'model.uiPhoneControls.@each.marginBottom',
-        'model.uiPhoneControls.@each.marginStart',
-        'model.uiPhoneControls.@each.marginEnd',
+        'uiPhoneControlsToDraw.@each.isWidthConstrained',
+        'uiPhoneControlsToDraw.@each.isHeightConstrained',
+        'uiPhoneControlsToDraw.@each.isRatioConstrained',
+        'uiPhoneControlsToDraw.@each.posX',
+        'uiPhoneControlsToDraw.@each.posY',
+        'uiPhoneControlsToDraw.@each.width',
+        'uiPhoneControlsToDraw.@each.height',
+        'uiPhoneControlsToDraw.@each.ratioWidth',
+        'uiPhoneControlsToDraw.@each.ratioHeight',
+        'uiPhoneControlsToDraw.@each.valueInChain',
+        'uiPhoneControlsToDraw.@each.marginTop',
+        'uiPhoneControlsToDraw.@each.marginBottom',
+        'uiPhoneControlsToDraw.@each.marginStart',
+        'uiPhoneControlsToDraw.@each.marginEnd',
         'model.controlChains.@each.type',
         'model.controlChains.@each.axis',
         'model.controlChains.@each.byas',
         'model.hasTabMenu',
         'model.startInScreen',
-        'model.width',
-        'model.sceneScreen.viewControllers.@each.uiPhoneControls.@each'
+        'model.width'
     ).on('init'),
 
     drawAllConstraints: function(id) {
         var self = this;
-        var controlsArray = [];
-        controlsArray.pushObject(this.get('model.uiPhoneControls'));
-        if(this.get('model.sceneScreen')) {
-            this.get('model.sceneScreen.viewControllers').forEach(function(vc) {
-                controlsArray.pushObject(vc.get('uiPhoneControls'));
+        var controls = this.get('uiPhoneControlsToDraw');
+        var control = controls.find(function(control) {return control.get('id') === id});
+        if(control !== undefined) {
+            var constraints = control.get('constraints').filter(function(c) {
+                return c.get('valid') && ((!c.get('isDirty') || c.get('isSaving')));
             });
-        }
-        controlsArray.forEach(function(controls) {
-            var control = controls.find(function(control) {return control.get('id') === id});
-            if(control !== undefined) {
-                var constraints = control.get('constraints').filter(function(c) {
-                    return c.get('valid') && ((!c.get('isDirty') || c.get('isSaving')));
-                });
 
-                // Draw position constraints
-                if(constraints) {
-                    constraints.forEach(function(constraint) {
-                        self.drawConstraint(constraint, control);
+            // Draw position constraints
+            if(constraints) {
+                constraints.forEach(function(constraint) {
+                    self.drawConstraint(constraint, control);
+                });
+            }
+
+            var ctx = self.get('ctx');
+            if(ctx) {
+                // Draw dimension constraints
+                ctx.fillStyle = "#ff0000";
+                if(control.get('isWidthConstrained') || control.get('isWidthPercentConstrained')) {
+                    ctx.fillRect(control.get('start'), control.get('top') - 2, control.get('computedWidth'), 2);
+                    ctx.fillRect(control.get('start'), control.get('bottom'), control.get('computedWidth'), 2);
+                }
+                if(control.get('isHeightConstrained') || control.get('isHeightPercentConstrained')) {
+                    ctx.fillRect(control.get('start') - 2, control.get('top'), 2, control.get('computedHeight'));
+                    ctx.fillRect(control.get('end'), control.get('top'), 2, control.get('computedHeight'));
+                }
+                ctx.fillStyle = "#ff00ff";
+                if(control.get('isRatioConstrained')) {
+                    ctx.fillRect(control.get('start') - 2, control.get('top') - 2, 12, 2);
+                    ctx.fillRect(control.get('start') - 2, control.get('top') - 2, 2, 12);
+                    ctx.fillRect(control.get('end') - 10, control.get('bottom'), 12, 2);
+                    ctx.fillRect(control.get('end'), control.get('bottom') - 10, 2, 12);
+                }
+
+                // Draw chain indicators
+                var chain = control.get('controlChain');
+                if(chain && chain.get('valid')) {
+                    ctx.fillStyle = "#a6a6a6";
+                    ctx.strokeStyle = "#a6a6a6";
+                    chainControls = chain.get('uiPhoneControls');
+                    var x, y;
+                    chainControls.forEach(function(c, index) {
+                        if(index === 0) {
+                            if(chain.get('axis') === 'horizontal') {
+                                x = c.get('end') - 4;
+                                y = c.get('top') + (c.get('computedHeight') / 2) - 4;
+                                ctx.beginPath();
+                                ctx.moveTo(x+4, y+4);
+                                ctx.fillRect(x, y, 8, 8);
+                            } else {
+                                x = c.get('start') + (c.get('computedWidth') / 2) - 4;
+                                y = c.get('bottom') - 4;
+                                ctx.beginPath();
+                                ctx.moveTo(x+4, y+4);
+                                ctx.fillRect(x, y, 8, 8);
+                            }
+                        } else if(index === (chainControls.get('length') - 1)){
+                            if(chain.get('axis') === 'horizontal') {
+                                x = c.get('start') - 4;
+                                y = c.get('top') + (c.get('computedHeight') / 2) - 4;
+                                ctx.lineTo(x+4, y+4);
+                                ctx.stroke();
+                                ctx.fillRect(x, y, 8, 8);
+                            } else {
+                                x = c.get('start') + (c.get('computedWidth') / 2) - 4;
+                                y = c.get('top') - 4;
+                                ctx.lineTo(x+4, y+4);
+                                ctx.stroke();
+                                ctx.fillRect(x, y, 8, 8);
+                            }
+                        } else {
+                            if(chain.get('axis') === 'horizontal') {
+                                x = c.get('start') - 4;
+                                y = c.get('top') + (c.get('computedHeight') / 2) - 4;
+                                ctx.lineTo(x+4, y+4);
+                                ctx.stroke();
+                                ctx.fillRect(x, y, 8, 8);
+                                x = c.get('end') - 4;
+                                y = c.get('top') + (c.get('computedHeight') / 2) - 4;
+                                ctx.beginPath();
+                                ctx.moveTo(x+4, y+4);
+                                ctx.fillRect(x, y, 8, 8);
+                            } else {
+                                x = c.get('start') + (c.get('computedWidth') / 2) - 4;
+                                y = c.get('top') - 4;
+                                ctx.lineTo(x+4, y+4);
+                                ctx.stroke();
+                                ctx.fillRect(x, y, 8, 8);
+                                x = c.get('start') + (c.get('computedWidth') / 2) - 4;
+                                y = c.get('bottom') - 4;
+                                ctx.beginPath();
+                                ctx.moveTo(x+4, y+4);
+                                ctx.fillRect(x, y, 8, 8);
+                            }
+                        }
                     });
                 }
-
-                var ctx = self.get('ctx');
-                if(ctx) {
-                    // Draw dimension constraints
-                    ctx.fillStyle = "#ff0000";
-                    if(control.get('isWidthConstrained') || control.get('isWidthPercentConstrained')) {
-                        ctx.fillRect(control.get('start'), control.get('top') - 2, control.get('computedWidth'), 2);
-                        ctx.fillRect(control.get('start'), control.get('bottom'), control.get('computedWidth'), 2);
-                    }
-                    if(control.get('isHeightConstrained') || control.get('isHeightPercentConstrained')) {
-                        ctx.fillRect(control.get('start') - 2, control.get('top'), 2, control.get('computedHeight'));
-                        ctx.fillRect(control.get('end'), control.get('top'), 2, control.get('computedHeight'));
-                    }
-                    ctx.fillStyle = "#ff00ff";
-                    if(control.get('isRatioConstrained')) {
-                        ctx.fillRect(control.get('start') - 2, control.get('top') - 2, 12, 2);
-                        ctx.fillRect(control.get('start') - 2, control.get('top') - 2, 2, 12);
-                        ctx.fillRect(control.get('end') - 10, control.get('bottom'), 12, 2);
-                        ctx.fillRect(control.get('end'), control.get('bottom') - 10, 2, 12);
-                    }
-
-                    // Draw chain indicators
-                    var chain = control.get('controlChain');
-                    if(chain && chain.get('valid')) {
-                        ctx.fillStyle = "#a6a6a6";
-                        ctx.strokeStyle = "#a6a6a6";
-                        chainControls = chain.get('uiPhoneControls');
-                        var x, y;
-                        chainControls.forEach(function(c, index) {
-                            if(index === 0) {
-                                if(chain.get('axis') === 'horizontal') {
-                                    x = c.get('end') - 4;
-                                    y = c.get('top') + (c.get('computedHeight') / 2) - 4;
-                                    ctx.beginPath();
-                                    ctx.moveTo(x+4, y+4);
-                                    ctx.fillRect(x, y, 8, 8);
-                                } else {
-                                    x = c.get('start') + (c.get('computedWidth') / 2) - 4;
-                                    y = c.get('bottom') - 4;
-                                    ctx.beginPath();
-                                    ctx.moveTo(x+4, y+4);
-                                    ctx.fillRect(x, y, 8, 8);
-                                }
-                            } else if(index === (chainControls.get('length') - 1)){
-                                if(chain.get('axis') === 'horizontal') {
-                                    x = c.get('start') - 4;
-                                    y = c.get('top') + (c.get('computedHeight') / 2) - 4;
-                                    ctx.lineTo(x+4, y+4);
-                                    ctx.stroke();
-                                    ctx.fillRect(x, y, 8, 8);
-                                } else {
-                                    x = c.get('start') + (c.get('computedWidth') / 2) - 4;
-                                    y = c.get('top') - 4;
-                                    ctx.lineTo(x+4, y+4);
-                                    ctx.stroke();
-                                    ctx.fillRect(x, y, 8, 8);
-                                }
-                            } else {
-                                if(chain.get('axis') === 'horizontal') {
-                                    x = c.get('start') - 4;
-                                    y = c.get('top') + (c.get('computedHeight') / 2) - 4;
-                                    ctx.lineTo(x+4, y+4);
-                                    ctx.stroke();
-                                    ctx.fillRect(x, y, 8, 8);
-                                    x = c.get('end') - 4;
-                                    y = c.get('top') + (c.get('computedHeight') / 2) - 4;
-                                    ctx.beginPath();
-                                    ctx.moveTo(x+4, y+4);
-                                    ctx.fillRect(x, y, 8, 8);
-                                } else {
-                                    x = c.get('start') + (c.get('computedWidth') / 2) - 4;
-                                    y = c.get('top') - 4;
-                                    ctx.lineTo(x+4, y+4);
-                                    ctx.stroke();
-                                    ctx.fillRect(x, y, 8, 8);
-                                    x = c.get('start') + (c.get('computedWidth') / 2) - 4;
-                                    y = c.get('bottom') - 4;
-                                    ctx.beginPath();
-                                    ctx.moveTo(x+4, y+4);
-                                    ctx.fillRect(x, y, 8, 8);
-                                }
-                            }
-                        });
-                    }
-                }
             }
-        });
+        }
     },
 
     drawConstraint: function(constraint, control) {

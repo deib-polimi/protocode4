@@ -7,7 +7,7 @@
 
 <div class="status-bar"></div>
 <!-- App Menu Icon -->
-{{#if hasMenu}}
+{{#if model.scene.hasMenu}}
     <div class="action-bar">
         {{#link-to "appMenu" menu}}<div class="icon-menu"></div>{{/link-to}}
         <div class="bar-content-menu">{{controllers.editor.name}}</div>
@@ -24,7 +24,7 @@
 {{/if}}
 
 <!-- App Menu -->
-{{#if hasMenu}}
+{{#if model.scene.hasMenu}}
     {{view App.MenuView}}
     {{#link-to "viewController" model}}{{view App.MenuViewShadow}}{{/link-to}}
 {{/if}}

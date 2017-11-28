@@ -51,7 +51,10 @@ App.SceneController = Ember.ObjectController.extend(App.Saveable, {
         return [];
     }.property(
         'viewControllers.@each',
-        'screens.content.@each.viewControllers.[]'
+        'screens.content.0.viewControllers.@each',
+        'screens.content.1.viewControllers.@each',
+        'screens.content.2.viewControllers.@each',
+        'screens.content.3.viewControllers.@each'
     ),
 
     isDirtyOverride: function() {

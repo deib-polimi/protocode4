@@ -3,6 +3,7 @@ App.SceneScreen = DS.Model.extend({
     viewControllers: DS.hasMany('viewController', {inverse: 'sceneScreen'}),
 
     name: DS.attr('string'),
+    hasTabMenu: DS.attr('boolean', {defaultValue: false}),
 
     xmlName: 'screen',
 
@@ -10,11 +11,30 @@ App.SceneScreen = DS.Model.extend({
         return this.get('viewControllers.length') > 0;
     }.property('viewControllers.length'),
 
+    cantHaveTabMenu: function() {
+        if(this.get('scene.screensNumber') > 1) {
+            return false;
+        } else {
+            return true;
+        }
+    }.property(
+        'scene.screensNumber'
+    ),
+
     viewControllersObserver: function() {
         if(!this.get('isDeleted')) {
             this.save();
         }
     }.observes('viewControllers.[]'),
+
+    tabMenuObserver: function() {
+        if(!this.get('isDeleted')) {
+            if(this.get('cantHaveTabMenu') && this.get('hasTabMenu')) {
+                this.set('hasTabMenu', false);
+                this.save();
+            }
+        }
+    }.observes('cantHaveTabMenu'),
 
     getPrecedentEnd: function(vc) {
         var index = this.get('viewControllers').indexOf(vc);

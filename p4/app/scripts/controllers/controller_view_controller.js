@@ -21,7 +21,7 @@ App.ViewControllerController = Ember.ObjectController.extend({
 
     tabMenuItems: function() {
         if(this.get('scene.viewControllers')) {
-            if(this.get('currentDeviceIsSmartphone')) {
+            if(this.get('currentDeviceIsSmartphone') || !this.get('scene.varyForTablets')) {
                 return this.get('scene.viewControllers').map(function(vc) {
                     return vc.get('name');
                 });
@@ -38,7 +38,8 @@ App.ViewControllerController = Ember.ObjectController.extend({
     }.property(
         'currentDeviceIsSmartphone',
         'scene.viewControllers.@each.name',
-        'scene.sceneScreens.@each.name'
+        'scene.sceneScreens.@each.name',
+        'scene.varyForTablets'
     ),
 
     haveScreen: function() {

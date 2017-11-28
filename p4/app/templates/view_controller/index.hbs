@@ -36,6 +36,7 @@
                     {{input-text label="Name" value=name action='acceptChanges'}}
                     {{input-color-picker label="Background Color" value=backgroundColor action='acceptChanges'}}
                     {{input-text label="Background Image" value=backgroundImage action='acceptChanges'}}
+                    {{input-checkbox label="Has Tab Menu" checked=hasTabMenu disabled=cantHaveTabMenu}}
                     <br>
                     <button type="button" {{bind-attr class=":btn :btn-block :btn-sm :btn-chain"}} {{action
                         "createChain"}}>

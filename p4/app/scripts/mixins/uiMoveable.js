@@ -19,8 +19,8 @@ App.UiMoveable = Ember.Mixin.create({
     $('.smartphone-screen-view').on('mousemove', function(event) {
       var element = self.get('element');
       var parentOffset = $(self.get('parentView.element')).offset();
-      var posX = (event.pageX - parentOffset.left - self.get('offsetMouseX') - self.get('context.marginStart')) / self.get('controller.zoomLevel') * self.get('device.screenWidth') / self.get('device.cssWidth');
-      var posY = (event.pageY - parentOffset.top - self.get('offsetMouseY') - self.get('context.marginTop')) / self.get('controller.zoomLevel') * self.get('device.screenHeight') / self.get('device.cssHeight');
+      var posX = (((event.pageX - parentOffset.left - self.get('offsetMouseX')) / self.get('controller.zoomLevel')) - self.get('context.marginStart')) * self.get('device.screenWidth') / self.get('device.cssWidth');
+      var posY = (((event.pageY - parentOffset.top - self.get('offsetMouseY')) / self.get('controller.zoomLevel')) - self.get('context.marginTop')) * self.get('device.screenHeight') / self.get('device.cssHeight');
 
       if (self.get('context.parentContainer') === null) {
         posY -= self.get('device.viewTop');
@@ -56,8 +56,8 @@ App.UiMoveable = Ember.Mixin.create({
     $('.tablet-screen-view').on('mousemove', function(event) {
       var element = self.get('element');
       var parentOffset = $(self.get('parentView.element')).offset();
-      var posX = (event.pageX - parentOffset.left - self.get('offsetMouseX') - self.get('context.marginStart') - self.get('vcStart')) / self.get('controller.zoomLevel') * self.get('device.screenWidth') / self.get('device.cssWidth');
-      var posY = (event.pageY - parentOffset.top - self.get('offsetMouseY') - self.get('context.marginTop')) / self.get('controller.zoomLevel') * self.get('device.screenHeight') / self.get('device.cssHeight');
+      var posX = (((event.pageX - parentOffset.left - self.get('offsetMouseX')) / self.get('controller.zoomLevel')) - self.get('context.marginStart') - self.get('vcStart')) * self.get('device.screenWidth') / self.get('device.cssWidth');
+      var posY = (((event.pageY - parentOffset.top - self.get('offsetMouseY')) / self.get('controller.zoomLevel')) - self.get('context.marginTop')) * self.get('device.screenHeight') / self.get('device.cssHeight');
 
       if (self.get('context.parentContainer') === null) {
         posY -= self.get('device.viewTop');

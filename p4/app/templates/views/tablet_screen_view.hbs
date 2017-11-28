@@ -24,7 +24,7 @@
 
 <div class="status-bar"></div>
 <!-- App Menu Icon -->
-{{#if hasMenu}}
+{{#if model.scene.hasMenu}}
     <div class="action-bar">
         {{#link-to "appMenu" menu}}<div class="icon-menu"></div>{{/link-to}}
         <div class="bar-content-menu">{{controllers.editor.name}}</div>
@@ -35,13 +35,22 @@
     </div>
 {{/if}}
 
-<!-- Tab Menu (Multiple screens in a scene) -->
-{{#if model.hasTabMenu}}
-    {{view App.MenuTabView}}
+<!-- Tab Menu (Multiple screens in a scene)
+    CASE 1: there is a variation for tablets, show tab menu if sceneScreen.hasTabMenu is true
+    CASE 2: there isn't a variation for tablets, show tab menu if viewController.hasTabMenu is true
+-->
+{{#if model.scene.varyForTablets}}
+    {{#if model.sceneScreen.hasTabMenu}}
+        {{view App.MenuTabView}}
+    {{/if}}
+{{else}}
+    {{#if model.hasTabMenu}}
+        {{view App.MenuTabView}}
+    {{/if}}
 {{/if}}
 
 <!-- App Menu -->
-{{#if hasMenu}}
+{{#if model.scene.hasMenu}}
     {{view App.MenuView}}
     {{#link-to "viewController" model}}{{view App.MenuViewShadow}}{{/link-to}}
 {{/if}}

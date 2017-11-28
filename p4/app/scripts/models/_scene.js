@@ -6,6 +6,7 @@ App.Scene = DS.Model.extend({
     name: DS.attr('string'),
     launcher: DS.attr('boolean', {defaultValue: false}),
     varyForTablets: DS.attr('boolean', {defaultValue: false}),
+    hasMenu: DS.attr('boolean', {defaultValue: false}),
 
     xmlName: 'scene',
 

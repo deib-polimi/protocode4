@@ -2,6 +2,7 @@ App.ViewController = DS.Model.extend({
     name: DS.attr('string'),
     backgroundColor: DS.attr('string', {defaultValue: ''}),
     backgroundImage: DS.attr('string', {defaultValue: ''}),
+    hasTabMenu: DS.attr('boolean', {defaultValue: false}),
 
     scene: DS.belongsTo('scene', {inverse: 'viewControllers'}),
     sceneScreen: DS.belongsTo('sceneScreen', {inverse: 'viewControllers'}),
@@ -16,24 +17,14 @@ App.ViewController = DS.Model.extend({
 
     xmlName: 'viewController',
 
-    hasTabMenu: function() {
-        if(this.get('scene.application.device.type') === 'smartphone') {
-            if(this.get('scene.viewControllers.length') > 1) {
-                return true;
-            } else {
-                return false;
-            }
+    cantHaveTabMenu: function() {
+        if(this.get('scene.viewControllers.length') > 1) {
+            return false;
         } else {
-            if(this.get('scene.screensNumber') > 1) {
-                return true;
-            } else {
-                return false;
-            }
+            return true;
         }
     }.property(
-        'scene.application.device.platform',
-        'scene.viewControllers.length',
-        'scene.screensNumber'
+        'scene.viewControllers.length'
     ),
 
     maxWidthPercentInScreen: function() {
@@ -115,6 +106,15 @@ App.ViewController = DS.Model.extend({
         }
         return false;
     }.property('sceneScreen'),
+
+    tabMenuObserver: function() {
+        if(!this.get('isDeleted')) {
+            if(this.get('cantHaveTabMenu') && this.get('hasTabMenu')) {
+                this.set('hasTabMenu', false);
+                this.save();
+            }
+        }
+    }.observes('cantHaveTabMenu'),
 
     getWidthFromPercent: function(widthPercent) {
         var result = this.get('scene.application.device.screenWidth') * widthPercent;
