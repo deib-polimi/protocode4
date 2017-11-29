@@ -23,30 +23,41 @@
 {{/if}}
 
 <div class="status-bar"></div>
-<!-- App Menu Icon -->
-{{#if model.scene.hasMenu}}
-    <div class="action-bar">
-        {{#link-to "appMenu" menu}}<div class="icon-menu"></div>{{/link-to}}
-        <div class="bar-content-menu">{{controllers.editor.name}}</div>
-    </div>
-{{else}}
-    <div class="action-bar">
-        <div class="bar-content">{{controllers.editor.name}}</div>
-    </div>
-{{/if}}
 
-<!-- Tab Menu (Multiple screens in a scene)
-    CASE 1: there is a variation for tablets, show tab menu if sceneScreen.hasTabMenu is true
-    CASE 2: there isn't a variation for tablets, show tab menu if viewController.hasTabMenu is true
--->
-{{#if model.scene.varyForTablets}}
-    {{#if model.sceneScreen.hasTabMenu}}
-        {{view App.MenuTabView}}
+<!-- App Menu button and Back navigation button -->
+{{#if haveScreen}}
+    <!-- For tablet scenes with variation -->
+    {{#if model.sceneScreen.hasBackButton}}
+        <div class="action-bar">
+            <div class="icon-back"></div>
+            <div class="bar-content-menu">{{controllers.editor.name}}</div>
+        </div>
+    {{else}}
+        <div class="action-bar">
+            {{#link-to "appMenu" menu}}<div class="icon-menu"></div>{{/link-to}}
+            <div class="bar-content-menu">{{controllers.editor.name}}</div>
+        </div>
     {{/if}}
 {{else}}
-    {{#if model.hasTabMenu}}
-        {{view App.MenuTabView}}
+    <!-- For tablet scenes without variation (same as for smartphone scenes) -->
+    {{#if model.hasBackButton}}
+        <div class="action-bar">
+            <div class="icon-back"></div>
+            <div class="bar-content-menu">{{controllers.editor.name}}</div>
+        </div>
+    {{else}}
+        <div class="action-bar">
+            {{#link-to "appMenu" menu}}<div class="icon-menu"></div>{{/link-to}}
+            <div class="bar-content-menu">{{controllers.editor.name}}</div>
+        </div>
     {{/if}}
+{{/if}}
+<!-- Tab Menu (Multiple screens in a scene)
+    CASE 1: there is a variation for tablets, show tab menu if there are multiple screens
+    CASE 2: there isn't a variation for tablets, show tab menu if there are multiple view controllers
+-->
+{{#if controller.mustShowTabMenu}}
+    {{view App.MenuTabView}}
 {{/if}}
 
 <!-- App Menu -->

@@ -1,11 +1,25 @@
 /*
  templates/control_list_view/index.hbs
  */
-App.ControlListViewIndexController = App.UiPhoneControlController.extend(App.ClickListenable, {
+App.ControlListViewIndexController = App.UiPhoneControlController.extend(App.NavigableSaveable, {
     needs: ['scenes'],
 
     isCreating: false,
     newNameListViewCell: 'newListItem',
+
+    navigationArray: function() {
+        var array = this.get('controllers.scenes.model').map(function(s) {
+            return s.get('referenceName');
+        });
+        array = array.pushObjects(this.get('model.viewController.scene.viewControllers').without(this.get('model.viewController')).map(function(vc) {
+            return vc.get('referenceName');
+        }));
+        return array;
+    }.property(
+        'controllers.scenes.model.[]',
+        'model.viewController',
+        'model.viewController.scene.viewControllers.[]'
+    ),
 
     simpleList: function (key, value) {
         return this.listType(key, value, 'simple');

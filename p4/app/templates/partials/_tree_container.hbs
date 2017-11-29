@@ -1,12 +1,26 @@
 {{#each uiPhoneControls}}
+    {{#unless controlChain}}
+        {{#if uiPhoneControls}}
+            <li><span><i class="fa fa-plus-square-o"></i> {{#link-to 'dispatchUiPhoneControl'
+                                                                     this}}{{name}}{{/link-to}}</span>
+                <ul>
+                    {{partial "partials/tree_container"}}
+                </ul>
+            </li>
+        {{else}}
+            <li>{{#link-to 'dispatchUiPhoneControl' this}}{{name}}{{/link-to}}</li>
+        {{/if}}
+    {{/unless}}
+{{/each}}
+{{#each controlChains}}
     {{#if uiPhoneControls}}
-        <li><span><i class="fa fa-plus-square-o"></i> {{#link-to 'dispatchUiPhoneControl'
+        <li><span {{bind-attr class="invalid"}}><i class="fa fa-plus-square-o"></i> {{#link-to 'controlChain'
                                                                  this}}{{name}}{{/link-to}}</span>
             <ul>
-                {{partial "partials/tree_container"}}
+                {{partial "partials/subtree_container"}}
             </ul>
         </li>
     {{else}}
-        <li>{{#link-to 'dispatchUiPhoneControl' this}}{{name}}{{/link-to}}</li>
+        <li><span><i class="fa fa-plus-square-o"></i> {{#link-to 'controlChain' this}}{{name}}{{/link-to}}</span></li>
     {{/if}}
 {{/each}}

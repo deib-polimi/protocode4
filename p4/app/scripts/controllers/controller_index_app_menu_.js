@@ -18,17 +18,10 @@ App.AppMenuIndexController = Ember.ObjectController.extend({
                 return;
             }
 
-            var navigation = this.store.createRecord('navigation', {
-                destination: this.get('controllers.scene.model')
-            });
-
-            navigation.save();
-
             var menuItem = this.store.createRecord('menuItem', {
                 name: name.replace(/ /g, ''),
                 title: name,
-                parentMenu: this.get('model'),
-                navigation: navigation
+                parentMenu: this.get('model')
             });
 
             this.set('newNameMenuItem', 'newMenuItem');

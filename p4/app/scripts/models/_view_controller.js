@@ -2,7 +2,6 @@ App.ViewController = DS.Model.extend({
     name: DS.attr('string'),
     backgroundColor: DS.attr('string', {defaultValue: ''}),
     backgroundImage: DS.attr('string', {defaultValue: ''}),
-    hasTabMenu: DS.attr('boolean', {defaultValue: false}),
 
     scene: DS.belongsTo('scene', {inverse: 'viewControllers'}),
     sceneScreen: DS.belongsTo('sceneScreen', {inverse: 'viewControllers'}),
@@ -16,16 +15,6 @@ App.ViewController = DS.Model.extend({
     asyncTasks: DS.hasMany('asyncTask', {inverse: 'viewController'}),
 
     xmlName: 'viewController',
-
-    cantHaveTabMenu: function() {
-        if(this.get('scene.viewControllers.length') > 1) {
-            return false;
-        } else {
-            return true;
-        }
-    }.property(
-        'scene.viewControllers.length'
-    ),
 
     maxWidthPercentInScreen: function() {
         if(this.get('sceneScreen')) {
@@ -107,14 +96,52 @@ App.ViewController = DS.Model.extend({
         return false;
     }.property('sceneScreen'),
 
-    tabMenuObserver: function() {
-        if(!this.get('isDeleted')) {
-            if(this.get('cantHaveTabMenu') && this.get('hasTabMenu')) {
-                this.set('hasTabMenu', false);
-                this.save();
+    /* NAVIGATION for smartphones and tablet with no screen
+        Scene has:
+            Case 1: menu YES, tab menu YES
+            all VCs have menu button
+
+            Case 2: menu YES, tab menu NO
+            - first VC has menu button
+            - other VCs have back button (to the first VC)
+
+            Case 3: menu NO, tab menu YES
+            all VCs have back button to the precedent scene
+
+            Case 4: menu NO, tab menu NO
+            all VCs have back button but:
+            - first VC go back to precedent scene
+            - others VCs go back to first VC
+    */
+    hasBackButton: function() {
+        if(!this.get('scene.varyForTablets')) {
+            if(this.get('scene.hasMenu')) {
+                if(this.get('scene.hasTabMenu')) {
+                    // Case 1
+                    return false;
+                } else {
+                    // Case 2
+                    if(this.get('scene.viewControllers').indexOf(this) === 0) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            } else {
+                // Cases 3 and 4
+                return true;
             }
         }
-    }.observes('cantHaveTabMenu'),
+        return false;
+    }.property(
+        'scene.varyForTablets',
+        'scene.hasMenu',
+        'scene.hasTabMenu'
+    ),
+
+    referenceName: function() {
+        return this.get('xmlName') + '/' + this.get('id');
+    }.property('id', 'xmlName'),
 
     getWidthFromPercent: function(widthPercent) {
         var result = this.get('scene.application.device.screenWidth') * widthPercent;
@@ -164,9 +191,17 @@ App.ViewController = DS.Model.extend({
 
     toXml: function (xmlDoc) {
         var viewController = xmlDoc.createElement(this.get('xmlName'));
+        viewController.setAttribute('id', this.get('id'));
         viewController.setAttribute('name', this.get('name'));
         viewController.setAttribute('backgroundColor', this.get('backgroundColor'));
         viewController.setAttribute('backgroundImage', this.get('backgroundImage'));
+        if(this.get('hasBackButton')) {
+            viewController.setAttribute('hasMenuButton', false);
+            viewController.setAttribute('hasBackButton', true);
+        } else {
+            viewController.setAttribute('hasMenuButton', true);
+            viewController.setAttribute('hasBackButton', false);
+        }
 
         this.get('alertDialogs').map(function (alertDialog) {
             viewController.appendChild(alertDialog.toXml(xmlDoc));
@@ -200,7 +235,7 @@ App.ViewController = DS.Model.extend({
     },
 
     getRefPath: function (path) {
-        return '//@' + this.get('xmlName') + '[name=\'' + this.get('name') + '\']' + path;
+        return '//@' + this.get('xmlName') + '[id=\'' + this.get('id') + '\']' + path;
     }
 
 });

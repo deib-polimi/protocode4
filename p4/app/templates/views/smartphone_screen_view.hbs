@@ -6,20 +6,22 @@
 {{/each}}
 
 <div class="status-bar"></div>
-<!-- App Menu Icon -->
-{{#if model.scene.hasMenu}}
+
+<!-- App Menu button and Back navigation button -->
+{{#if model.hasBackButton}}
     <div class="action-bar">
-        {{#link-to "appMenu" menu}}<div class="icon-menu"></div>{{/link-to}}
+        <div class="icon-back"></div>
         <div class="bar-content-menu">{{controllers.editor.name}}</div>
     </div>
 {{else}}
     <div class="action-bar">
-        <div class="bar-content">{{controllers.editor.name}}</div>
+        {{#link-to "appMenu" menu}}<div class="icon-menu"></div>{{/link-to}}
+        <div class="bar-content-menu">{{controllers.editor.name}}</div>
     </div>
 {{/if}}
 
 <!-- Tab Menu (Multiple screens in a scene) -->
-{{#if model.hasTabMenu}}
+{{#if controller.mustShowTabMenu}}
     {{view App.MenuTabView}}
 {{/if}}
 

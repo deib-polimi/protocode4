@@ -1,10 +1,10 @@
 App.Navigation = DS.Model.extend({
-    destination: DS.belongsTo('scene', {inverse: null}),
+    destination: DS.attr('string', {default: null}),
 
     toXml: function (xmlDoc) {
         var elem = xmlDoc.createElement('navigation');
 
-        elem.setAttribute('destination', this.get('destination.name'));
+        elem.setAttribute('destination', this.get('destination'));
 
         return elem;
     }

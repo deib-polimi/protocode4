@@ -72,6 +72,13 @@ App.SceneController = Ember.ObjectController.extend(App.Saveable, {
         return false;
     }.property('model.isDirty', 'screens.@each.isDirty', 'screens.@each.viewControllers.@each.isDirty'),
 
+    cantChangeHasMenu: function() {
+        if(this.get('model.launcher')) {
+            return true;
+        }
+        return false;
+    }.property('model.launcher'),
+
     varyForTabletsObserver: function() {
         if(!this.get('model.isDeleted') && !this.get('model.varyForTablets')) {
             // Remove all view controllers from screens

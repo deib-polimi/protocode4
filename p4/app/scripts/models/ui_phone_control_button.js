@@ -1,6 +1,6 @@
 App.Button = App.UiPhoneControl.extend({
     title: DS.attr('string', {defaultValue: 'Button'}),
-    clickListener: DS.belongsTo('clickListener'),
+    navigation: DS.belongsTo('navigation', {inverse: null}),
     minWidth: 64,
     minHeight: 40,
     defaultWidth: 88,
@@ -16,12 +16,23 @@ App.Button = App.UiPhoneControl.extend({
 
     xmlName: 'buttons',
 
-    deleteRecord: function () {
-        var clickListener = this.get('clickListener');
+    didCreate: function () {
+        var self = this;
+        this._super();
+        this.store.createRecord('navigation', {
+            destination: null
+        }).save().then(function(nav) {
+            self.set('navigation', nav);
+            self.save();
+        });
+    },
 
-        if (clickListener) {
-            clickListener.deleteRecord();
-            clickListener.save();
+    deleteRecord: function () {
+        var navigation = this.get('navigation');
+
+        if (navigation) {
+            navigation.deleteRecord();
+            navigation.save();
         }
 
         this._super();
@@ -37,10 +48,10 @@ App.Button = App.UiPhoneControl.extend({
         button.setAttribute('borderRadius', this.get('borderRadius'));
         button.setAttribute('clickColor', this.get('clickColor'));
 
-        var clickListener = this.get('clickListener');
+        var navigation = this.get('navigation');
 
-        if (clickListener !== null) {
-            button.appendChild(clickListener.toXml(xmlDoc));
+        if (navigation !== null) {
+            button.appendChild(navigation.toXml(xmlDoc));
         }
 
         return button;

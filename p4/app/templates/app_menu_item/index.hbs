@@ -9,7 +9,11 @@
             </h3>
         </div>
         <div class="panel-body">
-            {{partial "partials/first_commands"}}
+            <button type="button" {{bind-attr class=":btn :btn-block :btn-sm controller.isDirtyOverride:btn-warning:btn-default"}} {{action
+                "acceptChanges"}}>
+                <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Save
+            </button>
+            <br>
             <ul class="nav nav-tabs spacer">
                 <li class="active">
                     <a href="#home" data-toggle="tab">
@@ -23,11 +27,11 @@
                     {{input-text label="Name" value=name action='acceptChanges'}}
                     {{input-text label="Title" value=title action='acceptChanges'}}
                     {{input-select
-                        label="Click listener"
-                        content=controllers.scenes.model
-                        optionLabelPath="content.name"
+                        label="Target"
+                        content=controller.navigationArray
+                        optionLabelPath="content"
                         optionValuePath="content"
-                        selection=navigationTarget}}
+                        selection=navigation.destination}}
                 </div>
             </div>
         </div>

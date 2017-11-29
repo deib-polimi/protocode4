@@ -1,10 +1,17 @@
 /*
  templates/app_menu_item/index.hbs
  */
-App.AppMenuItemIndexController = Ember.ObjectController.extend(App.Saveable, App.Deletable, App.Navigable, {
+App.AppMenuItemIndexController = Ember.ObjectController.extend(App.NavigableSaveable, {
     needs: ['scenes'],
 
+    navigationArray: function() {
+        return this.get('controllers.scenes.model').map(function(s) {
+            return s.get('referenceName');
+        });
+    }.property('controllers.scenes.model.[]'),
+
     actions: {
+
         delete: function () {
             var menuItemToDelete = this.get('model');
             var menu = menuItemToDelete.get('parentMenu');
@@ -12,7 +19,7 @@ App.AppMenuItemIndexController = Ember.ObjectController.extend(App.Saveable, App
             menu.save();
             this.get('model').deleteRecord();
             this.get('model').save();
-            this.transitionToRoute('scene');
+            this.transitionToRoute('viewController');
         }
     }
 

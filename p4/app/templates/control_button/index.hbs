@@ -4,7 +4,11 @@
             <h3 class="panel-title">{{name}}</h3>
         </div>
         <div class="panel-body">
-            {{partial "partials/first_commands"}}
+            <button type="button" {{bind-attr class=":btn :btn-block :btn-sm controller.isDirtyOverride:btn-warning:btn-default"}} {{action
+                "acceptChanges"}}>
+                <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Save
+            </button>
+            <br>
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#home" data-toggle="tab"><span class="glyphicon glyphicon-pencil"
                                                                            aria-hidden="true"></span></a></li>
@@ -25,11 +29,11 @@
                     {{input-color-picker label="On Click Color" value=clickColor action='acceptChanges'}}
                     {{input-number min="0" max="40" label="Border Radius" value=borderRadius action='acceptChanges'}}
                     {{input-select
-                        label="Click listener"
-                        content=controllers.scenes.model
-                        optionLabelPath="content.name"
+                        label="Click Listener"
+                        content=controller.navigationArray
+                        optionLabelPath="content"
                         optionValuePath="content"
-                        selection=navigationTarget
+                        selection=navigation.destination
                         prompt="Navigate to:"}}
                 </div>
                 <div class="tab-pane fade form-horizontal" id="position">

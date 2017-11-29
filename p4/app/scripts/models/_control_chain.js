@@ -1,6 +1,7 @@
 App.ControlChain = DS.Model.extend({
     viewController: DS.belongsTo('viewController', {inverse: 'controlChains'}),
 
+    name: DS.attr('string'),
     axis: DS.attr('string'),
     type: DS.attr('string'),
     byas: DS.attr('number', {defaultValue: 0.5}),
@@ -21,17 +22,9 @@ App.ControlChain = DS.Model.extend({
         }
     }.property('axis', 'type', 'uiPhoneControls.@each'),
 
-    name: function() {
-        var name = 'chain:';
-        var controls = this.get('uiPhoneControls');
-        controls.forEach(function(c, index) {
-            name = name + c.get('name');
-            if(index < (controls.get('length') - 1)) {
-                name = name + '-';
-            }
-        });
-        return name;
-    }.property('uiPhoneControls.@each'),
+    invalid: function() {
+        return !this.get('valid');
+    }.property('valid'),
 
     totalValue: function() {
         var total = 0;
@@ -441,6 +434,12 @@ App.ControlChain = DS.Model.extend({
             spaceForControls = spaceForControls - ((controls.get('length') + 1) * this.get('spacing'));
         }
         return spaceForControls;
+    },
+
+    didCreate: function () {
+        this._super();
+        this.set('name', this.get('id') + '-Chain');
+        this.save();
     },
 
     toXml: function (xmlDoc) {

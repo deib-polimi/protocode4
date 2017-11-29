@@ -1070,7 +1070,7 @@ App.UiPhoneControl = App.UiControl.extend({
 
     // Used to reload views
     didCreate: function () {
-        this.set('name', this.get('id').replace(/[0-9]/g, '') + this.constructor.toString().split(".")[1]);
+        this.set('name', this.get('id') + '-' + this.constructor.toString().split(".")[1]);
 
         var self = this;
         if (this.get('parentContainer')) {
@@ -1174,7 +1174,7 @@ App.UiPhoneControl = App.UiControl.extend({
     },
 
     getRefPath: function (path) {
-        var updatedPath = '/@' + this.get('xmlName') + '[id=\'' + this.get('name') + '\']';
+        var updatedPath = '/@' + this.get('xmlName') + '[id=\'' + this.get('id') + '\']';
 
         if (this.get('parentContainer') !== null) {
             updatedPath = this.get('parentContainer').getRefPath(updatedPath);

@@ -2,7 +2,7 @@
 }
 
 .tree ul {
-    padding-left: 0;
+    padding-left: 16px;
 }
 
 .tree li {
@@ -42,6 +42,10 @@
     display: inline-block;
     padding: 3px 8px;
     text-decoration: none
+}
+
+.tree li span.invalid a {
+    color: #ff0000;
 }
 
 .tree li.parent_li > span {

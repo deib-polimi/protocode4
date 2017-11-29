@@ -7,6 +7,7 @@ App.Scene = DS.Model.extend({
     launcher: DS.attr('boolean', {defaultValue: false}),
     varyForTablets: DS.attr('boolean', {defaultValue: false}),
     hasMenu: DS.attr('boolean', {defaultValue: false}),
+    hasTabMenu: DS.attr('boolean', {defaultValue: true}),
 
     xmlName: 'scene',
 
@@ -19,6 +20,17 @@ App.Scene = DS.Model.extend({
         });
         return n;
     }.property('sceneScreens.@each.valid'),
+
+    referenceName: function() {
+        return this.get('xmlName') + '/' + this.get('id');
+    }.property('id', 'xmlName'),
+
+    launcherObserver: function() {
+        if(!this.get('isDeleted') && this.get('launcher') && !this.get('hasMenu')) {
+            this.set('hasMenu', true);
+            this.save();
+        }
+    }.observes('launcher'),
 
     didCreate: function() {
         var self = this;
@@ -59,9 +71,12 @@ App.Scene = DS.Model.extend({
 
     toXml: function (xmlDoc) {
         var scene = xmlDoc.createElement(this.get('xmlName'));
+        scene.setAttribute('id', this.get('id'));
         scene.setAttribute('name', this.get('name'));
         scene.setAttribute('launcher', this.get('launcher'));
         scene.setAttribute('varyForTablets', this.get('varyForTablets'));
+        scene.setAttribute('hasMenu', this.get('hasMenu'));
+        scene.setAttribute('hasTabMenu', this.get('hasTabMenu'));
 
         var vcs = xmlDoc.createElement('viewControllers');
         scene.appendChild(vcs);

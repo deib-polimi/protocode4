@@ -1,6 +1,6 @@
 App.GridView = App.UiPhoneControl.extend({
     gridViewCells: DS.hasMany('gridViewCell', {inverse: 'parentGridView'}),
-    clickListener: DS.belongsTo('clickListener'),
+    navigation: DS.belongsTo('navigation', {inverse: null}),
 
     height: DS.attr('number', {defaultValue: 408}),
     minHeight: 408,
@@ -22,6 +22,17 @@ App.GridView = App.UiPhoneControl.extend({
         return this.get('width');
     }.property('width'),
 
+    didCreate: function () {
+        var self = this;
+        this._super();
+        this.store.createRecord('navigation', {
+            destination: null
+        }).save().then(function(nav) {
+            self.set('navigation', nav);
+            self.save();
+        });
+    },
+
     deleteRecord: function () {
         var gridViewCells = this.get('gridViewCells');
 
@@ -32,11 +43,11 @@ App.GridView = App.UiPhoneControl.extend({
             });
         });
 
-        var clickListener = this.get('clickListener');
+        var navigation = this.get('navigation');
 
-        if (clickListener) {
-            clickListener.deleteRecord();
-            clickListener.save();
+        if (navigation) {
+            navigation.deleteRecord();
+            navigation.save();
         }
 
         this._super();
@@ -50,10 +61,10 @@ App.GridView = App.UiPhoneControl.extend({
 
         elem.setAttribute('gridType', this.get('gridType'));
 
-        var clickListener = self.get('clickListener');
+        var navigation = self.get('navigation');
 
-        if (clickListener !== null) {
-            elem.appendChild(clickListener.toXml(xmlDoc));
+        if (navigation !== null) {
+            elem.appendChild(navigation.toXml(xmlDoc));
         }
 
         self.get('gridViewCells').map(function (item) {

@@ -18,7 +18,14 @@ App.MenuItem = DS.Model.extend({
 
     // Used to reload menuItems
     didCreate: function () {
+        var self = this;
         this._super();
+        this.store.createRecord('navigation', {
+            destination: null
+        }).save().then(function(nav) {
+            self.set('navigation', nav);
+            self.save();
+        });
 
         this.get('parentMenu').save();
     },

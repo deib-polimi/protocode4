@@ -1,6 +1,6 @@
 App.ListView = App.UiPhoneControl.extend({
     listViewCells: DS.hasMany('listViewCell', {inverse: 'parentListView'}),
-    clickListener: DS.belongsTo('clickListener'),
+    navigation: DS.belongsTo('navigation', {inverse: null}),
     minWidth: 270,
     minHeight: 60,
     defaultWidth: 270,
@@ -14,6 +14,17 @@ App.ListView = App.UiPhoneControl.extend({
 
     xmlName: 'listViews',
 
+    didCreate: function () {
+        var self = this;
+        this._super();
+        this.store.createRecord('navigation', {
+            destination: null
+        }).save().then(function(nav) {
+            self.set('navigation', nav);
+            self.save();
+        });
+    },
+
     deleteRecord: function () {
         var listViewCells = this.get('listViewCells');
 
@@ -24,11 +35,11 @@ App.ListView = App.UiPhoneControl.extend({
             });
         });
 
-        var clickListener = this.get('clickListener');
+        var navigation = this.get('navigation');
 
-        if (clickListener) {
-            clickListener.deleteRecord();
-            clickListener.save();
+        if (navigation) {
+            navigation.deleteRecord();
+            navigation.save();
         }
 
         this._super();
@@ -43,10 +54,10 @@ App.ListView = App.UiPhoneControl.extend({
         elem.setAttribute('backgroundColor', this.get('backgroundColor'));
         elem.setAttribute('listType', this.get('listType'));
 
-        var clickListener = self.get('clickListener');
+        var navigation = self.get('navigation');
 
-        if (clickListener !== null) {
-            elem.appendChild(clickListener.toXml(xmlDoc));
+        if (navigation !== null) {
+            elem.appendChild(navigation.toXml(xmlDoc));
         }
 
         self.get('listViewCells').map(function (item) {

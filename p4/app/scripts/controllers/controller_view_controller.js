@@ -79,6 +79,31 @@ App.ViewControllerController = Ember.ObjectController.extend({
         'device.viewBottom'
     ),
 
+    mustShowTabMenu: function() {
+        if(this.get('scene.hasTabMenu')) {
+            if(this.get('device.type') === 'smartphone' || !this.get('scene.varyForTablets')) {
+                if(this.get('scene.viewControllers.length') > 1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                if(this.get('scene.screensNumber') > 1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+        return false;
+    }.property(
+        'scene.hasTabMenu',
+        'device.type',
+        'scene.varyForTablets',
+        'scene.viewControllers.length',
+        'scene.screensNumber'
+    ),
+
     isRotatedObserver: function() {
         if(!this.get('isDeleted') && this.get('device.type') === 'tablet') {
             var mustUpdate = (this.get('isRotated') && !this.get('device.isDirty')) ||

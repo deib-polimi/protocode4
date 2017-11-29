@@ -36,7 +36,6 @@
                     {{input-text label="Name" value=name action='acceptChanges'}}
                     {{input-color-picker label="Background Color" value=backgroundColor action='acceptChanges'}}
                     {{input-text label="Background Image" value=backgroundImage action='acceptChanges'}}
-                    {{input-checkbox label="Has Tab Menu" checked=hasTabMenu disabled=cantHaveTabMenu}}
                     <br>
                     <button type="button" {{bind-attr class=":btn :btn-block :btn-sm :btn-chain"}} {{action
                         "createChain"}}>
@@ -45,31 +44,15 @@
                     </button>
                     <br>
                     <br>
-                    <p align="center"><b>UiPhoneControls</b></p>
+                    <p align="center"><b>UiPhoneControls & Control Chains</b></p>
                     <div class="tree col-sm-11">
                         <ul>
                             <li>
                                 <span><i class="fa fa-mobile"></i> {{name}}</span>
                             </li>
-                            <ul style="padding-left:16px">
+                            <ul>
                                 {{partial "partials/tree_container"}}
                             </ul>
-                        </ul>
-                    </div>
-                    <p align="center"><b>Control Chains</b></p>
-                    <div class="col-sm-11">
-                        <ul class="collapse in">
-                            {{#each item in controlChains}}
-                                {{#if item.valid}}
-                                    <li class="list-item-simple">
-                                        {{#link-to "controlChain" item}}{{item.name}}{{/link-to}}
-                                    </li>
-                                {{else}}
-                                    <li class="list-item-simple-highlight">
-                                        {{#link-to "controlChain" item}}{{item.name}}{{/link-to}}
-                                    </li>
-                                {{/if}}
-                            {{/each}}
                         </ul>
                     </div>
                 </div>

@@ -4,7 +4,11 @@
             <h3 class="panel-title">{{name}}</h3>
         </div>
         <div class="panel-body">
-            {{partial "partials/first_commands"}}
+            <button type="button" {{bind-attr class=":btn :btn-block :btn-sm controller.isDirtyOverride:btn-warning:btn-default"}} {{action
+                "acceptChanges"}}>
+                <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Save
+            </button>
+            <br>
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#home" data-toggle="tab"><span class="glyphicon glyphicon-pencil"
                                                                            aria-hidden="true"></span></a></li>
@@ -35,10 +39,10 @@
                     </div>
                     {{input-select
                         label="Click listener"
-                        content=controllers.scenes.model
-                        optionLabelPath="content.name"
+                        content=controller.navigationArray
+                        optionLabelPath="content"
                         optionValuePath="content"
-                        selection=navigationTarget
+                        selection=navigation.destination
                         prompt="Navigate to:"}}
                     <br>
                     <p align="center"><b>Grid view cells</b></p>
