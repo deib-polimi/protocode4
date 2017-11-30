@@ -104,6 +104,147 @@ App.ViewControllerController = Ember.ObjectController.extend({
         'scene.screensNumber'
     ),
 
+    // BEGIN REPORTS
+
+    getReportText: function() {
+        var self = this;
+        return new Promise(function (resolve) {
+            var report = "<b>REPORT</b> scene <aid>" + self.get('scene.id') + '-' + self.get('scene.name') + "</aid>:<br>";
+            report = report + self.getReportTextPosition();
+            self.getReportTextReachability().then(function(reach) {
+                report = report + reach;
+                report = report + self.getReportTextInvalids();
+                resolve(report);
+            });
+        });
+    },
+
+    getReportTextPosition: function() {
+        var report = "<br>POSITION<br>";
+        var xConstrained, yConstrained;
+        this.get('scene.viewControllers').forEach(function(vc) {
+            vc.get('uiPhoneControls').forEach(function(uic) {
+                xConstrained = false;
+                yConstrained = false;
+                if(!uic.get('controlChain') || uic.get('controlChain.valid')) {
+                    uic.get('constraints').forEach(function(c) {
+                        if(c.get('layoutEdge') === 'start' || c.get('layoutEdge') === 'end' || c.get('layoutEdge') === 'centerX') {
+                            xConstrained = true;
+                        }
+                        if(c.get('layoutEdge') === 'top' || c.get('layoutEdge') === 'bottom' || c.get('layoutEdge') === 'centerY') {
+                            yConstrained = true;
+                        }
+                    });
+                    if(uic.get('controlChain')) {
+                        if(uic.get('controlChain.axis') === 'horizontal') {
+                            xConstrained = true;
+                        } else {
+                            yConstrained = true;
+                        }
+                    }
+                    if(!xConstrained || !yConstrained) {
+                        if(!xConstrained) {
+                            report = report + "- Control <aid>" + uic.get('name') + "</aid> miss an <ax>X</ax>-constraint.<br>";
+                        }
+                        if(!yConstrained) {
+                            report = report + "- Control <aid>" + uic.get('name') + "</aid> miss an <ay>Y</ay>-constraint.<br>";
+                        }
+                    } else {
+                        report = report + "- Control <aid>" + uic.get('name') + "</aid> is well <aok>positioned</aok>.<br>";
+                    }
+                }
+            });
+        });
+        return report;
+    },
+
+    getReportTextReachability: function() {
+        var self = this;
+        return new Promise(function (resolve) {
+            self.store.find('navigation').then(function(navigations) {
+                var report = "<br>REACHABILITY<br>";
+                var reachable;
+                // Scene
+                if(self.get('scene.launcher')) {
+                    reachable = true;
+                } else {
+                    reachable = false;
+                    navigations.forEach(function(nav) {
+                        if(nav.get('destination') === ('scene/' + self.get('scene.id'))) {
+                            reachable = true;
+                        }
+                    });
+                }
+                if(reachable) {
+                    report = report + "- Scene is <aok>reachable</aok>.<br>";
+                } else {
+                    report = report + "- Scene is <aunr>unreachable</aunr>.<br>";
+                }
+                // View controllers
+                self.get('scene.viewControllers').forEach(function(vc, index) {
+                    reachable = false;
+                    if(index === 0) {
+                        reachable = true;
+                    } else if(vc.get('scene.hasTabMenu')) {
+                        reachable = true;
+                    } else {
+                        navigations.forEach(function(nav) {
+                            if(nav.get('destination') === ('viewController/' + vc.get('id'))) {
+                                reachable = true;
+                            }
+                        });
+                    }
+                    if(reachable) {
+                        report = report + "- View Controller <aid>" + vc.get('id') + '-' + vc.get('name') + "</aid> is <aok>reachable</aok>.<br>";
+                    } else {
+                        report = report + "- View Controller <aid>" + vc.get('id') + '-' + vc.get('name') + "</aid> is <aunr>unreachable</aunr>.<br>";
+                    }
+                });
+                resolve(report);
+            });
+        });
+    },
+
+    getReportTextInvalids: function() {
+        var report = "<br>INVALID objects (not exported in the model)<br>";
+        var n;
+        report = report + "- Control Chains:<br>";
+        n = 0;
+        this.get('scene.viewControllers').forEach(function(vc) {
+            vc.get('controlChains').forEach(function(c) {
+                if(!c.get('valid')) {
+                    n++;
+                    report = report + "&nbsp&nbsp&nbsp&nbsp+ Chain <aid>" + c.get('id') + "</aid> of VC <aid>" + vc.get('id') + '-' + vc.get('name') + "</aid> is <ainv>not valid</ainv>.<br>";
+                    report = report + "&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp So, also the chain's controls aren't valid:<br>";
+                    c.get('uiPhoneControls').forEach(function(uic) {
+                        report = report + "&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- <ainv>" + uic.get('name') + "</ainv><br>";
+                    });
+                }
+            });
+        });
+        if(n === 0) {
+            report = report + "&nbsp&nbsp&nbsp&nbsp all <aok>rights</aok>.<br>";
+        }
+        n = 0;
+        report = report + "- Constraints:<br>";
+        this.get('scene.viewControllers').forEach(function(vc) {
+            vc.get('uiPhoneControls').forEach(function(uic) {
+                uic.get('constraints').forEach(function(c) {
+                    if(!c.get('valid')) {
+                        n++;
+                        report = report + "&nbsp&nbsp&nbsp+ Constraint <aid>" + c.get('id') + "</aid> of control <aid>" + uic.get('name') + "</aid> is <ainv>not valid</ainv>.<br>";
+                    }
+                });
+            });
+        });
+        if(n === 0) {
+            report = report + "&nbsp&nbsp&nbsp&nbsp all <aok>rights</aok>.<br>";
+        }
+        return report;
+    },
+
+    // END REPORTS
+
     isRotatedObserver: function() {
         if(!this.get('isDeleted') && this.get('device.type') === 'tablet') {
             var mustUpdate = (this.get('isRotated') && !this.get('device.isDirty')) ||

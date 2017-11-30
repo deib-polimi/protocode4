@@ -193,6 +193,49 @@ body,
     background-color: #ccc;
 }
 
+.report-text-area {
+    display: flex;
+    width: 100%;
+    height: auto;
+    resize: none;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    padding: 10px 10px 10px 10px;
+}
+
+.report-text-area aid {
+    font-weight: bold;
+    color: #6600ff;
+}
+
+.report-text-area ax {
+    font-weight: bold;
+    color: #ff3300;
+}
+
+.report-text-area ay {
+    font-weight: bold;
+    color: #0066ff;
+}
+
+.report-text-area aok {
+    font-weight: bold;
+    color: #009933;
+}
+
+.report-text-area aunr {
+    font-weight: bold;
+    color: #ffcc00;
+}
+
+.report-text-area ainv {
+    font-weight: bold;
+    color: #cc0000;
+}
+
 /*============ CONTROL PICKER ============*/
 
 .control-ui-picker,
