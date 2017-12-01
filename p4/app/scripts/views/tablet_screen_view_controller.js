@@ -15,7 +15,7 @@ App.TabletScreenViewController = Ember.View.extend(App.UiDroppable, {
   style: function() {
     var style = "";
     var menuOffset = 0;
-    if(this.get('context.hasTabMenu')) {
+    if(this.get('context.scene.mustShowTabMenu')) {
         menuOffset = 48;
     }
     // Set top
@@ -34,7 +34,7 @@ App.TabletScreenViewController = Ember.View.extend(App.UiDroppable, {
   	return style;
   }.property(
   	'context.backgroundColor',
-    'context.hasTabMenu',
+    'context.scene.mustShowTabMenu',
     'context.scene.application.device.platform',
     'context.scene.application.device.viewTop',
     'context.scene.application.device.viewBottom',

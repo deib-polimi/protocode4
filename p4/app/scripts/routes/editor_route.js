@@ -6,7 +6,7 @@ App.EditorRoute = Ember.Route.extend({
     setupController: function (controller, model) {
         this._super(controller, model);
         controller.set('model', model.application);
-        var devices = (model.smartphones).addObjects(model.tablets);
+        var devices = [].addObjects(model.smartphones).addObjects(model.tablets);
         controller.set('devices', devices);
         /*controller.set('smartphones', model.smartphones);
         controller.set('tablets', model.tablets);*/

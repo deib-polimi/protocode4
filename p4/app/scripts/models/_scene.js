@@ -21,6 +21,31 @@ App.Scene = DS.Model.extend({
         return n;
     }.property('sceneScreens.@each.valid'),
 
+    mustShowTabMenu: function() {
+        if(this.get('hasTabMenu')) {
+            if(this.get('application.device.type') === 'smartphone' || !this.get('varyForTablets')) {
+                if(this.get('viewControllers.length') > 1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                if(this.get('screensNumber') > 1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+        return false;
+    }.property(
+        'hasTabMenu',
+        'application.device.type',
+        'varyForTablets',
+        'viewControllers.length',
+        'screensNumber'
+    ),
+
     referenceName: function() {
         return this.get('xmlName') + '/' + this.get('id');
     }.property('id', 'xmlName'),

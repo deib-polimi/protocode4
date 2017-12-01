@@ -11,19 +11,8 @@ App.Application = DS.Model.extend({
     scenes: DS.hasMany('scene', {inverse: 'application', async: true}),
 
     deleteRecord: function () {
-        /*this.get('watchControllers').forEach(function (watchController) {
-            Ember.run.once(this, function () {
-                watchController.deleteRecord();
-                watchController.save();
-            });
-        });
-
-        this.get('viewControllers').forEach(function (viewController) {
-            Ember.run.once(this, function () {
-                viewController.deleteRecord();
-                viewController.save();
-            });
-        });*/
+        this.get('menu').deleteRecord();
+        this.get('menu').save();
 
         this._super();
     },

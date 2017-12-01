@@ -113,8 +113,6 @@ App.ApplicationRoute = Ember.Route.extend({
                     'container',
                     'scene',
                     'watchController',
-                    'menu',
-                    'menuItem',
                     'smartphone',
                     'tablet',
                     'smartwatch',

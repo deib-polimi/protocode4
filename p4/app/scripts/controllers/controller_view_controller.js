@@ -54,7 +54,7 @@ App.ViewControllerController = Ember.ObjectController.extend({
             var result = [];
             var top = this.get('device.viewTop');
             var height = this.get('device.viewBottom') - this.get('device.viewTop');
-            if(this.get('model.hasTabMenu')) {
+            if(this.get('model.scene.mustShowTabMenu')) {
                 if(this.get('device.platform') === 'android') {
                     top = top + 48;
                 }
@@ -73,92 +73,35 @@ App.ViewControllerController = Ember.ObjectController.extend({
     }.property(
         'model.sceneScreen',
         'model.sceneScreen.viewControllers.@each.startInScreen',
-        'model.hasTabMenu',
+        'model.scene.mustShowTabMenu',
         'device.platform',
         'device.viewTop',
         'device.viewBottom'
-    ),
-
-    mustShowTabMenu: function() {
-        if(this.get('scene.hasTabMenu')) {
-            if(this.get('device.type') === 'smartphone' || !this.get('scene.varyForTablets')) {
-                if(this.get('scene.viewControllers.length') > 1) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                if(this.get('scene.screensNumber') > 1) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        }
-        return false;
-    }.property(
-        'scene.hasTabMenu',
-        'device.type',
-        'scene.varyForTablets',
-        'scene.viewControllers.length',
-        'scene.screensNumber'
     ),
 
     // BEGIN REPORTS
 
     getReportText: function() {
         var self = this;
+        var tab = "&nbsp&nbsp&nbsp&nbsp&nbsp";
+        var sep = "_______________________________________________________";
         return new Promise(function (resolve) {
             var report = "<b>REPORT</b> scene <aid>" + self.get('scene.id') + '-' + self.get('scene.name') + "</aid>:<br>";
-            report = report + self.getReportTextPosition();
-            self.getReportTextReachability().then(function(reach) {
-                report = report + reach;
-                report = report + self.getReportTextInvalids();
+            self.getReportTextReachability(tab).then(function(reach) {
+                report = report + reach + sep + "<br><br>VIEW CONTROLLERS<br><br>";
+                sep = tab + ".........................................................................................";
+                self.get('scene.viewControllers').forEach(function(vc) {
+                    report = report + tab + "View Controller <aid>" + vc.get('id') + '-' + vc.get('name') + "</aid>:<br>";
+                    report = report + self.getReportTextPosition(tab, vc);
+                    report = report + self.getReportTextInvalids(tab, vc);
+                    report = report + sep + "<br><br>";
+                });
                 resolve(report);
             });
         });
     },
 
-    getReportTextPosition: function() {
-        var report = "<br>POSITION<br>";
-        var xConstrained, yConstrained;
-        this.get('scene.viewControllers').forEach(function(vc) {
-            vc.get('uiPhoneControls').forEach(function(uic) {
-                xConstrained = false;
-                yConstrained = false;
-                if(!uic.get('controlChain') || uic.get('controlChain.valid')) {
-                    uic.get('constraints').forEach(function(c) {
-                        if(c.get('layoutEdge') === 'start' || c.get('layoutEdge') === 'end' || c.get('layoutEdge') === 'centerX') {
-                            xConstrained = true;
-                        }
-                        if(c.get('layoutEdge') === 'top' || c.get('layoutEdge') === 'bottom' || c.get('layoutEdge') === 'centerY') {
-                            yConstrained = true;
-                        }
-                    });
-                    if(uic.get('controlChain')) {
-                        if(uic.get('controlChain.axis') === 'horizontal') {
-                            xConstrained = true;
-                        } else {
-                            yConstrained = true;
-                        }
-                    }
-                    if(!xConstrained || !yConstrained) {
-                        if(!xConstrained) {
-                            report = report + "- Control <aid>" + uic.get('name') + "</aid> miss an <ax>X</ax>-constraint.<br>";
-                        }
-                        if(!yConstrained) {
-                            report = report + "- Control <aid>" + uic.get('name') + "</aid> miss an <ay>Y</ay>-constraint.<br>";
-                        }
-                    } else {
-                        report = report + "- Control <aid>" + uic.get('name') + "</aid> is well <aok>positioned</aok>.<br>";
-                    }
-                }
-            });
-        });
-        return report;
-    },
-
-    getReportTextReachability: function() {
+    getReportTextReachability: function(tab) {
         var self = this;
         return new Promise(function (resolve) {
             self.store.find('navigation').then(function(navigations) {
@@ -176,9 +119,9 @@ App.ViewControllerController = Ember.ObjectController.extend({
                     });
                 }
                 if(reachable) {
-                    report = report + "- Scene is <aok>reachable</aok>.<br>";
+                    report = report + tab + "Scene is <aok>reachable</aok>.<br>";
                 } else {
-                    report = report + "- Scene is <aunr>unreachable</aunr>.<br>";
+                    report = report + tab + "Scene is <aunr>unreachable</aunr>.<br>";
                 }
                 // View controllers
                 self.get('scene.viewControllers').forEach(function(vc, index) {
@@ -195,9 +138,9 @@ App.ViewControllerController = Ember.ObjectController.extend({
                         });
                     }
                     if(reachable) {
-                        report = report + "- View Controller <aid>" + vc.get('id') + '-' + vc.get('name') + "</aid> is <aok>reachable</aok>.<br>";
+                        report = report + tab + "View Controller <aid>" + vc.get('id') + '-' + vc.get('name') + "</aid> is <aok>reachable</aok>.<br>";
                     } else {
-                        report = report + "- View Controller <aid>" + vc.get('id') + '-' + vc.get('name') + "</aid> is <aunr>unreachable</aunr>.<br>";
+                        report = report + tab + "View Controller <aid>" + vc.get('id') + '-' + vc.get('name') + "</aid> is <aunr>unreachable</aunr>.<br>";
                     }
                 });
                 resolve(report);
@@ -205,40 +148,80 @@ App.ViewControllerController = Ember.ObjectController.extend({
         });
     },
 
-    getReportTextInvalids: function() {
-        var report = "<br>INVALID objects (not exported in the model)<br>";
+    getReportTextPosition: function(tab, vc) {
+        var report = "<br>" + tab + tab + "POSITION<br>";
+        var xConstrained, yConstrained;
+        vc.get('uiPhoneControls').forEach(function(uic) {
+            xConstrained = false;
+            yConstrained = false;
+            if(!uic.get('controlChain') || uic.get('controlChain.valid')) {
+                uic.get('constraints').forEach(function(c) {
+                    if(c.get('layoutEdge') === 'start' || c.get('layoutEdge') === 'end' || c.get('layoutEdge') === 'centerX') {
+                        xConstrained = true;
+                    }
+                    if(c.get('layoutEdge') === 'top' || c.get('layoutEdge') === 'bottom' || c.get('layoutEdge') === 'centerY') {
+                        yConstrained = true;
+                    }
+                });
+                if(uic.get('controlChain')) {
+                    if(uic.get('controlChain.axis') === 'horizontal') {
+                        xConstrained = true;
+                    } else {
+                        yConstrained = true;
+                    }
+                }
+                if(!xConstrained || !yConstrained) {
+                    if(!xConstrained) {
+                        report = report + tab + tab + "Control <aid>" + uic.get('name') + "</aid> <ainv>miss</ainv> an <ax>X-constraint</ax>.<br>";
+                    }
+                    if(!yConstrained) {
+                        report = report + tab + tab + "Control <aid>" + uic.get('name') + "</aid> <ainv>miss</ainv> an <ay>Y-constraint</ay>.<br>";
+                    }
+                } else {
+                    report = report + tab + tab + "Control <aid>" + uic.get('name') + "</aid> is well <aok>positioned</aok>.<br>";
+                }
+            }
+        });
+        if(vc.get('uiPhoneControls.length') === 0) {
+            report = report + tab + tab + "No phone controls in this view controller.<br>";
+        }
+        return report;
+    },
+
+    getReportTextInvalids: function(tab, vc) {
+        var report = "<br>" + tab + tab + "INVALID objects (not exported in the model)<br>";
         var n;
-        report = report + "- Control Chains:<br>";
+        report = report + tab + tab + "Control Chains:<br>";
         n = 0;
-        this.get('scene.viewControllers').forEach(function(vc) {
-            vc.get('controlChains').forEach(function(c) {
+        vc.get('controlChains').forEach(function(c) {
+            if(!c.get('valid')) {
+                n++;
+                report = report + tab + tab + tab + "Chain <aid>" + c.get('name') + "</aid> is <ainv>not valid</ainv>.<br>";
+                report = report + tab + tab + tab + "So, also the chain's controls aren't valid:<br>";
+                c.get('uiPhoneControls').forEach(function(uic) {
+                    report = report + tab + tab + tab + "<ainv>" + uic.get('name') + "</ainv><br>";
+                });
+            }
+        });
+        if(vc.get('controlChains.length') === 0) {
+            report = report + tab + tab + tab + "No control chains in this view controller.<br>";
+        } else if(n === 0) {
+            report = report + tab + tab + tab + "all <aok>right</aok>.<br>";
+        }
+        n = 0;
+        report = report + tab + tab + "Constraints:<br>";
+        vc.get('uiPhoneControls').forEach(function(uic) {
+            uic.get('constraints').forEach(function(c) {
                 if(!c.get('valid')) {
                     n++;
-                    report = report + "&nbsp&nbsp&nbsp&nbsp+ Chain <aid>" + c.get('id') + "</aid> of VC <aid>" + vc.get('id') + '-' + vc.get('name') + "</aid> is <ainv>not valid</ainv>.<br>";
-                    report = report + "&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp So, also the chain's controls aren't valid:<br>";
-                    c.get('uiPhoneControls').forEach(function(uic) {
-                        report = report + "&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp- <ainv>" + uic.get('name') + "</ainv><br>";
-                    });
+                    report = report + tab + tab + tab + "Constraint <aid>" + c.get('id') + "</aid> of <aid>" + uic.get('name') + "</aid> is <ainv>not valid</ainv>.<br>";
                 }
             });
         });
-        if(n === 0) {
-            report = report + "&nbsp&nbsp&nbsp&nbsp all <aok>rights</aok>.<br>";
-        }
-        n = 0;
-        report = report + "- Constraints:<br>";
-        this.get('scene.viewControllers').forEach(function(vc) {
-            vc.get('uiPhoneControls').forEach(function(uic) {
-                uic.get('constraints').forEach(function(c) {
-                    if(!c.get('valid')) {
-                        n++;
-                        report = report + "&nbsp&nbsp&nbsp+ Constraint <aid>" + c.get('id') + "</aid> of control <aid>" + uic.get('name') + "</aid> is <ainv>not valid</ainv>.<br>";
-                    }
-                });
-            });
-        });
-        if(n === 0) {
-            report = report + "&nbsp&nbsp&nbsp&nbsp all <aok>rights</aok>.<br>";
+        if(vc.get('uiPhoneControls.length') === 0) {
+            report = report + tab + tab + tab + "No phone controls in this view controller.<br>";
+        } else if(n === 0) {
+            report = report + tab + tab + tab + "all <aok>right</aok>.<br>";
         }
         return report;
     },

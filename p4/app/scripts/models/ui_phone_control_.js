@@ -224,7 +224,7 @@ App.UiPhoneControl = App.UiControl.extend({
 
     heightPercentMin: function() {
         var availableHeight = this.get('viewController.scene.application.device.viewBottom') - this.get('viewController.scene.application.device.viewTop');
-        if(this.get('viewController.hasTabMenu')) {
+        if(this.get('viewController.scene.mustShowTabMenu')) {
             availableHeight = availableHeight - 48;
         }
         var i;
@@ -236,7 +236,7 @@ App.UiPhoneControl = App.UiControl.extend({
         }
         return i;
     }.property('minHeight',
-        'viewController.hasTabMenu',
+        'viewController.scene.mustShowTabMenu',
         'viewController.scene.application.device.viewTop',
         'viewController.scene.application.device.viewBottom',
     ),
@@ -286,7 +286,7 @@ App.UiPhoneControl = App.UiControl.extend({
                     } else {
                         // Check tab bar for menu in Android
                         var isAndroid = self.get('viewController.scene.application.device.platform') === 'android';
-                        var currentViewControllerIsMenu = self.get('viewController.hasTabMenu');
+                        var currentViewControllerIsMenu = self.get('viewController.scene.mustShowTabMenu');
                         // Offset from tab bar for menu in Android
                         if (isAndroid && currentViewControllerIsMenu) {
                             result = self.get('viewController.scene.application.device.viewTop') + 48;
@@ -316,7 +316,7 @@ App.UiPhoneControl = App.UiControl.extend({
                         } else {
                             // Check tab bar for menu in Android
                             var isAndroid = self.get('viewController.scene.application.device.platform') === 'android';
-                            var currentViewControllerIsMenu = self.get('viewController.hasTabMenu');
+                            var currentViewControllerIsMenu = self.get('viewController.scene.mustShowTabMenu');
 
                             if (isAndroid && currentViewControllerIsMenu) {
                                 result = self.get('viewController.scene.application.device.viewTop') + 48 +
@@ -388,7 +388,7 @@ App.UiPhoneControl = App.UiControl.extend({
         'controlChain.valid',
         'bindedControls.@each.top',
         'posY',
-        'viewController.hasTabMenu',
+        'viewController.scene.mustShowTabMenu',
         'outerHeight',
         'constraints.@each.layoutEdge',
         'constraints.@each.withParent',
@@ -433,7 +433,7 @@ App.UiPhoneControl = App.UiControl.extend({
                     } else {
                         // Check tab bar for menu in iOS
                         var isIOS = self.get('viewController.scene.application.device.platform') === 'ios';
-                        var currentViewControllerIsMenu = self.get('viewController.hasTabMenu');
+                        var currentViewControllerIsMenu = self.get('viewController.scene.mustShowTabMenu');
                         // Offset from tab bar for menu in iOS
                         if (isIOS && currentViewControllerIsMenu) {
                             result = self.get('viewController.scene.application.device.viewBottom') - 48;
@@ -463,7 +463,7 @@ App.UiPhoneControl = App.UiControl.extend({
                         } else {
                             // Check tab bar for menu in iOS
                             var isIOS = self.get('viewController.scene.application.device.platform') === 'ios';
-                            var currentViewControllerIsMenu = self.get('viewController.hasTabMenu');
+                            var currentViewControllerIsMenu = self.get('viewController.scene.mustShowTabMenu');
                             // Offset from tab bar for menu in iOS
                             if (isIOS && currentViewControllerIsMenu) {
                                 result = self.get('viewController.scene.application.device.viewBottom') - 48 -
@@ -536,7 +536,7 @@ App.UiPhoneControl = App.UiControl.extend({
         'constraints.@each.referenceLayoutEdge',
         'constraints.@each.valid',
         'topWithMargin',
-        'viewController.hasTabMenu',
+        'viewController.scene.mustShowTabMenu',
         'outerHeight',
         'viewController.scene.application.device.platform',
         'viewController.scene.application.device.viewBottom',
@@ -1025,7 +1025,7 @@ App.UiPhoneControl = App.UiControl.extend({
         if(mustUpdateHeight) {
             if(this.get('isHeightPercentConstrained')) {
                 var screenHeight = this.get('viewController.scene.application.device.viewBottom') - this.get('viewController.scene.application.device.viewTop');
-                if(this.get('viewController.hasTabMenu')) {
+                if(this.get('viewController.scene.mustShowTabMenu')) {
                     screenHeight = screenHeight - 48;
                 }
                 this.set('height', this.get('heightPercent') * screenHeight);
@@ -1037,7 +1037,7 @@ App.UiPhoneControl = App.UiControl.extend({
 
             } else if(this.get('isHeightPercentConstrained')) {
                 var screenHeight = this.get('viewController.scene.application.device.viewBottom') - this.get('viewController.scene.application.device.viewTop');
-                if(this.get('viewController.hasTabMenu')) {
+                if(this.get('viewController.scene.mustShowTabMenu')) {
                     screenHeight = screenHeight - 48;
                 }
                 this.set('height', this.get('heightPercent') * screenHeight);
@@ -1050,7 +1050,7 @@ App.UiPhoneControl = App.UiControl.extend({
     }.observes(
         'viewController.scene.application.device.viewTop',
         'viewController.scene.application.device.viewBottom',
-        'viewController.hasTabMenu',
+        'viewController.scene.mustShowTabMenu',
         'heightPercent',
         'isHeightConstrained',
         'isHeightPercentConstrained',

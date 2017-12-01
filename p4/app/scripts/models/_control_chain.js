@@ -49,7 +49,7 @@ App.ControlChain = DS.Model.extend({
     viewTop: function() {
         var isAndroid = this.get('viewController.scene.application.device.platform') === 'android';
         // Compute if the viewController has the menu bar
-        var currentViewControllerIsMenu = this.get('viewController.hasTabMenu');
+        var currentViewControllerIsMenu = this.get('viewController.scene.mustShowTabMenu');
         if(isAndroid && currentViewControllerIsMenu) {
             return this.get('viewController.scene.application.device.viewTop') + 48;
         } else {
@@ -57,14 +57,14 @@ App.ControlChain = DS.Model.extend({
         }
     }.property(
         'viewController.scene.application.device.platform',
-        'viewController.hasTabMenu',
+        'viewController.scene.mustShowTabMenu',
         'viewController.scene.application.device.viewTop'
     ),
 
     viewBottom: function() {
         var isAndroid = this.get('viewController.scene.application.device.platform') === 'android';
         // Compute if the viewController has the menu bar
-        var currentViewControllerIsMenu = this.get('viewController.hasTabMenu');
+        var currentViewControllerIsMenu = this.get('viewController.scene.mustShowTabMenu');
         if(!isAndroid && currentViewControllerIsMenu) {
             return this.get('viewController.scene.application.device.viewBottom') - 48;
         } else {
@@ -72,7 +72,7 @@ App.ControlChain = DS.Model.extend({
         }
     }.property(
         'viewController.scene.application.device.platform',
-        'viewController.hasTabMenu',
+        'viewController.scene.mustShowTabMenu',
         'viewController.scene.application.menu.menuItems.@each',
         'viewController.scene.application.device.viewBottom'
     ),

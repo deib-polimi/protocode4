@@ -33,7 +33,7 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
         var constraints = control.get('constraints').without(thisConstraint);
         var isIOS = control.get('viewController.scene.application.device.platform') === 'ios';
         // Compute if the viewController has the menu bar
-        var currentViewControllerIsMenu = control.get('viewController.hasTabMenu');
+        var currentViewControllerIsMenu = control.get('viewController.scene.mustShowTabMenu');
         // Check x position over-constrained
         var constrainedX;
         if(thisConstraint.get('layoutEdge') === 'start' || thisConstraint.get('layoutEdge') === 'end') {

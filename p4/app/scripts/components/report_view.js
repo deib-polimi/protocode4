@@ -4,15 +4,31 @@ App.ReportViewComponent = Ember.Component.extend({
     sceneBinding: 'controller.scene',
     routerBinding: 'controller.target',
 
+    didInsertElement: function() {
+        this._super();
+        if(this.get('scene')) {
+            this.updateReport();
+        }
+    },
+
+    parentViewDidChange: function() {
+        this._super();
+        if(this.get('scene')) {
+            this.updateReport();
+        }
+    },
+
     updateReportObserver: function() {
         this.updateReport();
     }.observes('scene', 'router.location.lastSetURL'),
 
     updateReport: function() {
         var self = this;
-        if(this.get('element')) {
-            this.get('vcController').getReportText().then(function(report) {
-                self.get('element').childNodes[4].innerHTML = report;
+        if(!self.get('isDestroying') && self.get('element') && self.get('element').childNodes[4]) {
+            self.get('vcController').getReportText().then(function(report) {
+                if(!self.get('isDestroying') && self.get('element') && self.get('element').childNodes[4]) {
+                    self.get('element').childNodes[4].innerHTML = report;
+                }
             });
         }
     },

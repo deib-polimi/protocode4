@@ -116,7 +116,7 @@ App.ScreenCanvasComponent = Ember.Component.extend({
         'model.controlChains.@each.type',
         'model.controlChains.@each.axis',
         'model.controlChains.@each.byas',
-        'model.hasTabMenu',
+        'model.scene.mustShowTabMenu',
         'model.startInScreen',
         'model.width'
     ).on('init'),
@@ -232,7 +232,7 @@ App.ScreenCanvasComponent = Ember.Component.extend({
             if(constraint.get('withParent')) {
                 var isIOS = this.get('model.scene.application.device.platform') === 'ios';
                 // Compute if the viewController has the menu bar
-                var currentViewControllerIsMenu = this.get('model.hasTabMenu');
+                var currentViewControllerIsMenu = this.get('model.scene.mustShowTabMenu');
                 var viewTop = this.get('device.viewTop');
                 if(currentViewControllerIsMenu && !isIOS) {
                     viewTop = viewTop + 48;

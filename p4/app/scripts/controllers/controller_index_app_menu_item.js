@@ -5,9 +5,12 @@ App.AppMenuItemIndexController = Ember.ObjectController.extend(App.NavigableSave
     needs: ['scenes'],
 
     navigationArray: function() {
-        return this.get('controllers.scenes.model').map(function(s) {
-            return s.get('referenceName');
-        });
+        if(this.get('controllers.scenes.model')) {
+            return this.get('controllers.scenes.model').map(function(s) {
+                return s.get('referenceName');
+            });
+        }
+        return [];
     }.property('controllers.scenes.model.[]'),
 
     actions: {

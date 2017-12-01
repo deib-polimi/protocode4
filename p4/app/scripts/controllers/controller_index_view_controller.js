@@ -56,9 +56,10 @@ App.ViewControllerIndexController = Ember.ObjectController.extend(App.Saveable, 
                         vcs.save();
                     }
                 });
+                var id = this.get('id');
                 this.store.find('navigation').then(function (navigations) {
                     navigations.forEach(function (navigation) {
-                        if (navigation.get('destination') === viewController) {
+                        if (navigation.get('destination') === ('viewController/' + id)) {
                             navigation.set('destination', null);
                             navigation.save();
                         }

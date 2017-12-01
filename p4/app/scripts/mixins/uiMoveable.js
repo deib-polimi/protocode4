@@ -28,7 +28,7 @@ App.UiMoveable = Ember.Mixin.create({
 
       var menuTop = 0;
       var menuBottom = 0;
-      if(self.get('context.viewController.hasTabMenu')) {
+      if(self.get('context.viewController.scene.mustShowTabMenu')) {
           if(self.get('device.platform') === 'android') {
               menuTop = 48;
           } else {
@@ -65,7 +65,7 @@ App.UiMoveable = Ember.Mixin.create({
 
       var menuTop = 0;
       var menuBottom = 0;
-      if(self.get('context.viewController.hasTabMenu')) {
+      if(self.get('context.viewController.scene.mustShowTabMenu')) {
           if(self.get('device.platform') === 'android') {
               menuTop = 48;
           } else {
