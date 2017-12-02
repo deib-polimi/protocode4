@@ -442,6 +442,17 @@ App.ControlChain = DS.Model.extend({
         this.save();
     },
 
+    deleteRecord: function () {
+        this.get('uiPhoneControls').forEach(function (uiPhoneControl) {
+            Ember.run.once(self, function () {
+                uiPhoneControl.deleteRecord();
+                uiPhoneControl.save();
+            });
+        });
+
+        this._super();
+    },
+
     toXml: function (xmlDoc) {
         var chain = xmlDoc.createElement(this.get('xmlName'));
         chain.setAttribute('id', this.get('id'));

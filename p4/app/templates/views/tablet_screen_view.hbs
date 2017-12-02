@@ -1,9 +1,5 @@
 {{#if haveScreen}}
     <!-- MULTIPLE viewController in screen -->
-    <!-- Separation Lines -->
-    {{#each st in separationLinesStyle}}
-        <div class="separation-line" {{bind-attr style=st}}></div>
-    {{/each}}
     {{#each sceneScreen.viewControllers}}
         <!-- Screen view -->
         {{#link-to "viewController" this}}{{view App.TabletScreenViewController}}{{/link-to}}
@@ -11,6 +7,10 @@
         {{#each this.uiPhoneControls}}
             {{view App.UiPhoneControlView}}
         {{/each}}
+    {{/each}}
+    <!-- Separation Lines -->
+    {{#each st in separationLinesStyle}}
+        <div class="separation-line" {{bind-attr style=st}}></div>
     {{/each}}
 {{else}}
     <!-- SINGLE viewController in screen -->

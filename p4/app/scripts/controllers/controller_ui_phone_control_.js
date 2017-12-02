@@ -69,6 +69,17 @@ App.UiPhoneControlController = Ember.ObjectController.extend(App.Saveable, {
                 chain.save();
             }
 
+            controlToDelete.get('bindedControls').forEach(function(control) {
+                control.get('bindedControls').removeObject(controlToDelete);
+                control.get('constraints').forEach(function(c) {
+                    if(c.get('referenceElement') === controlToDelete) {
+                        c.deleteRecord();
+                        c.save();
+                    }
+                });
+                control.save();
+            });
+
             this.set('number', this.get('number') - 1);
 
             controlToDelete.deleteRecord();

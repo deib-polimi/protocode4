@@ -114,7 +114,7 @@ App.ViewController = DS.Model.extend({
             - others VCs go back to first VC
     */
     hasBackButton: function() {
-        if(!this.get('scene.varyForTablets')) {
+        if(this.get('scene.application.device.type') === 'smartphone' || !this.get('scene.varyForTablets')) {
             if(this.get('scene.hasMenu')) {
                 if(this.get('scene.hasTabMenu')) {
                     // Case 1
@@ -134,6 +134,7 @@ App.ViewController = DS.Model.extend({
         }
         return false;
     }.property(
+        'scene.application.device.type',
         'scene.varyForTablets',
         'scene.hasMenu',
         'scene.hasTabMenu'
@@ -159,11 +160,15 @@ App.ViewController = DS.Model.extend({
     deleteRecord: function () {
         var self = this;
 
+        // Delete uiPhoneControls not in control chains
+        // The uiPhoneControls in chains will be deleted by the chains themselves
         this.get('uiPhoneControls').forEach(function (uiPhoneControl) {
-            Ember.run.once(self, function () {
-                uiPhoneControl.deleteRecord();
-                uiPhoneControl.save();
-            });
+            if(uiPhoneControl.get('controlChain') === null) {
+                Ember.run.once(self, function () {
+                    uiPhoneControl.deleteRecord();
+                    uiPhoneControl.save();
+                });
+            }
         });
 
         this.get('controlChains').forEach(function (chain) {

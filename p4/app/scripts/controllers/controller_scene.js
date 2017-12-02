@@ -103,6 +103,7 @@ App.SceneController = Ember.ObjectController.extend(App.Saveable, {
         createViewController: function () {
             this.get('currentNumber');
             var name = this.get('newViewControllerName') + this.get('number');
+            var self = this;
 
             var viewController = this.store.createRecord('viewController', {
                 scene: this.get('model'),
@@ -110,16 +111,26 @@ App.SceneController = Ember.ObjectController.extend(App.Saveable, {
             }).save().then(function(vc) {
                 vc.get('scene.viewControllers').addObject(vc);
                 vc.get('scene').save();
+
+                self.set('number', self.get('number') + 1);
+
+                self.transitionToRoute('viewController', vc);
             });
-
-            this.set('number', this.get('number') + 1);
-
-            this.transitionToRoute('viewController', viewController);
         },
 
         deleteScene: function () {
             if (confirm('Are you sure to delete?')) {
                 this.set('number', this.get('number') - 1);
+
+                var id = this.get('id');
+                this.store.find('navigation').then(function (navigations) {
+                    navigations.forEach(function (navigation) {
+                        if (navigation.get('destination') === ('scene/' + id)) {
+                            navigation.set('destination', null);
+                            navigation.save();
+                        }
+                    });
+                });
 
                 var app = this.get('model.application');
                 app.get('scenes').removeObject(this.get('model'));

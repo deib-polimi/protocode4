@@ -29,7 +29,7 @@ App.ReportViewComponent = Ember.Component.extend({
                 if(!self.get('isDestroying') && self.get('element') && self.get('element').childNodes[4]) {
                     self.get('element').childNodes[4].innerHTML = report;
                 }
-            });
+            }).catch(function(f) {});
         }
     },
 

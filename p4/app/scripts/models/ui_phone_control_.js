@@ -987,24 +987,26 @@ App.UiPhoneControl = App.UiControl.extend({
     }.observes('height'),
 
     widthObserver: function() {
-        var mustUpdateWidth = true;
-        mustUpdateWidth = mustUpdateWidth && !this.get('isDeleted');
-        mustUpdateWidth = mustUpdateWidth && !this.widthIsBindedByConstraints(this.get('constraints'));
-        if(mustUpdateWidth) {
-            if(this.get('isWidthPercentConstrained')) {
-                this.set('width', this.get('viewController').getWidthFromPercent(this.get('widthPercent')));
+        if(!this.get('isDeleted') && this.get('viewController')) {
+            var mustUpdateWidth = true;
+            mustUpdateWidth = mustUpdateWidth;
+            mustUpdateWidth = mustUpdateWidth && !this.widthIsBindedByConstraints(this.get('constraints'));
+            if(mustUpdateWidth) {
+                if(this.get('isWidthPercentConstrained')) {
+                    this.set('width', this.get('viewController').getWidthFromPercent(this.get('widthPercent')));
+                }
             }
-        }
-        mustUpdateWidth = mustUpdateWidth && !this.get('isRatioConstrained');
-        if(mustUpdateWidth) {
-            if(this.get('isWidthConstrained')) {
+            mustUpdateWidth = mustUpdateWidth && !this.get('isRatioConstrained');
+            if(mustUpdateWidth) {
+                if(this.get('isWidthConstrained')) {
 
-            } else if(this.get('isWidthPercentConstrained')) {
-                this.set('width', this.get('viewController').getWidthFromPercent(this.get('widthPercent')));
-            } else if(!this.get('isWidthConstrained')) {
-                this.set('width', this.get('defaultWidth'));
-            } else if(!this.get('isWidthPercentConstrained')) {
-                this.set('width', this.get('defaultWidth'));
+                } else if(this.get('isWidthPercentConstrained')) {
+                    this.set('width', this.get('viewController').getWidthFromPercent(this.get('widthPercent')));
+                } else if(!this.get('isWidthConstrained')) {
+                    this.set('width', this.get('defaultWidth'));
+                } else if(!this.get('isWidthPercentConstrained')) {
+                    this.set('width', this.get('defaultWidth'));
+                }
             }
         }
     }.observes(
@@ -1019,32 +1021,34 @@ App.UiPhoneControl = App.UiControl.extend({
     ),
 
     heightObserver: function() {
-        var mustUpdateHeight = true;
-        mustUpdateHeight = mustUpdateHeight && !this.get('isDeleted');
-        mustUpdateHeight = mustUpdateHeight && !this.heightIsBindedByConstraints(this.get('constraints'));
-        if(mustUpdateHeight) {
-            if(this.get('isHeightPercentConstrained')) {
-                var screenHeight = this.get('viewController.scene.application.device.viewBottom') - this.get('viewController.scene.application.device.viewTop');
-                if(this.get('viewController.scene.mustShowTabMenu')) {
-                    screenHeight = screenHeight - 48;
+        if(!this.get('isDeleted') && this.get('viewController')) {
+            var mustUpdateHeight = true;
+            mustUpdateHeight = mustUpdateHeight;
+            mustUpdateHeight = mustUpdateHeight && !this.heightIsBindedByConstraints(this.get('constraints'));
+            if(mustUpdateHeight) {
+                if(this.get('isHeightPercentConstrained')) {
+                    var screenHeight = this.get('viewController.scene.application.device.viewBottom') - this.get('viewController.scene.application.device.viewTop');
+                    if(this.get('viewController.scene.mustShowTabMenu')) {
+                        screenHeight = screenHeight - 48;
+                    }
+                    this.set('height', this.get('heightPercent') * screenHeight);
                 }
-                this.set('height', this.get('heightPercent') * screenHeight);
             }
-        }
-        mustUpdateHeight = mustUpdateHeight && !this.get('isRatioConstrained');
-        if(mustUpdateHeight) {
-            if(this.get('isHeightConstrained')) {
+            mustUpdateHeight = mustUpdateHeight && !this.get('isRatioConstrained');
+            if(mustUpdateHeight) {
+                if(this.get('isHeightConstrained')) {
 
-            } else if(this.get('isHeightPercentConstrained')) {
-                var screenHeight = this.get('viewController.scene.application.device.viewBottom') - this.get('viewController.scene.application.device.viewTop');
-                if(this.get('viewController.scene.mustShowTabMenu')) {
-                    screenHeight = screenHeight - 48;
+                } else if(this.get('isHeightPercentConstrained')) {
+                    var screenHeight = this.get('viewController.scene.application.device.viewBottom') - this.get('viewController.scene.application.device.viewTop');
+                    if(this.get('viewController.scene.mustShowTabMenu')) {
+                        screenHeight = screenHeight - 48;
+                    }
+                    this.set('height', this.get('heightPercent') * screenHeight);
+                } else if(!this.get('isHeightConstrained')) {
+                    this.set('height', this.get('defaultHeight'));
+                } else if(!this.get('isHeightPercentConstrained')) {
+                    this.set('height', this.get('defaultHeight'));
                 }
-                this.set('height', this.get('heightPercent') * screenHeight);
-            } else if(!this.get('isHeightConstrained')) {
-                this.set('height', this.get('defaultHeight'));
-            } else if(!this.get('isHeightPercentConstrained')) {
-                this.set('height', this.get('defaultHeight'));
             }
         }
     }.observes(
@@ -1083,24 +1087,6 @@ App.UiPhoneControl = App.UiControl.extend({
     deleteRecord: function () {
         var viewController = this.get('viewController');
         var self = this;
-
-        if (viewController) {
-            viewController.get('uiPhoneControls').forEach(function (uiPhoneControl) {
-                var constraints = uiPhoneControl.get('constraints');
-                constraints.forEach(function (constraint) {
-                    if (constraint.get('referenceElement') === self) {
-                        //Ember.run.once(self, function () {
-                            if(constraint) {
-                                constraint.set('referenceElement', null);
-                                constraint.save();
-                                uiPhoneControl.get('bindedControls').removeObject(self);
-                                uiPhoneControl.save();
-                            }
-                        //});
-                    }
-                });
-            });
-        }
 
         var myConstraints = this.get('constraints');
         myConstraints.forEach(function (constraint) {

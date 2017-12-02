@@ -87,17 +87,21 @@ App.ViewControllerController = Ember.ObjectController.extend({
         var sep = "_______________________________________________________";
         return new Promise(function (resolve) {
             var report = "<b>REPORT</b> scene <aid>" + self.get('scene.id') + '-' + self.get('scene.name') + "</aid>:<br>";
-            self.getReportTextReachability(tab).then(function(reach) {
-                report = report + reach + sep + "<br><br>VIEW CONTROLLERS<br><br>";
-                sep = tab + ".........................................................................................";
-                self.get('scene.viewControllers').forEach(function(vc) {
-                    report = report + tab + "View Controller <aid>" + vc.get('id') + '-' + vc.get('name') + "</aid>:<br>";
-                    report = report + self.getReportTextPosition(tab, vc);
-                    report = report + self.getReportTextInvalids(tab, vc);
-                    report = report + sep + "<br><br>";
+            if(self.get('scene') && self.get('scene.viewControllers')) {
+                self.getReportTextReachability(tab).then(function(reach) {
+                    report = report + reach + sep + "<br><br>VIEW CONTROLLERS<br><br>";
+                    sep = tab + ".........................................................................................";
+                    self.get('scene.viewControllers').forEach(function(vc) {
+                        report = report + tab + "View Controller <aid>" + vc.get('id') + '-' + vc.get('name') + "</aid>:<br>";
+                        report = report + self.getReportTextPosition(tab, vc);
+                        report = report + self.getReportTextInvalids(tab, vc);
+                        report = report + sep + "<br><br>";
+                    });
+                    resolve(report);
                 });
-                resolve(report);
-            });
+            } else {
+                resolve(null);
+            }
         });
     },
 
@@ -190,12 +194,12 @@ App.ViewControllerController = Ember.ObjectController.extend({
 
     getReportTextInvalids: function(tab, vc) {
         var report = "<br>" + tab + tab + "INVALID objects (not exported in the model)<br>";
-        var n;
+        var nInvalids;
         report = report + tab + tab + "Control Chains:<br>";
-        n = 0;
+        nInvalids = 0;
         vc.get('controlChains').forEach(function(c) {
             if(!c.get('valid')) {
-                n++;
+                nInvalids++;
                 report = report + tab + tab + tab + "Chain <aid>" + c.get('name') + "</aid> is <ainv>not valid</ainv>.<br>";
                 report = report + tab + tab + tab + "So, also the chain's controls aren't valid:<br>";
                 c.get('uiPhoneControls').forEach(function(uic) {
@@ -205,22 +209,26 @@ App.ViewControllerController = Ember.ObjectController.extend({
         });
         if(vc.get('controlChains.length') === 0) {
             report = report + tab + tab + tab + "No control chains in this view controller.<br>";
-        } else if(n === 0) {
+        } else if(nInvalids === 0) {
             report = report + tab + tab + tab + "all <aok>right</aok>.<br>";
         }
-        n = 0;
+        nInvalids = 0;
+        var nConstraints = 0;
         report = report + tab + tab + "Constraints:<br>";
         vc.get('uiPhoneControls').forEach(function(uic) {
             uic.get('constraints').forEach(function(c) {
+                nConstraints++;
                 if(!c.get('valid')) {
-                    n++;
+                    nInvalids++;
                     report = report + tab + tab + tab + "Constraint <aid>" + c.get('id') + "</aid> of <aid>" + uic.get('name') + "</aid> is <ainv>not valid</ainv>.<br>";
                 }
             });
         });
         if(vc.get('uiPhoneControls.length') === 0) {
             report = report + tab + tab + tab + "No phone controls in this view controller.<br>";
-        } else if(n === 0) {
+        } else if(nConstraints === 0) {
+            report = report + tab + tab + tab + "No constraints in this view controller.<br>";
+        } else if(nInvalids === 0) {
             report = report + tab + tab + tab + "all <aok>right</aok>.<br>";
         }
         return report;
@@ -230,7 +238,8 @@ App.ViewControllerController = Ember.ObjectController.extend({
 
     isRotatedObserver: function() {
         if(!this.get('isDeleted') && this.get('device.type') === 'tablet') {
-            var mustUpdate = (this.get('isRotated') && !this.get('device.isDirty')) ||
+            var mustUpdate = (this.get('scene.varyForTablets') && this.get('isRotated')) ||
+                (this.get('isRotated') && !this.get('device.isDirty')) ||
                 (!this.get('isRotated') && this.get('device.isDirty'));
             if(mustUpdate) {
                 var device = this.get('device');
@@ -251,7 +260,10 @@ App.ViewControllerController = Ember.ObjectController.extend({
                     device.set('viewBottom', device.get('screenHeight') - 47);
                 }
             }
+            if(this.get('scene.varyForTablets') && this.get('isRotated')) {
+                this.set('isRotated', false);
+            }
         }
-    }.observes('isRotated', 'device')
+    }.observes('isRotated', 'device', 'scene.varyForTablets')
 
 });
