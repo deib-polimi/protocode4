@@ -211,14 +211,12 @@ App.ViewController = DS.Model.extend({
 
         this.get('controlChains').forEach(function (chain) {
             Ember.run.once(self, function () {
-                chain.deleteRecord();
+                chain.delete();
                 chain.save();
             });
         });
 
         var linkedModels = ['alertDialogs', 'progressDialogs', 'asyncTasks'];
-
-        var self = this;
 
         linkedModels.forEach(function (linkedModel) {
             self.get(linkedModel).forEach(function (uiPhoneControl) {

@@ -116,7 +116,7 @@ App.ScreenCanvasComponent = Ember.Component.extend({
         'model.controlChains.@each.type',
         'model.controlChains.@each.axis',
         'model.controlChains.@each.byas',
-        'model.scene.mustShowTabMenu',
+        'model.top',
         'model.start',
         'model.width'
     ).on('init'),
@@ -230,17 +230,7 @@ App.ScreenCanvasComponent = Ember.Component.extend({
             ctx.fillStyle = "#00ff00";
             var plus = 7
             if(constraint.get('withParent')) {
-                var isIOS = this.get('model.scene.application.device.platform') === 'ios';
-                // Compute if the viewController has the menu bar
-                var currentViewControllerIsMenu = this.get('model.scene.mustShowTabMenu');
-                var viewTop = this.get('device.viewTop');
-                if(currentViewControllerIsMenu && !isIOS) {
-                    viewTop = viewTop + 48;
-                }
-                var viewBottom = this.get('device.viewBottom');
-                if(currentViewControllerIsMenu && isIOS) {
-                    viewBottom = viewBottom - 48;
-                }
+                var viewTop = this.get('model.top');
                 if(constraint.get('layoutEdge') === 'top') {
                     var endY = parseFloat(control.get('marginTop')) + plus;
                     ctx.fillRect(control.get('centerX'), viewTop, 2, endY);

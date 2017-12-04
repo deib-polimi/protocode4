@@ -52,14 +52,8 @@ App.ViewControllerController = Ember.ObjectController.extend({
     separationLinesStyle: function() {
         if(this.get('model.sceneScreen')) {
             var result = [];
-            var top = this.get('device.viewTop');
-            var height = this.get('device.viewBottom') - this.get('device.viewTop');
-            if(this.get('model.scene.mustShowTabMenu')) {
-                if(this.get('device.platform') === 'android') {
-                    top = top + 48;
-                }
-                height = height - 48;
-            }
+            var top = this.get('model.top');
+            var height = this.get('model.height');
             var vcs = this.get('model.sceneScreen.viewControllers');
             vcs.without(vcs.get('firstObject')).forEach(function(vc) {
                 var style = "left:" + parseInt(vc.get('start')) +
@@ -73,10 +67,8 @@ App.ViewControllerController = Ember.ObjectController.extend({
     }.property(
         'model.sceneScreen',
         'model.sceneScreen.viewControllers.@each.start',
-        'model.scene.mustShowTabMenu',
-        'device.platform',
-        'device.viewTop',
-        'device.viewBottom'
+        'model.top',
+        'model.height'
     ),
 
     // BEGIN REPORTS

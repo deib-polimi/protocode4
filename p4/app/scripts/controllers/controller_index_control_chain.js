@@ -51,7 +51,8 @@ App.ControlChainIndexController = Ember.ObjectController.extend(App.Saveable, {
             var viewController = chainToDelete.get('viewController');
             var uiPhoneControls = chainToDelete.get('uiPhoneControls');
             uiPhoneControls.forEach(function(c) {
-                Ember.run.once(self, function () {
+                Ember.run.once(this, function () {
+                    uiPhoneControls.removeObject(c);
                     viewController.get('uiPhoneControls').removeObject(c);
                     viewController.save();
                     c.deleteRecord();

@@ -31,9 +31,6 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
         }
         var control = thisConstraint.get('uiPhoneControl');
         var constraints = control.get('constraints').without(thisConstraint);
-        var isIOS = control.get('viewController.scene.application.device.platform') === 'ios';
-        // Compute if the viewController has the menu bar
-        var currentViewControllerIsMenu = control.get('viewController.scene.mustShowTabMenu');
         // Check x position over-constrained
         var constrainedX;
         if(thisConstraint.get('layoutEdge') === 'start' || thisConstraint.get('layoutEdge') === 'end') {
@@ -92,18 +89,12 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
             }
         }
         // Check boundaries: top
-        var minTop = control.get('viewController.scene.application.device.viewTop');
-        if(currentViewControllerIsMenu && !isIOS) {
-            minTop = minTop + 48;
-        }
+        var minTop = control.get('viewController.top');
         if(control.getTopWithMargin(false) < minTop) {
             return 4;
         }
         // Check boundaries: bottom
-        var maxBottom = control.get('viewController.scene.application.device.viewBottom');
-        if(currentViewControllerIsMenu && isIOS) {
-            maxBottom = maxBottom - 48;
-        }
+        var maxBottom = control.get('viewController.bottom');
         if(control.getBottomWithMargin(false) > maxBottom) {
             return 5;
         }

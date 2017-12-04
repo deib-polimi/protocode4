@@ -46,41 +46,6 @@ App.ControlChain = DS.Model.extend({
         }
     }.property('type', 'valid'),
 
-    viewTop: function() {
-        var isAndroid = this.get('viewController.scene.application.device.platform') === 'android';
-        // Compute if the viewController has the menu bar
-        var currentViewControllerIsMenu = this.get('viewController.scene.mustShowTabMenu');
-        if(isAndroid && currentViewControllerIsMenu) {
-            return this.get('viewController.scene.application.device.viewTop') + 48;
-        } else {
-            return this.get('viewController.scene.application.device.viewTop');
-        }
-    }.property(
-        'viewController.scene.application.device.platform',
-        'viewController.scene.mustShowTabMenu',
-        'viewController.scene.application.device.viewTop'
-    ),
-
-    viewBottom: function() {
-        var isAndroid = this.get('viewController.scene.application.device.platform') === 'android';
-        // Compute if the viewController has the menu bar
-        var currentViewControllerIsMenu = this.get('viewController.scene.mustShowTabMenu');
-        if(!isAndroid && currentViewControllerIsMenu) {
-            return this.get('viewController.scene.application.device.viewBottom') - 48;
-        } else {
-            return this.get('viewController.scene.application.device.viewBottom');
-        }
-    }.property(
-        'viewController.scene.application.device.platform',
-        'viewController.scene.mustShowTabMenu',
-        'viewController.scene.application.menu.menuItems.@each',
-        'viewController.scene.application.device.viewBottom'
-    ),
-
-    screenHeight: function() {
-        return this.get('viewBottom') - this.get('viewTop');
-    }.property('viewTop', 'viewBottom'),
-
     availableSpace: function() {
         var controls = this.get('uiPhoneControls');
         var dimension;
@@ -93,7 +58,7 @@ App.ControlChain = DS.Model.extend({
             availableSpace = this.get('viewController.width');
         } else {
             dimension = 'height';
-            availableSpace = this.get('screenHeight');
+            availableSpace = this.get('viewController.height');
         }
         var firstMargin, lastMargin;
         if(dimension === 'height') {
@@ -125,7 +90,7 @@ App.ControlChain = DS.Model.extend({
         'valid',
         'type',
         'axis',
-        'screenHeight',
+        'viewController.height',
         'spacing',
         'viewController.width',
         'uiPhoneControls.length',
@@ -192,7 +157,7 @@ App.ControlChain = DS.Model.extend({
                 if(this.get('type') === 'weighted') {
                     var topInChain;
                     if(index === 0) {
-                        topInChain = this.get('viewTop');
+                        topInChain = this.get('viewController.top');
                     } else {
                         var precedingControl = controls.objectAt(index - 1);
                         topInChain = parseFloat(precedingControl.get('bottom'));
@@ -204,7 +169,7 @@ App.ControlChain = DS.Model.extend({
                     var spreadSpace = this.getSpreadSpace(false);
                     var topInChain;
                     if(index === 0) {
-                        topInChain = this.get('viewTop') + spreadSpace;
+                        topInChain = this.get('viewController.top') + spreadSpace;
                     } else {
                         var precedingControl = controls.objectAt(index - 1);
                         topInChain = parseFloat(precedingControl.get('bottom')) + spreadSpace;
@@ -215,7 +180,7 @@ App.ControlChain = DS.Model.extend({
                     var spreadSpace = this.getSpreadSpace(true);
                     var topInChain;
                     if(index === 0) {
-                        topInChain = this.get('viewTop');
+                        topInChain = this.get('viewController.top');
                     } else {
                         var precedingControl = controls.objectAt(index - 1);
                         topInChain = parseFloat(precedingControl.get('bottom')) + spreadSpace;
@@ -226,7 +191,7 @@ App.ControlChain = DS.Model.extend({
                     var packedSpaceFirst = this.getPackedSpace(true);
                     var topInChain;
                     if(index === 0) {
-                        topInChain = this.get('viewTop') + packedSpaceFirst;
+                        topInChain = this.get('viewController.top') + packedSpaceFirst;
                     } else {
                         var precedingControl = controls.objectAt(index - 1);
                         topInChain = parseFloat(precedingControl.get('bottom')) + this.get('spacing');
@@ -442,15 +407,17 @@ App.ControlChain = DS.Model.extend({
         this.save();
     },
 
-    deleteRecord: function () {
+    delete: function () {
         this.get('uiPhoneControls').forEach(function (uiPhoneControl) {
-            Ember.run.once(self, function () {
-                uiPhoneControl.deleteRecord();
-                uiPhoneControl.save();
+            Ember.run.once(this, function () {
+                if(!uiPhoneControl.get('isDeleted')) {
+                    uiPhoneControl.deleteRecord();
+                    uiPhoneControl.save();
+                }
             });
         });
 
-        this._super();
+        this.deleteRecord();
     },
 
     toXml: function (xmlDoc) {

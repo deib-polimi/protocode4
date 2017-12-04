@@ -233,10 +233,7 @@ App.UiPhoneControl = App.UiControl.extend({
     }.property('minWidth', 'viewController.scene.application.device.screenWidth'),
 
     heightPercentMin: function() {
-        var availableHeight = this.get('viewController.scene.application.device.viewBottom') - this.get('viewController.scene.application.device.viewTop');
-        if(this.get('viewController.scene.mustShowTabMenu')) {
-            availableHeight = availableHeight - 48;
-        }
+        var availableHeight = this.get('viewController.height');
         var i;
         var flag = true;
         for(i = 0.1; i < 1 && flag; i = i+0.1) {
@@ -245,10 +242,9 @@ App.UiPhoneControl = App.UiControl.extend({
             }
         }
         return i;
-    }.property('minHeight',
-        'viewController.scene.mustShowTabMenu',
-        'viewController.scene.application.device.viewTop',
-        'viewController.scene.application.device.viewBottom',
+    }.property(
+        'minHeight',
+        'viewController.height'
     ),
 
     sameLevelControls: function () {
@@ -874,150 +870,6 @@ App.UiPhoneControl = App.UiControl.extend({
         }
     }.observes('valueInChain'),
 
-    /*ratioObserver: function() {
-        if(!this.get('isDeleted')) {
-            if(this.get('isRatioConstrained')) {
-                var ratio;
-                if(this.get('isWidthPercentConstrained') || this.widthIsBindedByConstraints(this.get('constraints'))) {
-                    ratio = this.get('ratioHeight') / this.get('ratioWidth');
-                    this.set('height', this.get('width') * ratio);
-                } else if(this.get('isHeightPercentConstrained') || this.heightIsBindedByConstraints(this.get('constraints'))) {
-                    ratio = this.get('ratioWidth') / this.get('ratioHeight');
-                    this.set('width', this.get('height') * ratio);
-                } else if(this.get('ratioWidth') < this.get('ratioHeight')) {
-                    ratio = this.get('ratioWidth') / this.get('ratioHeight');
-                    this.set('width', this.get('height') * ratio);
-                } else {
-                    ratio = this.get('ratioHeight') / this.get('ratioWidth');
-                    this.set('height', this.get('width') * ratio);
-                }
-            } else {
-                var mustUpdateWidth = true;
-                mustUpdateWidth = mustUpdateWidth && !this.get('isWidthPercentConstrained');
-                mustUpdateWidth = mustUpdateWidth && !this.widthIsBindedByConstraints(this.get('constraints'));
-                if(this.get('controlChain')) {
-                    mustUpdateWidth = mustUpdateWidth && (this.get('controlChain.axis') !== 'horizontal');
-                }
-                if(mustUpdateWidth) {
-                    this.set('width', this.get('defaultWidth'));
-                }
-                var mustUpdateHeight = true;
-                mustUpdateHeight = mustUpdateHeight && !this.get('isHeightPercentConstrained');
-                mustUpdateHeight = mustUpdateHeight && !this.heightIsBindedByConstraints(this.get('constraints'));
-                if(this.get('controlChain')) {
-                    mustUpdateHeight = mustUpdateHeight && (this.get('controlChain.axis') !== 'vertical');
-                }
-                if(mustUpdateHeight) {
-                    this.set('height', this.get('defaultHeight'));
-                }
-            }
-        }
-    }.observes(
-        'isRatioConstrained',
-        'ratioWidth',
-        'ratioHeight'
-    ),
-
-    ratioObserverWidth: function() {
-        if(!this.get('isDeleted') && this.get('isRatioConstrained')) {
-            var ratio = this.get('ratioHeight') / this.get('ratioWidth');
-            this.set('height', this.get('width') * ratio);
-        }
-    }.observes('width'),
-
-    ratioObserverHeight: function() {
-        if(!this.get('isDeleted') && this.get('isRatioConstrained')) {
-            var ratio = this.get('ratioWidth') / this.get('ratioHeight');
-            this.set('width', this.get('height') * ratio);
-        }
-    }.observes('height'),
-
-    widthObserver: function() {
-        if(!this.get('isDeleted') && this.get('viewController')) {
-            var mustUpdateWidth = true;
-            mustUpdateWidth = mustUpdateWidth;
-            mustUpdateWidth = mustUpdateWidth && !this.widthIsBindedByConstraints(this.get('constraints'));
-            if(mustUpdateWidth) {
-                if(this.get('isWidthPercentConstrained')) {
-                    this.set('width', this.get('viewController').getWidthFromPercent(this.get('widthPercent')));
-                }
-            }
-            mustUpdateWidth = mustUpdateWidth && !this.get('isRatioConstrained');
-            if(mustUpdateWidth) {
-                if(this.get('isWidthConstrained')) {
-
-                } else if(this.get('isWidthPercentConstrained')) {
-                    this.set('width', this.get('viewController').getWidthFromPercent(this.get('widthPercent')));
-                } else if(!this.get('isWidthConstrained')) {
-                    this.set('width', this.get('defaultWidth'));
-                } else if(!this.get('isWidthPercentConstrained')) {
-                    this.set('width', this.get('defaultWidth'));
-                }
-            }
-        }
-    }.observes(
-        'viewController.sceneScreen',
-        'viewController.sceneScreen.viewControllers.@each.widthPercentInScreen',
-        'viewController.scene.application.device.type',
-        'viewController.scene.application.device.screenWidth',
-        'widthPercent',
-        'isWidthConstrained',
-        'isWidthPercentConstrained',
-        'computedWidth'
-    ),
-
-    heightObserver: function() {
-        if(!this.get('isDeleted') && this.get('viewController')) {
-            var mustUpdateHeight = true;
-            mustUpdateHeight = mustUpdateHeight;
-            mustUpdateHeight = mustUpdateHeight && !this.heightIsBindedByConstraints(this.get('constraints'));
-            if(mustUpdateHeight) {
-                if(this.get('isHeightPercentConstrained')) {
-                    var screenHeight = this.get('viewController.scene.application.device.viewBottom') - this.get('viewController.scene.application.device.viewTop');
-                    if(this.get('viewController.scene.mustShowTabMenu')) {
-                        screenHeight = screenHeight - 48;
-                    }
-                    this.set('height', this.get('heightPercent') * screenHeight);
-                }
-            }
-            mustUpdateHeight = mustUpdateHeight && !this.get('isRatioConstrained');
-            if(mustUpdateHeight) {
-                if(this.get('isHeightConstrained')) {
-
-                } else if(this.get('isHeightPercentConstrained')) {
-                    var screenHeight = this.get('viewController.scene.application.device.viewBottom') - this.get('viewController.scene.application.device.viewTop');
-                    if(this.get('viewController.scene.mustShowTabMenu')) {
-                        screenHeight = screenHeight - 48;
-                    }
-                    this.set('height', this.get('heightPercent') * screenHeight);
-                } else if(!this.get('isHeightConstrained')) {
-                    this.set('height', this.get('defaultHeight'));
-                } else if(!this.get('isHeightPercentConstrained')) {
-                    this.set('height', this.get('defaultHeight'));
-                }
-            }
-        }
-    }.observes(
-        'viewController.scene.application.device.viewTop',
-        'viewController.scene.application.device.viewBottom',
-        'viewController.scene.mustShowTabMenu',
-        'heightPercent',
-        'isHeightConstrained',
-        'isHeightPercentConstrained',
-        'computedHeight'
-    ),
-
-    constraintsObserver: function() {
-        if(!this.get('isDeleted')) {
-            if(this.widthIsBindedByConstraints(this.get('constraints'))) {
-                this.set('width', this.get('computedWidth'));
-            }
-            if(this.heightIsBindedByConstraints(this.get('constraints'))) {
-                this.set('height', this.get('computedHeight'));
-            }
-        }
-    }.observes('computedWidth', 'computedHeight'),*/
-
     // Used to reload views
     didCreate: function () {
         this.set('name', this.get('id') + '-' + this.constructor.toString().split(".")[1]);
@@ -1031,7 +883,6 @@ App.UiPhoneControl = App.UiControl.extend({
     },
 
     deleteRecord: function () {
-        var viewController = this.get('viewController');
         var self = this;
 
         var myConstraints = this.get('constraints');

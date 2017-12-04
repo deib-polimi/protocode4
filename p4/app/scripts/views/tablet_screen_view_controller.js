@@ -13,20 +13,11 @@ App.TabletScreenViewController = Ember.View.extend(App.UiDroppable, {
   }.property('context.isRotated'),
 
   style: function() {
-    var style = "";
-    var menuOffset = 0;
-    if(this.get('context.scene.mustShowTabMenu')) {
-        menuOffset = 48;
-    }
+    var style;
     // Set top
-    if(this.get('context.scene.application.device.platform') === 'ios') {
-        style = "top:" + (this.get('context.scene.application.device.viewTop') - 1) + "px;";
-    } else {
-        style = "top:" + (this.get('context.scene.application.device.viewTop') + menuOffset - 1) + "px;";
-    }
+    style = "top:" + (this.get('context.top') - 1) + "px;";
     // Set height
-    var height = this.get('context.scene.application.device.viewBottom') - this.get('context.scene.application.device.viewTop') - menuOffset;
-    style = style + "height:" + height + "px;";
+    style = style + "height:" + this.get('context.height') + "px;";
     // Set left & width
     style = style + "left:" + this.get('context.start') + "px;width:" + this.get('context.width') + "px;";
     // Set color
@@ -34,10 +25,8 @@ App.TabletScreenViewController = Ember.View.extend(App.UiDroppable, {
   	return style;
   }.property(
   	'context.backgroundColor',
-    'context.scene.mustShowTabMenu',
-    'context.scene.application.device.platform',
-    'context.scene.application.device.viewTop',
-    'context.scene.application.device.viewBottom',
+    'context.top',
+    'context.height',
     'context.start',
     'context.width'
   )

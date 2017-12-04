@@ -23,20 +23,11 @@ App.UiMoveable = Ember.Mixin.create({
       var posY = (((event.pageY - parentOffset.top - self.get('offsetMouseY')) / self.get('controller.zoomLevel')) - self.get('context.marginTop')) * self.get('device.screenHeight') / self.get('device.cssHeight');
 
       if (self.get('context.parentContainer') === null) {
-        posY -= self.get('device.viewTop');
+        posY -= self.get('context.viewController.top');
       }
 
-      var menuTop = 0;
-      var menuBottom = 0;
-      if(self.get('context.viewController.scene.mustShowTabMenu')) {
-          if(self.get('device.platform') === 'android') {
-              menuTop = 48;
-          } else {
-              menuBottom = 48;
-          }
-      }
-      if(posY < menuTop) {
-        posY = menuTop;
+      if(posY < 0) {
+        posY = 0;
       }
       if(posX < 0) {
         posX = 0;
@@ -44,8 +35,8 @@ App.UiMoveable = Ember.Mixin.create({
       if((posX + self.get('context.outerWidth')) > self.get('device.screenWidth')) {
           posX = self.get('device.screenWidth') - self.get('context.outerWidth');
       }
-      if((posY + self.get('context.outerHeight')) > (self.get('device.viewBottom') - self.get('device.viewTop') - menuBottom)) {
-          posY = self.get('device.viewBottom') - self.get('device.viewTop') - self.get('context.outerHeight') - menuBottom;
+      if((posY + self.get('context.outerHeight')) > self.get('context.viewController.height')) {
+          posY = self.get('context.viewController.height') - self.get('context.outerHeight');
       }
 
       self.set('context.posX', posX);
