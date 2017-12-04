@@ -2,25 +2,25 @@ App.GridView = App.UiPhoneControl.extend({
     gridViewCells: DS.hasMany('gridViewCell', {inverse: 'parentGridView'}),
     navigation: DS.belongsTo('navigation', {inverse: null}),
 
-    height: DS.attr('number', {defaultValue: 408}),
     minHeight: 408,
     defaultHeight: 408,
+    heightFixed: DS.attr('number', {defaultValue: 408}),
 
     gridType: DS.attr('string', {defaultValue: 'simple'}),
 
     xmlName: 'gridViews',
 
-    width: function() {
+    defaultWidth: function() {
         return this.get('viewController.scene.application.device.screenWidth');
     }.property('viewController.scene.application.device.screenWidth'),
 
     minWidth: function() {
-        return this.get('width');
-    }.property('width'),
+        return this.get('defaultWidth');
+    }.property('defaultWidth'),
 
-    defaultWidth: function() {
-        return this.get('width');
-    }.property('width'),
+    widthCanBeConstrained: function() {
+        return false;
+    }.property(),
 
     didCreate: function () {
         var self = this;

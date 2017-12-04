@@ -4,9 +4,8 @@ App.AudioPlayer = App.UiPhoneControl.extend({
     minHeight: 75,
     defaultWidth: 250,
     defaultHeight: 75,
-
-    width: DS.attr('number', {defaultValue: 250}),
-    height: DS.attr('number', {defaultValue: 75}),
+    widthFixed: DS.attr('number', {defaultValue: 250}),
+    heightFixed: DS.attr('number', {defaultValue: 75}),
 
     xmlName: 'audioPlayers',
 

@@ -4,9 +4,8 @@ App.Slider = App.UiPhoneControl.extend({
     minHeight: 50,
     defaultWidth: 150,
     defaultHeight: 50,
-
-    width: DS.attr('number', {defaultValue: 150}),
-    height: DS.attr('number', {defaultValue: 50}),
+    widthFixed: DS.attr('number', {defaultValue: 150}),
+    heightFixed: DS.attr('number', {defaultValue: 50}),
 
     xmlName: 'sliders',
 

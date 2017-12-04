@@ -14,7 +14,4 @@ App.UiControl = DS.Model.extend({
     marginStart: DS.attr('number', {defaultValue: 0}),
     marginEnd: DS.attr('number', {defaultValue: 0}),
 
-    width: DS.attr('number', {defaultValue: 125}),
-    height: DS.attr('number', {defaultValue: 30})
-
 });

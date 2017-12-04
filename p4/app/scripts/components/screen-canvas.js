@@ -117,7 +117,7 @@ App.ScreenCanvasComponent = Ember.Component.extend({
         'model.controlChains.@each.axis',
         'model.controlChains.@each.byas',
         'model.scene.mustShowTabMenu',
-        'model.startInScreen',
+        'model.start',
         'model.width'
     ).on('init'),
 
@@ -249,14 +249,14 @@ App.ScreenCanvasComponent = Ember.Component.extend({
                     ctx.fillRect(control.get('centerX'), control.get('bottom') - plus, 2, endY);
                 } else if(constraint.get('layoutEdge') === 'start') {
                     var endX = parseFloat(control.get('marginStart')) + plus;
-                    ctx.fillRect(control.get('viewController.startInScreen'), control.get('centerY'), endX, 2);
+                    ctx.fillRect(control.get('viewController.start'), control.get('centerY'), endX, 2);
                 } else if(constraint.get('layoutEdge') === 'end') {
                     var endX = parseFloat(control.get('marginEnd')) + plus;
                     ctx.fillRect(control.get('end') - plus, control.get('centerY'), endX, 2);
                 } else if(constraint.get('layoutEdge') === 'centerX') {
                     ctx.fillStyle = "#ffdd00";
-                    var endX = control.get('start') - control.get('viewController.startInScreen') + plus;
-                    ctx.fillRect(control.get('viewController.startInScreen'), control.get('centerY'), endX, 2);
+                    var endX = control.get('start') - control.get('viewController.start') + plus;
+                    ctx.fillRect(control.get('viewController.start'), control.get('centerY'), endX, 2);
                     ctx.fillRect(control.get('end') - plus, control.get('centerY'), endX, 2);
                     ctx.fillStyle = "#00ff00";
                 } else if(constraint.get('layoutEdge') === 'centerY') {

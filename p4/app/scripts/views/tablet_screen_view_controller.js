@@ -28,7 +28,7 @@ App.TabletScreenViewController = Ember.View.extend(App.UiDroppable, {
     var height = this.get('context.scene.application.device.viewBottom') - this.get('context.scene.application.device.viewTop') - menuOffset;
     style = style + "height:" + height + "px;";
     // Set left & width
-    style = style + "left:" + this.get('context.startInScreen') + "px;width:" + this.get('context.width') + "px;";
+    style = style + "left:" + this.get('context.start') + "px;width:" + this.get('context.width') + "px;";
     // Set color
     style += 'background-color: ' + this.get('context.backgroundColor') + ";";
   	return style;
@@ -38,7 +38,7 @@ App.TabletScreenViewController = Ember.View.extend(App.UiDroppable, {
     'context.scene.application.device.platform',
     'context.scene.application.device.viewTop',
     'context.scene.application.device.viewBottom',
-    'context.startInScreen',
+    'context.start',
     'context.width'
   )
 

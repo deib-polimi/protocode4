@@ -285,7 +285,7 @@ App.ControlChain = DS.Model.extend({
                 if(this.get('type') === 'weighted') {
                     var startInChain;
                     if(index === 0) {
-                        startInChain = this.get('viewController.startInScreen');
+                        startInChain = this.get('viewController.start');
                     } else {
                         var precedingControl = controls.objectAt(index - 1);
                         startInChain = parseFloat(precedingControl.get('end'));
@@ -297,7 +297,7 @@ App.ControlChain = DS.Model.extend({
                     var spreadSpace = this.getSpreadSpace(false);
                     var startInChain;
                     if(index === 0) {
-                        startInChain = this.get('viewController.startInScreen') + spreadSpace;
+                        startInChain = this.get('viewController.start') + spreadSpace;
                     } else {
                         var precedingControl = controls.objectAt(index - 1);
                         startInChain = parseFloat(precedingControl.get('end')) + spreadSpace;
@@ -308,7 +308,7 @@ App.ControlChain = DS.Model.extend({
                     var spreadSpace = this.getSpreadSpace(true);
                     var startInChain;
                     if(index === 0) {
-                        startInChain = this.get('viewController.startInScreen');
+                        startInChain = this.get('viewController.start');
                     } else {
                         var precedingControl = controls.objectAt(index - 1);
                         startInChain = parseFloat(precedingControl.get('end')) + spreadSpace;
@@ -319,7 +319,7 @@ App.ControlChain = DS.Model.extend({
                     var packedSpaceFirst = this.getPackedSpace(true);
                     var startInChain;
                     if(index === 0) {
-                        startInChain = this.get('viewController.startInScreen') + packedSpaceFirst;
+                        startInChain = this.get('viewController.start') + packedSpaceFirst;
                     } else {
                         var precedingControl = controls.objectAt(index - 1);
                         startInChain = parseFloat(precedingControl.get('end')) + this.get('spacing');

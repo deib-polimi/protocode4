@@ -60,7 +60,7 @@ App.SceneScreen = DS.Model.extend({
         if(index === 0) {
             return 0;
         }
-        return parseFloat(this.get('viewControllers').objectAt(index - 1).get('endInScreen'));
+        return parseFloat(this.get('viewControllers').objectAt(index - 1).get('end'));
     },
 
     getMaxWidthPercentInScreen: function(thisVc) {

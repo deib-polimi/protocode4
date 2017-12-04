@@ -4,9 +4,8 @@ App.ImageView = App.UiPhoneControl.extend({
     minHeight: 0,
     defaultWidth: 240,
     defaultHeight: 128,
-
-    width: DS.attr('number', {defaultValue: 240}),
-    height: DS.attr('number', {defaultValue: 128}),
+    widthFixed: DS.attr('number', {defaultValue: 240}),
+    heightFixed: DS.attr('number', {defaultValue: 128}),
 
     xmlName: 'imageViews',
 

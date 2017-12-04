@@ -4,12 +4,11 @@ App.Map = App.UiPhoneControl.extend({
     minHeight: 0,
     defaultWidth: 200,
     defaultHeight: 330,
+    widthFixed: DS.attr('number', {defaultValue: 200}),
+    heightFixed: DS.attr('number', {defaultValue: 330}),
 
     lat: DS.attr('number', {defaultValue: 45.478}),
     lon: DS.attr('number', {defaultValue: 9.227}),
-
-    width: DS.attr('number', {defaultValue: 200}),
-    height: DS.attr('number', {defaultValue: 330}),
 
     xmlName: 'map',
 

@@ -5,14 +5,13 @@ App.Label = App.UiPhoneControl.extend({
     minHeight: 24,
     defaultWidth: 88,
     defaultHeight: 36,
+    widthFixed: DS.attr('number', {defaultValue: 88}),
+    heightFixed: DS.attr('number', {defaultValue: 36}),
 
     textAlign: DS.attr('string', {defaultValue: 'left'}),
     textColor: DS.attr('string', {defaultValue: '#000000'}),
     textSize: DS.attr('number', {defaultValue: 16}),
     textDecoration: DS.attr('string', {defaultValue: 'none'}),
-
-    width: DS.attr('number', {defaultValue: 88}),
-    height: DS.attr('number', {defaultValue: 36}),
 
     xmlName: 'textViews',
 

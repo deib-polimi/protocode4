@@ -5,9 +5,8 @@ App.ListView = App.UiPhoneControl.extend({
     minHeight: 60,
     defaultWidth: 270,
     defaultHeight: 270,
-
-    width: DS.attr('number', {defaultValue: 270}),
-    height: DS.attr('number', {defaultValue: 270}),
+    widthFixed: DS.attr('number', {defaultValue: 270}),
+    heightFixed: DS.attr('number', {defaultValue: 270}),
 
     backgroundColor: DS.attr('string', {defaultValue: ''}),
     listType: DS.attr('string', {defaultValue: 'simple'}),

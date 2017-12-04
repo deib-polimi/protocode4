@@ -1,6 +1,9 @@
 App.UiPhoneControl = App.UiControl.extend({
+    // Defined here to be able to use them, but the values are overwritten in child classes
     defaultWidth: 0,
     defaultHeight: 0,
+    widthFixed: DS.attr('number', {defaultValue: 1}),
+    heightFixed: DS.attr('number', {defaultValue: 1}),
 
     //Override
     /*--------------------------------------------------------------*/
@@ -23,6 +26,12 @@ App.UiPhoneControl = App.UiControl.extend({
     isRatioConstrained: DS.attr('boolean', {defaultValue: false}),
     ratioWidth: DS.attr('number', {defaultValue: 1}),
     ratioHeight: DS.attr('number', {defaultValue: 1}),
+
+    validConstraints: function() {
+        return this.get('constraints').filter(function(c) {
+    		return c.get('valid');
+    	});
+    }.property('constraints.@each.valid'),
 
     isntWidthConstrained: function() {
         return !this.get('isWidthConstrained');
@@ -48,7 +57,7 @@ App.UiPhoneControl = App.UiControl.extend({
         var xConstraintsNumber = 0;
         constraints.forEach(function(constraint) {
             if(constraint.get('valid')) {
-                if(constraint.get('layoutEdge') === 'start' || constraint.get('layoutEdge') === 'end' || constraint.get('layoutEdge') === 'centerX') {
+                if(constraint.get('layoutEdge') === 'start' || constraint.get('layoutEdge') === 'end') {
                     xConstraintsNumber++;
                 }
             }
@@ -64,7 +73,7 @@ App.UiPhoneControl = App.UiControl.extend({
         var yConstraintsNumber = 0;
         constraints.forEach(function(constraint) {
             if(constraint.get('valid')) {
-                if(constraint.get('layoutEdge') === 'top' || constraint.get('layoutEdge') === 'bottom' || constraint.get('layoutEdge') === 'centerY') {
+                if(constraint.get('layoutEdge') === 'top' || constraint.get('layoutEdge') === 'bottom') {
                     yConstraintsNumber++;
                 }
             }
@@ -178,9 +187,10 @@ App.UiPhoneControl = App.UiControl.extend({
             return false;
         } else if(this.get('isWidthConstrained') || this.get('isHeightConstrained')) {
             return false;
-        } else {
-            return !(this.get('isWidthPercentConstrained') && this.get('isHeightPercentConstrained'));
+        } else if(this.get('isWidthPercentConstrained') && this.get('isHeightPercentConstrained')) {
+            return false;
         }
+        return true;
     }.property(
         'isRatioConstrained',
         'isWidthConstrained',
@@ -262,107 +272,62 @@ App.UiPhoneControl = App.UiControl.extend({
     }.property('sameLevelControls'),
 
     getTopWithMargin: function(onlyValid) {
-        var self = this;
-        var result = -1000;
-        var constraints = self.get('constraints');
+        // Get constraints
+        var constraints;
         if(onlyValid) {
-            constraints = constraints.filter(function(c) {
-                return c.get('valid');
+            constraints = this.get('validConstraints');
+        } else {
+            constraints = this.get('constraints').filter(function(c) {
+                return (c.get('layoutEdge') === 'top') || (c.get('layoutEdge') === 'bottom');
             });
         }
-        // Look for constraints with top
-        constraints.forEach(function (constraint) {
-            if(constraint.get('layoutEdge') === 'top') {
-                if(constraint.get('withParent') === false) {
-                    if(constraint.get('referenceLayoutEdge') === 'top') {
-                        result = constraint.get('referenceElement.top');
+        // Process constraints
+        var i, layoutEdge = 'empty', referencePosition;
+        for(i = 0; i < constraints.get('length') && layoutEdge !== 'top'; i++) {
+            var c = constraints.objectAt(i);
+            if(c.get('layoutEdge') === 'top') {
+                layoutEdge = 'top';
+                if(c.get('referenceLayoutEdge') === 'top') {
+                    if(c.get('withParent')) {
+                        if (this.get('parentContainer') === null) {
+                            referencePosition = this.get('viewController.top');
+                        } else {
+                            referencePosition = 0;
+                        }
                     } else {
-                        result = constraint.get('referenceElement.bottomWithMargin');
+                        referencePosition = c.get('referenceElement.top');
                     }
                 } else {
-                    // Case top with parentTop
-                    if (self.get('parentContainer') !== null) {
-                        result = parseFloat(self.get('marginTop'));
+                    // Top aligned with Bottom can't be with parent
+                    referencePosition = c.get('referenceElement.bottomWithMargin');
+                }
+            } else if(c.get('layoutEdge') === 'bottom') {
+                layoutEdge = 'bottom';
+            } else if(c.get('layoutEdge') === 'centerY') {
+                layoutEdge = 'centerY';
+                if(c.get('withParent')) {
+                    if (this.get('parentContainer') === null) {
+                        referencePosition = this.get('viewController.centerY') - (this.get('height') / 2);
                     } else {
-                        // Check tab bar for menu in Android
-                        var isAndroid = self.get('viewController.scene.application.device.platform') === 'android';
-                        var currentViewControllerIsMenu = self.get('viewController.scene.mustShowTabMenu');
-                        // Offset from tab bar for menu in Android
-                        if (isAndroid && currentViewControllerIsMenu) {
-                            result = self.get('viewController.scene.application.device.viewTop') + 48;
-                        } else {
-                            result = self.get('viewController.scene.application.device.viewTop');
-                        }
+                        referencePosition = this.get('parentContainer.centerY') - (this.get('height') / 2);
                     }
+                } else {
+                    referencePosition = c.get('referenceElement.centerY') - (this.get('height') / 2);
                 }
-            }
-        });
-
-        if(result === -1000) {
-            // Look for other y constraints with parent
-            constraints.forEach(function (constraint) {
-                if(constraint.get('withParent') === true) {
-                    // Case bottom - parentBottom
-                    if(constraint.get('referenceLayoutEdge') === 'bottom') {
-                        if (self.get('parentContainer') !== null) {
-                            result = self.get('bottomWithMargin') - self.get('outerHeight');
-                        } else {
-                            result = self.get('bottomWithMargin') - self.get('outerHeight');
-                        }
-                    } else if(constraint.get('referenceLayoutEdge') === 'centerY') {
-                        // Case centerY - parentCenterY
-                        if (self.get('parentContainer') !== null) {
-                            result = (self.get('parentContainer.height') / 2) - (self.get('outerHeight') / 2);
-                        } else {
-                            // Check tab bar for menu in Android
-                            var isAndroid = self.get('viewController.scene.application.device.platform') === 'android';
-                            var currentViewControllerIsMenu = self.get('viewController.scene.mustShowTabMenu');
-
-                            if (isAndroid && currentViewControllerIsMenu) {
-                                result = self.get('viewController.scene.application.device.viewTop') + 48 +
-                                    ((self.get('viewController.scene.application.device.viewBottom') -
-                                    self.get('viewController.scene.application.device.viewTop') - 48) / 2) -
-                                    (self.get('outerHeight') / 2);
-                            } else {
-                                result = self.get('viewController.scene.application.device.viewTop') +
-                                    ((self.get('viewController.scene.application.device.viewBottom') -
-                                    self.get('viewController.scene.application.device.viewTop')) / 2) -
-                                    (self.get('outerHeight') / 2);
-                            }
-                        }
-                    }
-                }
-            });
-
-            if(result === -1000) {
-                // Look for other y constraints with other uiPhoneControls
-                constraints.forEach(function (constraint) {
-                    if(constraint.get('withParent') === false) {
-                        if(constraint.get('layoutEdge') === 'bottom') {
-                            if(constraint.get('referenceLayoutEdge') === 'bottom') {
-                                result = constraint.get('referenceElement.bottom');
-                            } else {
-                                result = constraint.get('referenceElement.topWithMargin');
-                            }
-                            result = result - self.get('outerHeight');
-                        } else if(constraint.get('layoutEdge') === 'centerY') {
-                            result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) -
-                                (self.get('height') / 2);
-                        }
-                    }
-                });
             }
         }
-
-        // Base case: there aren't y constraints
-        if(result != -1000) {
-            return result;
+        // In the case of bottom, i set here referencePosition to escape from infinte recursion
+        if(layoutEdge === 'bottom') {
+            referencePosition = this.get('bottomWithMargin') - this.get('outerHeight');
+        }
+        // Return position
+        if(layoutEdge !== 'empty') {
+            return referencePosition;
         } else {
-            if (self.get('parentContainer') !== null) {
-                return parseFloat(self.get('posY'));
+            if (this.get('parentContainer') === null) {
+                return parseFloat(this.get('posY')) + this.get('viewController.top');
             } else {
-                // Offset of top bar
-                return parseFloat(self.get('posY')) + self.get('viewController.scene.application.device.viewTop');
+                return parseFloat(this.get('posY'));
             }
         }
     },
@@ -388,8 +353,8 @@ App.UiPhoneControl = App.UiControl.extend({
         'controlChain.valid',
         'bindedControls.@each.top',
         'posY',
-        'viewController.scene.mustShowTabMenu',
         'outerHeight',
+        'height',
         'constraints.@each.layoutEdge',
         'constraints.@each.withParent',
         'constraints.@each.referenceElement',
@@ -397,114 +362,63 @@ App.UiPhoneControl = App.UiControl.extend({
         'constraints.@each.referenceElement.marginBottom',
         'constraints.@each.referenceLayoutEdge',
         'constraints.@each.valid',
-        'viewController.scene.application.device.viewTop',
-        'viewController.scene.application.device.viewBottom',
-        'viewController.scene.application.device.platform',
+        'viewController.top',
+        'viewController.centerY',
         'bottomWithMargin',
         'parentContainer',
-        'parentContainer.height'),
+        'parentContainer.centerY'
+    ),
 
     top: function () {
         return this.get('topWithMargin') + parseFloat(this.get('marginTop'));
     }.property('topWithMargin'),
 
     getBottomWithMargin: function(onlyValid) {
-        var self = this;
-        var result = -1000;
-        var constraints = self.get('constraints');
+        // Get constraints
+        var constraints;
         if(onlyValid) {
-            constraints = constraints.filter(function(c) {
-                return c.get('valid');
+            constraints = this.get('validConstraints');
+        } else {
+            constraints = this.get('constraints').filter(function(c) {
+                return (c.get('layoutEdge') === 'top') || (c.get('layoutEdge') === 'bottom');
             });
         }
-        // look for a constraint with bottom
-        constraints.forEach(function (constraint) {
-            if(constraint.get('layoutEdge') === 'bottom') {
-                if(constraint.get('withParent') === false) {
-                    if(constraint.get('referenceLayoutEdge') === 'bottom') {
-                        result = constraint.get('referenceElement.bottom');
+        // Process constraints
+        var i, layoutEdge = 'empty', referencePosition;
+        for(i = 0; i < constraints.get('length') && layoutEdge !== 'bottom'; i++) {
+            var c = constraints.objectAt(i);
+            if(c.get('layoutEdge') === 'bottom') {
+                layoutEdge = 'bottom';
+                if(c.get('referenceLayoutEdge') === 'bottom') {
+                    if(c.get('withParent')) {
+                        if (this.get('parentContainer') === null) {
+                            referencePosition = this.get('viewController.bottom');
+                        } else {
+                            referencePosition = this.get('parentContainer.height');
+                        }
                     } else {
-                        result = constraint.get('referenceElement.topWithMargin');
+                        referencePosition = c.get('referenceElement.bottom');
                     }
                 } else {
-                    // Case bottom - parentBottom
-                    if (self.get('parentContainer') !== null) {
-                        result = self.get('parentContainer.height');
-                    } else {
-                        // Check tab bar for menu in iOS
-                        var isIOS = self.get('viewController.scene.application.device.platform') === 'ios';
-                        var currentViewControllerIsMenu = self.get('viewController.scene.mustShowTabMenu');
-                        // Offset from tab bar for menu in iOS
-                        if (isIOS && currentViewControllerIsMenu) {
-                            result = self.get('viewController.scene.application.device.viewBottom') - 48;
-                        } else {
-                            result = self.get('viewController.scene.application.device.viewBottom');
-                        }
-                    }
+                    // Bottom aligned with top can't be with parent
+                    referencePosition = c.get('referenceElement.topWithMargin');
                 }
-            }
-        });
-
-        if(result === -1000) {
-            //Look for another y constraint with parentContainer
-            constraints.forEach(function (constraint) {
-                if(constraint.get('withParent') === true) {
-                    // Case top - parentTop
-                    if(constraint.get('referenceLayoutEdge') === 'top') {
-                        if (self.get('parentContainer') !== null) {
-                            result = self.get('topWithMargin') + self.get('outerHeight');
-                        } else {
-                            result = self.get('topWithMargin') + self.get('outerHeight');
-                        }
-                    } else if(constraint.get('referenceLayoutEdge') === 'centerY') {
-                        // Case centerY - parentCenterY
-                        if (self.get('parentContainer') !== null) {
-                            result = (self.get('parentContainer.height') / 2) + (self.get('outerHeight') / 2);
-                        } else {
-                            // Check tab bar for menu in iOS
-                            var isIOS = self.get('viewController.scene.application.device.platform') === 'ios';
-                            var currentViewControllerIsMenu = self.get('viewController.scene.mustShowTabMenu');
-                            // Offset from tab bar for menu in iOS
-                            if (isIOS && currentViewControllerIsMenu) {
-                                result = self.get('viewController.scene.application.device.viewBottom') - 48 -
-                                    ((self.get('viewController.scene.application.device.viewBottom') -
-                                    self.get('viewController.scene.application.device.viewTop' - 48)) / 2) +
-                                    (self.get('outerHeight') / 2);
-                            }
-                            result = self.get('viewController.scene.application.device.viewBottom') -
-                                ((self.get('viewController.scene.application.device.viewBottom') -
-                                self.get('viewController.scene.application.device.viewTop')) / 2) +
-                                (self.get('outerHeight') / 2);
-                        }
-                    }
-                }
-            });
-
-            if(result === -1000) {
-                // Look for other y constraints with other uiPhoneControls
-                constraints.forEach(function (constraint) {
-                    if(constraint.get('withParent') === false) {
-                        if(constraint.get('layoutEdge') === 'top') {
-                            if(constraint.get('referenceLayoutEdge') === 'top') {
-                                result = constraint.get('referenceElement.top');
-                            } else {
-                                result = constraint.get('referenceElement.bottomWithMargin');
-                            }
-                            result = result + self.get('outerHeight');
-                        } else if(constraint.get('layoutEdge') === 'centerY') {
-                            result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) +
-                                (self.get('height') / 2);
-                        }
-                    }
-                });
+            } else if(c.get('layoutEdge') === 'top') {
+                layoutEdge = 'top';
+            } else if(c.get('layoutEdge') === 'centerY') {
+                layoutEdge = 'centerY';
+                referencePosition = this.get('topWithMargin') + this.get('outerHeight');
             }
         }
-
-        // Base case: no y constraints
-        if(result != -1000) {
-            return result;
+        // In the case of top, i set here referencePosition to escape from infinte recursion
+        if(layoutEdge === 'top') {
+            referencePosition = this.get('topWithMargin') + this.get('outerHeight');
+        }
+        // Return position
+        if(layoutEdge !== 'empty') {
+            return referencePosition;
         } else {
-            return self.get('topWithMargin') + parseFloat(self.get('outerHeight'));
+            return this.get('topWithMargin') + this.get('outerHeight');
         }
     },
 
@@ -536,12 +450,10 @@ App.UiPhoneControl = App.UiControl.extend({
         'constraints.@each.referenceLayoutEdge',
         'constraints.@each.valid',
         'topWithMargin',
-        'viewController.scene.mustShowTabMenu',
         'outerHeight',
-        'viewController.scene.application.device.platform',
-        'viewController.scene.application.device.viewBottom',
-        'viewController.scene.application.device.viewTop',
+        'viewController.bottom',
         'parentContainer',
+        'parentContainer.bottom',
         'parentContainer.height'
     ),
 
@@ -550,72 +462,63 @@ App.UiPhoneControl = App.UiControl.extend({
     }.property('bottomWithMargin'),
 
     getStartWithMargin: function(onlyValid) {
-        var self = this;
-        var result = -1000;
-        var constraints = self.get('constraints');
+        // Get constraints
+        var constraints;
         if(onlyValid) {
-            constraints = constraints.filter(function(c) {
-                return c.get('valid');
+            constraints = this.get('validConstraints');
+        } else {
+            constraints = this.get('constraints').filter(function(c) {
+                return (c.get('layoutEdge') === 'start') || (c.get('layoutEdge') === 'end');
             });
         }
-        // look for a constraint with start
-        constraints.forEach(function (constraint) {
-            if(constraint.get('layoutEdge') === 'start') {
-                if(constraint.get('withParent') === false) {
-                    if(constraint.get('referenceLayoutEdge') === 'start') {
-                        result = constraint.get('referenceElement.start');
+        // Process constraints
+        var i, layoutEdge = 'empty', referencePosition;
+        for(i = 0; i < constraints.get('length') && layoutEdge !== 'start'; i++) {
+            var c = constraints.objectAt(i);
+            if(c.get('layoutEdge') === 'start') {
+                layoutEdge = 'start';
+                if(c.get('referenceLayoutEdge') === 'start') {
+                    if(c.get('withParent')) {
+                        if (this.get('parentContainer') === null) {
+                            referencePosition = this.get('viewController.start');
+                        } else {
+                            referencePosition = 0;
+                        }
                     } else {
-                        result = constraint.get('referenceElement.endWithMargin');
+                        referencePosition = c.get('referenceElement.start');
                     }
                 } else {
-                    // Case start - parentStart
-                    result = self.get('viewController.startInScreen');
+                    // Start aligned with end can't be with parent
+                    referencePosition = c.get('referenceElement.endWithMargin');
                 }
-            }
-        });
-
-        if(result === -1000) {
-            // look for another x constraint with parent
-            constraints.forEach(function (constraint) {
-                if(constraint.get('withParent') === true) {
-                    // Case end - parentEnd
-                    if(constraint.get('referenceLayoutEdge') === 'end') {
-                        result = self.get('endWithMargin') - self.get('outerWidth');
-                    } else if(constraint.get('referenceLayoutEdge') === 'centerX') {
-                        // Case centerX - parentCenterX
-                        if(self.get('parentContainer') !== null) {
-                            result = (self.get('parentContainer.width') / 2) - (self.get('outerWidth') / 2);
-                        } else {
-                            result = self.get('viewController.startInScreen') + (self.get('viewController.width') / 2) - (self.get('outerWidth') / 2);
-                        }
+            } else if(c.get('layoutEdge') === 'end') {
+                layoutEdge = 'end';
+            } else if(c.get('layoutEdge') === 'centerX') {
+                layoutEdge = 'centerX';
+                if(c.get('withParent')) {
+                    if (this.get('parentContainer') === null) {
+                        referencePosition = this.get('viewController.centerX') - (this.get('width') / 2);
+                    } else {
+                        referencePosition = this.get('parentContainer.centerX') - (this.get('width') / 2);
                     }
+                } else {
+                    referencePosition = c.get('referenceElement.centerX') - (this.get('width') / 2);
                 }
-            });
-
-            if(result === -1000) {
-                // look for another x constraint with other uiPhoneControls
-                constraints.forEach(function (constraint) {
-                    if(constraint.get('withParent') === false) {
-                        if(constraint.get('layoutEdge') === 'end') {
-                            if(constraint.get('referenceLayoutEdge') === 'end') {
-                                result = constraint.get('referenceElement.end');
-                            } else {
-                                result = constraint.get('referenceElement.startWithMargin');
-                            }
-                            result = result - self.get('outerWidth');
-                        } else if(constraint.get('layoutEdge') === 'centerX') {
-                            result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) -
-                                (self.get('width') / 2);
-                        }
-                    }
-                });
             }
         }
-
-        if(result != -1000) {
-            return result;
+        // In the case of end, i set here referencePosition to escape from infinte recursion
+        if(layoutEdge === 'end') {
+            referencePosition = this.get('endWithMargin') - this.get('outerWidth');
+        }
+        // Return position
+        if(layoutEdge !== 'empty') {
+            return referencePosition;
         } else {
-            return parseFloat(self.get('posX')) + self.get('viewController.startInScreen');
+            if (this.get('parentContainer') === null) {
+                return parseFloat(this.get('posX')) + this.get('viewController.start');
+            } else {
+                return parseFloat(this.get('posX'));
+            }
         }
     },
 
@@ -648,87 +551,64 @@ App.UiPhoneControl = App.UiControl.extend({
         'constraints.@each.valid',
         'posX',
         'outerWidth',
+        'width',
         'parentContainer',
-        'parentContainer.width',
+        'parentContainer.centerX',
         'endWithMargin',
-        'viewController.startInScreen',
-        'viewController.width'),
+        'viewController.start',
+        'viewController.centerX'
+    ),
 
     start: function () {
         return this.get('startWithMargin') + parseFloat(this.get('marginStart'));
     }.property('startWithMargin'),
 
     getEndWithMargin: function(onlyValid) {
-        var self = this;
-        var result = -1000;
-        var constraints = self.get('constraints');
+        // Get constraints
+        var constraints;
         if(onlyValid) {
-            constraints = constraints.filter(function(c) {
-                return c.get('valid');
+            constraints = this.get('validConstraints');
+        } else {
+            constraints = this.get('constraints').filter(function(c) {
+                return (c.get('layoutEdge') === 'start') || (c.get('layoutEdge') === 'end');
             });
         }
-        // look for a constraint with end
-        constraints.forEach(function (constraint) {
-            if(constraint.get('layoutEdge') === 'end') {
-                if(constraint.get('withParent') === false) {
-                    if(constraint.get('referenceLayoutEdge') === 'end') {
-                        result = constraint.get('referenceElement.end');
+        // Process constraints
+        var i, layoutEdge = 'empty', referencePosition;
+        for(i = 0; i < constraints.get('length') && layoutEdge !== 'end'; i++) {
+            var c = constraints.objectAt(i);
+            if(c.get('layoutEdge') === 'end') {
+                layoutEdge = 'end';
+                if(c.get('referenceLayoutEdge') === 'end') {
+                    if(c.get('withParent')) {
+                        if (this.get('parentContainer') === null) {
+                            referencePosition = this.get('viewController.end');
+                        } else {
+                            referencePosition = this.get('parentContainer.width');
+                        }
                     } else {
-                        result = constraint.get('referenceElement.startWithMargin');
+                        referencePosition = c.get('referenceElement.end');
                     }
                 } else {
-                    // Case end - parentEnd
-                    if (self.get('parentContainer') !== null) {
-                        result = self.get('parentContainer.width');
-                    } else {
-                        result = self.get('viewController.endInScreen');
-                    }
+                    // End aligned with start can't be with parent
+                    referencePosition = c.get('referenceElement.startWithMargin');
                 }
-            }
-        });
-
-        if(result === -1000) {
-            // look for another x constraint with parent
-            constraints.forEach(function (constraint) {
-                if(constraint.get('withParent') === true) {
-                    // Case end - parentEnd
-                    if(constraint.get('referenceLayoutEdge') === 'start') {
-                        result = self.get('startWithMargin') + self.get('outerWidth');
-                    } else if(constraint.get('referenceLayoutEdge') === 'centerX') {
-                        // Case centerX - parentCenterX
-                        if(self.get('parentContainer') !== null) {
-                            result = self.get('startWithMargin') + self.get('outerWidth');
-                        } else {
-                            result = self.get('startWithMargin') + self.get('outerWidth');
-                        }
-                    }
-                }
-            });
-
-            if(result === -1000) {
-                // look for another x constraint with other uiPhoneControls
-                constraints.forEach(function (constraint) {
-                    if(constraint.get('withParent') === false) {
-                        if(constraint.get('layoutEdge') === 'start') {
-                            if(constraint.get('referenceLayoutEdge') === 'start') {
-                                result = constraint.get('referenceElement.start');
-                            } else {
-                                result = constraint.get('referenceElement.endWithMargin');
-                            }
-                            result = result + self.get('outerWidth');
-                        } else if(constraint.get('layoutEdge') === 'centerX') {
-                            result = constraint.get('referenceElement.' + constraint.get('referenceLayoutEdge')) +
-                                (self.get('width') / 2);
-                        }
-                    }
-                });
+            } else if(c.get('layoutEdge') === 'start') {
+                layoutEdge = 'start';
+            } else if(c.get('layoutEdge') === 'centerX') {
+                layoutEdge = 'centerX';
+                referencePosition = this.get('startWithMargin') + this.get('outerWidth');
             }
         }
-
-        if(result != -1000) {
-            return result;
+        // In the case of start, i set here referencePosition to escape from infinte recursion
+        if(layoutEdge === 'start') {
+            referencePosition = this.get('startWithMargin') + this.get('outerWidth');
+        }
+        // Return position
+        if(layoutEdge !== 'empty') {
+            return referencePosition;
         } else {
-            return self.get('startWithMargin') + parseFloat(self.get('outerWidth'));
+            return this.get('startWithMargin') + this.get('outerWidth');
         }
     },
 
@@ -763,8 +643,8 @@ App.UiPhoneControl = App.UiControl.extend({
         'parentContainer',
         'parentContainer.width',
         'outerWidth',
-        'viewController.endInScreen',
-        'viewController.width'),
+        'viewController.end'
+    ),
 
     end: function () {
         return this.get('endWithMargin') - parseFloat(this.get('marginEnd'));
@@ -821,6 +701,72 @@ App.UiPhoneControl = App.UiControl.extend({
         'height',
         'paddingBottom',
         'marginBottom'),
+
+    width: function() {
+        if(this.get('isWidthConstrained')) {
+            return parseFloat(this.get('widthFixed'));
+        } else if(this.get('isWidthPercentConstrained')) {
+            if(this.get('parentContainer') === null) {
+                return this.get('viewController').getWidthFromPercent(this.get('widthPercent'));
+            } else {
+                return this.get('parentContainer').getWidthFromPercent(this.get('widthPercent'));
+            }
+        } else if(this.widthIsBindedByConstraints(this.get('constraints'))) {
+            return this.get('computedWidth');
+        } else if(this.get('isRatioConstrained')) {
+            if(this.get('isHeightPercentConstrained') || this.heightIsBindedByConstraints(this.get('constraints'))) {
+                return this.get('height') * (this.get('ratioWidth') / this.get('ratioHeight'));
+            }
+            return this.get('defaultWidth');
+        }
+        return this.get('defaultWidth');
+    }.property(
+        'isWidthConstrained',
+        'widthFixed',
+        'isWidthPercentConstrained',
+        'widthPercent',
+        'viewController.width',
+        'parentContainer',
+        'parentContainer.width',
+        'computedWidth',
+        'isRatioConstrained',
+        'isHeightPercentConstrained',
+        'height',
+        'ratioWidth',
+        'ratioHeight',
+        'defaultWidth'
+    ),
+
+    height: function() {
+        if(this.get('isHeightConstrained')) {
+            return parseFloat(this.get('heightFixed'));
+        } else if(this.get('isHeightPercentConstrained')) {
+            if(this.get('parentContainer') === null) {
+                return this.get('viewController').getHeightFromPercent(this.get('heightPercent'));
+            } else {
+                return this.get('parentContainer').getHeightFromPercent(this.get('heightPercent'));
+            }
+        } else if(this.heightIsBindedByConstraints(this.get('constraints'))) {
+            return this.get('computedHeight');
+        } else if(this.get('isRatioConstrained')) {
+            return this.get('width') * (this.get('ratioHeight') / this.get('ratioWidth'));
+        }
+        return this.get('defaultHeight');
+    }.property(
+        'isHeightConstrained',
+        'heightFixed',
+        'isHeightPercentConstrained',
+        'heightPercent',
+        'viewController.height',
+        'parentContainer',
+        'parentContainer.height',
+        'computedHeight',
+        'isRatioConstrained',
+        'ratioHeight',
+        'ratioWidth',
+        'width',
+        'defaultHeight'
+    ),
 
     valueInChainCanBeChanged: function() {
         if(!this.get('isDeleted') && this.get('controlChain')) {
@@ -928,7 +874,7 @@ App.UiPhoneControl = App.UiControl.extend({
         }
     }.observes('valueInChain'),
 
-    ratioObserver: function() {
+    /*ratioObserver: function() {
         if(!this.get('isDeleted')) {
             if(this.get('isRatioConstrained')) {
                 var ratio;
@@ -1070,7 +1016,7 @@ App.UiPhoneControl = App.UiControl.extend({
                 this.set('height', this.get('computedHeight'));
             }
         }
-    }.observes('computedWidth', 'computedHeight'),
+    }.observes('computedWidth', 'computedHeight'),*/
 
     // Used to reload views
     didCreate: function () {

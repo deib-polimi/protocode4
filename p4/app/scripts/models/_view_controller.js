@@ -48,7 +48,7 @@ App.ViewController = DS.Model.extend({
         'uiPhoneControls.@each'
     ),
 
-    startInScreen: function() {
+    start: function() {
         if(this.get('scene.application.device.type') === 'smartphone') {
             return 0;
         } else {
@@ -64,11 +64,33 @@ App.ViewController = DS.Model.extend({
         'scene.application.device.type'
     ),
 
-    endInScreen: function() {
-        return this.get('startInScreen') + this.get('width');
+    end: function() {
+        return this.get('start') + this.get('width');
     }.property(
         'width',
-        'startInScreen'
+        'start'
+    ),
+
+    top: function() {
+        if(this.get('scene.mustShowTabMenu') && (this.get('scene.application.device.platform') === 'android')) {
+            return (this.get('scene.application.device.viewTop') + 48);
+        }
+        return this.get('scene.application.device.viewTop');
+    }.property(
+        'scene.application.device.viewTop',
+        'scene.application.device.platform',
+        'scene.mustShowTabMenu'
+    ),
+
+    bottom: function() {
+        if(this.get('scene.mustShowTabMenu') && (this.get('scene.application.device.platform') === 'ios')) {
+            return (this.get('scene.application.device.viewBottom') - 48);
+        }
+        return this.get('scene.application.device.viewBottom');
+    }.property(
+        'scene.application.device.viewBottom',
+        'scene.application.device.platform',
+        'scene.mustShowTabMenu'
     ),
 
     width: function() {
@@ -87,6 +109,27 @@ App.ViewController = DS.Model.extend({
         'widthPercentInScreen',
         'scene.application.device.type',
         'scene.application.device.screenWidth'
+    ),
+
+    height: function() {
+        return this.get('bottom') - this.get('top');
+    }.property(
+        'top',
+        'bottom'
+    ),
+
+    centerX: function() {
+        return (this.get('start') + (this.get('width') / 2));
+    }.property(
+        'start',
+        'width'
+    ),
+
+    centerY: function() {
+        return (this.get('top') + (this.get('height') / 2));
+    }.property(
+        'top',
+        'height'
     ),
 
     isInAScreen: function() {
@@ -145,16 +188,11 @@ App.ViewController = DS.Model.extend({
     }.property('id', 'xmlName'),
 
     getWidthFromPercent: function(widthPercent) {
-        var result = this.get('scene.application.device.screenWidth') * widthPercent;
-        if(this.get('scene.application.device.type') === 'smartphone') {
-            return result;
-        } else {
-            if(this.get('sceneScreen')) {
-                return parseFloat(this.get('widthPercentInScreen')) * result;
-            } else {
-                return result;
-            }
-        }
+        return widthPercent * this.get('width');
+    },
+
+    getHeightFromPercent: function(heightPercent) {
+        return heightPercent * this.get('height');
     },
 
     deleteRecord: function () {

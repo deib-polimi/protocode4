@@ -5,8 +5,8 @@ App.Spinner = App.UiPhoneControl.extend({
     defaultWidth: 180,
     defaultHeight: 48,
 
-    width: DS.attr('number', {defaultValue: 180}),
-    height: DS.attr('number', {defaultValue: 48}),
+    widthFixed: DS.attr('number', {defaultValue: 180}),
+    heightFixed: DS.attr('number', {defaultValue: 48}),
 
     xmlName: 'spinners',
 

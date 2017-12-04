@@ -101,8 +101,8 @@ App.UiPhoneControlView = Ember.View.extend(App.UiMoveable, {
   }.property(),
 
   vcStart: function() {
-    return this.computeVerticalAxis(this.get('context.viewController.startInScreen'));
-  }.property('context.viewController.startInScreen', 'device'),
+    return this.computeVerticalAxis(this.get('context.viewController.start'));
+  }.property('context.viewController.start', 'device'),
 
   vcWidth: function() {
     return this.computeVerticalAxis(this.get('context.viewController.width'));

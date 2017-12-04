@@ -5,8 +5,8 @@ App.VideocameraController = App.UiPhoneControl.extend({
     defaultWidth: 120,
     defaultHeight: 40,
 
-    width: DS.attr('number', {defaultValue: 120}),
-    height: DS.attr('number', {defaultValue: 40}),
+    widthFixed: DS.attr('number', {defaultValue: 120}),
+    heightFixed: DS.attr('number', {defaultValue: 40}),
 
     backgroundType: DS.attr('string', {defaultValue: 'normal'}),
 

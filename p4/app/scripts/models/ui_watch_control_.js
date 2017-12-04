@@ -1,11 +1,6 @@
 App.UiWatchControl = App.UiControl.extend({
-
-    //Override
-    /*--------------------------------------------------------------*/
+    width: DS.attr('number', {defaultValue: 125}),
     height: DS.attr('number', {defaultValue: 48}),
-    alignParentStart: DS.attr('boolean', {defaultValue: true}),
-    alignParentEnd: DS.attr('boolean', {defaultValue: true}),
-    /*--------------------------------------------------------------*/
 
     order: DS.attr('number', {defaultValue: 0}),
 
@@ -14,8 +9,8 @@ App.UiWatchControl = App.UiControl.extend({
 
     alignParentTop: DS.attr('boolean', {defaultValue: false}),
     alignParentBottom: DS.attr('boolean', {defaultValue: false}),
-    alignParentStart: DS.attr('boolean', {defaultValue: false}),
-    alignParentEnd: DS.attr('boolean', {defaultValue: false}),
+    alignParentStart: DS.attr('boolean', {defaultValue: true}),
+    alignParentEnd: DS.attr('boolean', {defaultValue: true}),
 
     alignTop: DS.belongsTo('uiWatchControl', {polymorphic: true, inverse: null}),
     alignBottom: DS.belongsTo('uiWatchControl', {polymorphic: true, inverse: null}),

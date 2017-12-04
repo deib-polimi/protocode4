@@ -3,12 +3,12 @@ App.Card = App.UiPhoneControl.extend({
     title: DS.attr('string', {defaultValue: 'Title goes here'}),
     subtitle: DS.attr('string', {defaultValue: 'Subtitle here'}),
 
-    width: DS.attr('number', {defaultValue: 320}),
-    height: DS.attr('number', {defaultValue: 320}),
     minWidth: 320,
     minHeight: 320,
     defaultWidth: 320,
     defaultHeight: 320,
+    widthFixed: DS.attr('number', {defaultValue: 320}),
+    heightFixed: DS.attr('number', {defaultValue: 320}),
 
     marginTop: DS.attr('number', {defaultValue: 8}),
     marginBottom: DS.attr('number', {defaultValue: 8}),

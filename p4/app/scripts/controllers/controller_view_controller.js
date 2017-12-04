@@ -62,7 +62,7 @@ App.ViewControllerController = Ember.ObjectController.extend({
             }
             var vcs = this.get('model.sceneScreen.viewControllers');
             vcs.without(vcs.get('firstObject')).forEach(function(vc) {
-                var style = "left:" + vc.get('startInScreen') +
+                var style = "left:" + parseInt(vc.get('start')) +
                     "px;top:" + top + "px;height:" + height + "px;";
                 result.pushObject(style);
             });
@@ -72,7 +72,7 @@ App.ViewControllerController = Ember.ObjectController.extend({
         return [];
     }.property(
         'model.sceneScreen',
-        'model.sceneScreen.viewControllers.@each.startInScreen',
+        'model.sceneScreen.viewControllers.@each.start',
         'model.scene.mustShowTabMenu',
         'device.platform',
         'device.viewTop',

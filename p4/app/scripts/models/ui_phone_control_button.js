@@ -5,9 +5,8 @@ App.Button = App.UiPhoneControl.extend({
     minHeight: 40,
     defaultWidth: 88,
     defaultHeight: 40,
-
-    width: DS.attr('number', {defaultValue: 88}),
-    height: DS.attr('number', {defaultValue: 40}),
+    widthFixed: DS.attr('number', {defaultValue: 88}),
+    heightFixed: DS.attr('number', {defaultValue: 40}),
 
     textColor: DS.attr('string', {defaultValue: ''}),
     backgroundColor: DS.attr('string', {defaultValue: ''}),

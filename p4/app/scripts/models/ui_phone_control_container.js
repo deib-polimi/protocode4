@@ -1,8 +1,8 @@
 App.Container = App.UiPhoneControl.extend({
     name: DS.attr('string', {defaultValue: 'DummyContainer'}),
     title: DS.attr('string', {defaultValue: 'Dummy Container'}),
-    width: DS.attr('number', {defaultValue: 200}),
-    height: DS.attr('number', {defaultValue: 100}),
+    widthFixed: DS.attr('number', {defaultValue: 200}),
+    heightFixed: DS.attr('number', {defaultValue: 100}),
 
     uiPhoneControls: DS.hasMany('uiPhoneControl', {polymorphic: true, inverse: 'parentContainer'}),
 
@@ -19,6 +19,14 @@ App.Container = App.UiPhoneControl.extend({
         'posY',
         'height'
     ),
+
+    getWidthFromPercent: function(widthPercent) {
+        return widthPercent * this.get('width');
+    },
+
+    getHeightFromPercent: function(heightPercent) {
+        return heightPercent * this.get('height');
+    },
 
     toXml: function (xmlDoc) {
         var elem = xmlDoc.createElement('container');

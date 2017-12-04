@@ -5,8 +5,8 @@ App.Switch = App.UiPhoneControl.extend({
     defaultWidth: 51,
     defaultHeight: 36,
 
-    width: DS.attr('number', {defaultValue: 51}),
-    height: DS.attr('number', {defaultValue: 36}),
+    widthFixed: DS.attr('number', {defaultValue: 51}),
+    heightFixed: DS.attr('number', {defaultValue: 36}),
 
     xmlName: 'switches',
 

@@ -46,7 +46,7 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
                     alreadyStartEndConstraint = true;
                 }
             });
-            if(constrainedX || (alreadyStartEndConstraint && control.get('isWidthConstrained'))) {
+            if(constrainedX || (alreadyStartEndConstraint && (control.get('isWidthConstrained') || control.get('isWidthPercentConstrained')))) {
                 return 2;
             } else if(alreadyStartEndConstraint && control.heightIsBindedByConstraints(constraints) && control.get('isRatioConstrained')) {
                 return 2;
@@ -75,7 +75,7 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
                     alreadyTopBottomConstraint = true;
                 }
             });
-            if(constrainedY || (alreadyTopBottomConstraint && control.get('isHeightConstrained'))) {
+            if(constrainedY || (alreadyTopBottomConstraint && (control.get('isHeightConstrained') || control.get('isHeightPercentConstrained')))) {
                 return 3;
             } else if(alreadyTopBottomConstraint && control.widthIsBindedByConstraints(constraints) && control.get('isRatioConstrained')) {
                 return 3;
@@ -108,12 +108,12 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
             return 5;
         }
         // Check boundaries: start
-        var minStart = control.get('viewController.startInScreen');
+        var minStart = control.get('viewController.start');
         if(control.getStartWithMargin(false) < minStart) {
             return 6;
         }
         // Check boundaries: end
-        var maxEnd = control.get('viewController.endInScreen');
+        var maxEnd = control.get('viewController.end');
         if(control.getEndWithMargin(false) > maxEnd) {
             return 7;
         }

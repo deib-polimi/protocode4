@@ -5,8 +5,8 @@ App.Timepicker = App.UiPhoneControl.extend({
     defaultWidth: 346,
     defaultHeight: 346,
 
-    width: DS.attr('number', {defaultValue: 346}),
-    height: DS.attr('number', {defaultValue: 346}),
+    widthFixed: DS.attr('number', {defaultValue: 346}),
+    heightFixed: DS.attr('number', {defaultValue: 346}),
 
     xmlName: 'timepickers',
 
