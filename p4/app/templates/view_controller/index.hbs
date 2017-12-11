@@ -2,7 +2,12 @@
 <div class="col-md-3">
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title">{{name}}</h3>
+            <h3 class="panel-title">
+                {{#link-to 'scene' scene class="btn btn-default btn-sm"}}
+                    <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                {{/link-to}}
+                {{name}}
+            </h3>
         </div>
         <div class="panel-body">
             {{partial "partials/first_commands"}}
@@ -33,7 +38,7 @@
             <div class="tab-content">
                 <div class="tab-pane fade in active form-horizontal" id="home">
                     <br>
-                    {{input-text label="Name" value=name action='acceptChanges'}}
+                    {{input-text label="Name" value=name action='acceptChanges' disabled=isParent}}
                     {{input-color-picker label="Background Color" value=backgroundColor action='acceptChanges'}}
                     {{input-text label="Background Image" value=backgroundImage action='acceptChanges'}}
                     <br>
@@ -102,7 +107,7 @@
         </div>
         <div class="panel-footer">
             <div class="btn-group">
-                <button type="button" class="btn btn-default btn-sm" {{action "deleteViewController"}}>
+                <button type="button" class="btn btn-default btn-sm" {{bind-attr disabled=isParent}} {{action "deleteViewController"}}>
                     <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                 </button>
             </div>

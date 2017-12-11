@@ -7,11 +7,10 @@ App.UiPhoneControl = App.UiControl.extend({
 
     //Override
     /*--------------------------------------------------------------*/
-    posY: DS.attr('number', {defaultValue: 96}),
+    //posY: DS.attr('number', {defaultValue: 96}),
     /*--------------------------------------------------------------*/
 
-    viewController: DS.belongsTo('viewController'),
-    parentContainer: DS.belongsTo('container', {inverse: 'uiPhoneControls'}),
+    viewController: DS.belongsTo('viewController', {inverse: 'uiPhoneControls'}),
     controlChain: DS.belongsTo('controlChain', {inverse: 'uiPhoneControls'}),
     valueInChain: DS.attr('number', {defaultValue: 1}),
 
@@ -221,51 +220,12 @@ App.UiPhoneControl = App.UiControl.extend({
         return !this.get('ratioCanBeConstrained');
     }.property('ratioCanBeConstrained'),
 
-    widthPercentMin: function() {
-        var i;
-        var flag = true;
-        for(i = 0.1; i < 1 && flag; i = i+0.1) {
-            if((i * this.get('viewController.scene.application.device.screenWidth')) > this.get('minWidth')) {
-                flag = false;
-            }
-        }
-        return i;
-    }.property('minWidth', 'viewController.scene.application.device.screenWidth'),
-
-    heightPercentMin: function() {
-        var availableHeight = this.get('viewController.height');
-        var i;
-        var flag = true;
-        for(i = 0.1; i < 1 && flag; i = i+0.1) {
-            if((i * availableHeight) > this.get('minHeight')) {
-                flag = false;
-            }
-        }
-        return i;
-    }.property(
-        'minHeight',
-        'viewController.height'
-    ),
-
-    sameLevelControls: function () {
-        var parentContainer = this.get('parentContainer');
-
-        if (parentContainer !== null) {
-            return parentContainer.get('uiPhoneControls');
-        }
-
-        return this.get('viewController.uiPhoneControls');
-    }.property(
-        'parentContainer.uiPhoneControls.@each',
-        'viewController.uiPhoneControls.@each'),
-
     siblings: function () {
-        if (this.get('sameLevelControls') !== null) {
-            return this.get('sameLevelControls').without(this);
+        if (this.get('viewController.uiPhoneControls')) {
+            return this.get('viewController.uiPhoneControls').without(this);
         }
-
         return null;
-    }.property('sameLevelControls'),
+    }.property('viewController.uiPhoneControls.@each'),
 
     getTopWithMargin: function(onlyValid) {
         // Get constraints
@@ -285,11 +245,7 @@ App.UiPhoneControl = App.UiControl.extend({
                 layoutEdge = 'top';
                 if(c.get('referenceLayoutEdge') === 'top') {
                     if(c.get('withParent')) {
-                        if (this.get('parentContainer') === null) {
-                            referencePosition = this.get('viewController.top');
-                        } else {
-                            referencePosition = 0;
-                        }
+                        referencePosition = this.get('viewController.top');
                     } else {
                         referencePosition = c.get('referenceElement.top');
                     }
@@ -302,11 +258,7 @@ App.UiPhoneControl = App.UiControl.extend({
             } else if(c.get('layoutEdge') === 'centerY') {
                 layoutEdge = 'centerY';
                 if(c.get('withParent')) {
-                    if (this.get('parentContainer') === null) {
-                        referencePosition = this.get('viewController.centerY') - (this.get('height') / 2);
-                    } else {
-                        referencePosition = this.get('parentContainer.centerY') - (this.get('height') / 2);
-                    }
+                    referencePosition = this.get('viewController.centerY') - (this.get('height') / 2);
                 } else {
                     referencePosition = c.get('referenceElement.centerY') - (this.get('height') / 2);
                 }
@@ -320,11 +272,7 @@ App.UiPhoneControl = App.UiControl.extend({
         if(layoutEdge !== 'empty') {
             return referencePosition;
         } else {
-            if (this.get('parentContainer') === null) {
-                return parseFloat(this.get('posY')) + this.get('viewController.top');
-            } else {
-                return parseFloat(this.get('posY'));
-            }
+            return parseFloat(this.get('posY')) + this.get('viewController.top');
         }
     },
 
@@ -360,9 +308,7 @@ App.UiPhoneControl = App.UiControl.extend({
         'constraints.@each.valid',
         'viewController.top',
         'viewController.centerY',
-        'bottomWithMargin',
-        'parentContainer',
-        'parentContainer.centerY'
+        'bottomWithMargin'
     ),
 
     top: function () {
@@ -387,11 +333,7 @@ App.UiPhoneControl = App.UiControl.extend({
                 layoutEdge = 'bottom';
                 if(c.get('referenceLayoutEdge') === 'bottom') {
                     if(c.get('withParent')) {
-                        if (this.get('parentContainer') === null) {
-                            referencePosition = this.get('viewController.bottom');
-                        } else {
-                            referencePosition = this.get('parentContainer.height');
-                        }
+                        referencePosition = this.get('viewController.bottom');
                     } else {
                         referencePosition = c.get('referenceElement.bottom');
                     }
@@ -447,10 +389,7 @@ App.UiPhoneControl = App.UiControl.extend({
         'constraints.@each.valid',
         'topWithMargin',
         'outerHeight',
-        'viewController.bottom',
-        'parentContainer',
-        'parentContainer.bottom',
-        'parentContainer.height'
+        'viewController.bottom'
     ),
 
     bottom: function () {
@@ -475,11 +414,7 @@ App.UiPhoneControl = App.UiControl.extend({
                 layoutEdge = 'start';
                 if(c.get('referenceLayoutEdge') === 'start') {
                     if(c.get('withParent')) {
-                        if (this.get('parentContainer') === null) {
-                            referencePosition = this.get('viewController.start');
-                        } else {
-                            referencePosition = 0;
-                        }
+                        referencePosition = this.get('viewController.start');
                     } else {
                         referencePosition = c.get('referenceElement.start');
                     }
@@ -492,11 +427,7 @@ App.UiPhoneControl = App.UiControl.extend({
             } else if(c.get('layoutEdge') === 'centerX') {
                 layoutEdge = 'centerX';
                 if(c.get('withParent')) {
-                    if (this.get('parentContainer') === null) {
-                        referencePosition = this.get('viewController.centerX') - (this.get('width') / 2);
-                    } else {
-                        referencePosition = this.get('parentContainer.centerX') - (this.get('width') / 2);
-                    }
+                    referencePosition = this.get('viewController.centerX') - (this.get('width') / 2);
                 } else {
                     referencePosition = c.get('referenceElement.centerX') - (this.get('width') / 2);
                 }
@@ -510,11 +441,7 @@ App.UiPhoneControl = App.UiControl.extend({
         if(layoutEdge !== 'empty') {
             return referencePosition;
         } else {
-            if (this.get('parentContainer') === null) {
-                return parseFloat(this.get('posX')) + this.get('viewController.start');
-            } else {
-                return parseFloat(this.get('posX'));
-            }
+            return parseFloat(this.get('posX')) + this.get('viewController.start');
         }
     },
 
@@ -548,8 +475,6 @@ App.UiPhoneControl = App.UiControl.extend({
         'posX',
         'outerWidth',
         'width',
-        'parentContainer',
-        'parentContainer.centerX',
         'endWithMargin',
         'viewController.start',
         'viewController.centerX'
@@ -577,11 +502,7 @@ App.UiPhoneControl = App.UiControl.extend({
                 layoutEdge = 'end';
                 if(c.get('referenceLayoutEdge') === 'end') {
                     if(c.get('withParent')) {
-                        if (this.get('parentContainer') === null) {
-                            referencePosition = this.get('viewController.end');
-                        } else {
-                            referencePosition = this.get('parentContainer.width');
-                        }
+                        referencePosition = this.get('viewController.end');
                     } else {
                         referencePosition = c.get('referenceElement.end');
                     }
@@ -636,8 +557,6 @@ App.UiPhoneControl = App.UiControl.extend({
         'constraints.@each.referenceLayoutEdge',
         'constraints.@each.valid',
         'startWithMargin',
-        'parentContainer',
-        'parentContainer.width',
         'outerWidth',
         'viewController.end'
     ),
@@ -702,11 +621,7 @@ App.UiPhoneControl = App.UiControl.extend({
         if(this.get('isWidthConstrained')) {
             return parseFloat(this.get('widthFixed'));
         } else if(this.get('isWidthPercentConstrained')) {
-            if(this.get('parentContainer') === null) {
-                return this.get('viewController').getWidthFromPercent(this.get('widthPercent'));
-            } else {
-                return this.get('parentContainer').getWidthFromPercent(this.get('widthPercent'));
-            }
+            return this.get('viewController').getWidthFromPercent(this.get('widthPercent'));
         } else if(this.widthIsBindedByConstraints(this.get('constraints'))) {
             return this.get('computedWidth');
         } else if(this.get('isRatioConstrained')) {
@@ -722,8 +637,6 @@ App.UiPhoneControl = App.UiControl.extend({
         'isWidthPercentConstrained',
         'widthPercent',
         'viewController.width',
-        'parentContainer',
-        'parentContainer.width',
         'computedWidth',
         'isRatioConstrained',
         'isHeightPercentConstrained',
@@ -737,11 +650,7 @@ App.UiPhoneControl = App.UiControl.extend({
         if(this.get('isHeightConstrained')) {
             return parseFloat(this.get('heightFixed'));
         } else if(this.get('isHeightPercentConstrained')) {
-            if(this.get('parentContainer') === null) {
-                return this.get('viewController').getHeightFromPercent(this.get('heightPercent'));
-            } else {
-                return this.get('parentContainer').getHeightFromPercent(this.get('heightPercent'));
-            }
+            return this.get('viewController').getHeightFromPercent(this.get('heightPercent'));
         } else if(this.heightIsBindedByConstraints(this.get('constraints'))) {
             return this.get('computedHeight');
         } else if(this.get('isRatioConstrained')) {
@@ -754,8 +663,6 @@ App.UiPhoneControl = App.UiControl.extend({
         'isHeightPercentConstrained',
         'heightPercent',
         'viewController.height',
-        'parentContainer',
-        'parentContainer.height',
         'computedHeight',
         'isRatioConstrained',
         'ratioHeight',
@@ -873,13 +780,6 @@ App.UiPhoneControl = App.UiControl.extend({
     // Used to reload views
     didCreate: function () {
         this.set('name', this.get('id') + '-' + this.constructor.toString().split(".")[1]);
-
-        var self = this;
-        if (this.get('parentContainer')) {
-            var uiPhoneControls = this.get('parentContainer.uiPhoneControls');
-            uiPhoneControls.pushObject(self);
-            this.get('parentContainer').save();
-        }
     },
 
     deleteRecord: function () {
@@ -959,12 +859,7 @@ App.UiPhoneControl = App.UiControl.extend({
     getRefPath: function (path) {
         var updatedPath = '/@' + this.get('xmlName') + '[id=\'' + this.get('id') + '\']';
 
-        if (this.get('parentContainer') !== null) {
-            updatedPath = this.get('parentContainer').getRefPath(updatedPath);
-        }
-        else {
-            updatedPath = this.get('viewController').getRefPath(updatedPath);
-        }
+        updatedPath = this.get('viewController').getRefPath(updatedPath);
 
         return updatedPath;
     },

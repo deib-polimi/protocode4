@@ -92,11 +92,7 @@ App.Constraint = DS.Model.extend({
         constraint.setAttribute('id', this.get('id'));
         constraint.setAttribute('layoutEdge', this.get('layoutEdge'));
         if(this.get('withParent') === true) {
-            if(this.get('uiPhoneControl.parentContainer') !== null) {
-                constraint.setAttribute('referenceElement', this.get('uiPhoneControl.parentContainer').getRefPath(''));
-            } else {
-                constraint.setAttribute('referenceElement', 'parentView');
-            }
+            constraint.setAttribute('referenceElement', 'parentView');
         } else if(this.get('referenceElement') !== null){
             constraint.setAttribute('referenceElement', this.get('referenceElement').getRefPath(''));
         }

@@ -100,46 +100,38 @@ App.UiPhoneControlView = Ember.View.extend(App.UiMoveable, {
     }
   }.property(),
 
-  vcStart: function() {
-    return this.computeVerticalAxis(this.get('context.viewController.start'));
-  }.property('context.viewController.start', 'device'),
-
-  vcWidth: function() {
-    return this.computeVerticalAxis(this.get('context.viewController.width'));
-}.property('context.viewController.width', 'device'),
-
   top: function() {
-    return this.computeVerticalAxis(this.get('context.topWithMargin') + parseFloat(this.get('context.marginTop')));
-  }.property('context.top', 'context.marginTop', 'device'),
+    return this.computeVerticalAxis(this.get('context.topWithMargin') + parseFloat(this.get('marginTop')) - this.get('context.viewController.top'));
+  }.property('context.topWithMargin', 'device', 'context.viewController.top'),
 
-  bottom: function() {
+  /*bottom: function() {
     return this.computeVerticalAxis(this.get('context.bottom'));
-  }.property('context.bottom', 'device'),
+}.property('context.bottom', 'device'),*/
 
   start: function() {
-    return this.computeHorizontalAxis(this.get('context.startWithMargin') + parseFloat(this.get('context.marginStart')));
-}.property('context.start', 'context.marginStart', 'device'),
+    return this.computeHorizontalAxis(this.get('context.startWithMargin') + parseFloat(this.get('marginStart')) - this.get('context.viewController.start'));
+  }.property('context.startWithMargin', 'device', 'context.viewController.start'),
 
-  end: function() {
+  /*end: function() {
     return this.computeHorizontalAxis(this.get('context.end'));
-  }.property('context.end', 'device'),
+  }.property('context.end', 'device'),*/
 
   /**** Margin ****/
   marginTop: function() {
     return this.computeVerticalAxis(this.get('context.marginTop'));
   }.property('context.marginTop', 'device'),
 
-  marginBottom: function() {
+  /*marginBottom: function() {
     return this.computeVerticalAxis(this.get('context.marginBottom'));
-  }.property('context.marginBottom', 'device'),
+  }.property('context.marginBottom', 'device'),*/
 
   marginStart: function() {
     return this.computeHorizontalAxis(this.get('context.marginStart'));
   }.property('context.marginStart', 'device'),
 
-  marginEnd: function() {
+  /*marginEnd: function() {
     return this.computeHorizontalAxis(this.get('context.marginEnd'));
-  }.property('context.marginEnd', 'device'),
+  }.property('context.marginEnd', 'device'),*/
 
   /**** Padding ****/
   paddingTop: function() {

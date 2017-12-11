@@ -1,167 +1,263 @@
 /*
- templates/view_scene.hbs
+ templates/view_controller.hbs
  */
-App.SceneController = Ember.ObjectController.extend(App.Saveable, {
-    number: 1,
-    newViewControllerName: 'newView',
-    needs: ['viewController'],
+App.SceneController = Ember.ObjectController.extend({
+    needs: ['uiPhoneControlTemplates', 'editor'],
+    isActive: false,
+    zoomLevel: 1,
+    isRotated: false,
+    viewControllerToShow: null,
 
-    screens: Ember.computed.alias('model.sceneScreens'),
-    viewControllers: Ember.computed.alias('model.viewControllers'),
+    menu: Ember.computed.alias('controllers.editor.menu'),
+    device: Ember.computed.alias('controllers.editor.device'),
 
-    addedViewController: null,
-
-    currentNumber: function() {
-        var viewControllers = this.get('viewControllers');
-        var n = 0;
-        viewControllers.forEach(function(viewController) {
-            var name = viewController.get('name');
-            var i = parseInt(name.charAt(name.length - 1));
-            if(i > n) {
-                n = i;
+    modelObserver: function () {
+        var path = this.get('target.location.lastSetURL');
+        if(!path) {
+            path = this.get('target.url');
+        }
+        if(this.get('model') && path) {
+            var splittedPath = path.split('/');
+            var selectedType;
+            var selectedId;
+            var i, end;
+            for(i = 1, end = false; i < 4 && !end; i+=2) {
+                selectedType = splittedPath[splittedPath.get('length') - i - 1];
+                selectedId = splittedPath[splittedPath.get('length') - i];
+                if(this.get('model.isTabbed')) {
+                    if(selectedType === 'viewController') {
+                        var viewController = this.get('model.viewControllers').find(function(vc) {return vc.get('id') === selectedId});
+                        if(viewController) {
+                            this.set('viewControllerToShow', viewController);
+                        }
+                        end = true;
+                    } else if(selectedType === 'scene'){
+                        this.set('viewControllerToShow', null);
+                        end = true;
+                    }
+                } else {
+                    if(selectedType === 'viewController') {
+                        this.set('viewControllerToShow', this.get('model.parentViewController'));
+                        end = true;
+                    } else if(selectedType === 'scene') {
+                        this.set('viewControllerToShow', null);
+                        end = true;
+                    }
+                }
             }
-        });
-        this.set('number', n + 1);
-        return n + 1;
+        }
+    }.observes('model', 'model.isTabbed', 'target.location.lastSetURL'),
+
+    hasMenu: function () {
+        return this.get('menu.menuItems.length') > 0;
+    }.property('menu.menuItems.@each'),
+
+    currentDeviceIsSmartphone: function() {
+        return this.get('device.type') === 'smartphone';
+    }.property('device.type'),
+
+    tabMenuItems: function() {
+        if(this.get('model.viewControllers')) {
+            return this.get('model.viewControllers').without(this.get('model.parentViewController')).map(function(vc) {
+                return vc.get('name');
+            });
+        } else {
+            return null;
+        }
     }.property(
-        'model.viewControllers.@each',
+        'model.viewControllers',
         'model.viewControllers.@each.name'
     ),
 
-    availableViewControllers: function() {
+    // BEGIN REPORTS
+
+    getReportText: function() {
         var self = this;
-        if(self.get('screens.content.0.viewControllers') && self.get('screens.content.1.viewControllers') &&
-            self.get('screens.content.2.viewControllers') && self.get('screens.content.3.viewControllers')) {
-            return this.get('viewControllers').filter(function(vc) {
-                if(self.get('screens.content.0.viewControllers').contains(vc)) {
-                    return false;
-                }
-                if(self.get('screens.content.1.viewControllers').contains(vc)) {
-                    return false;
-                }
-                if(self.get('screens.content.2.viewControllers').contains(vc)) {
-                    return false;
-                }
-                if(self.get('screens.content.3.viewControllers').contains(vc)) {
-                    return false;
-                }
-                return true;
-            });
-        }
-        return [];
-    }.property(
-        'viewControllers.@each',
-        'screens.content.0.viewControllers.@each',
-        'screens.content.1.viewControllers.@each',
-        'screens.content.2.viewControllers.@each',
-        'screens.content.3.viewControllers.@each'
-    ),
-
-    isDirtyOverride: function() {
-        var screens = this.get('screens');
-        if(!screens) {
-            return false;
-        }
-        var i, dirty = false;
-        for(i = 0; i < screens.get('length') && !dirty; i++) {
-            dirty = screens.objectAt(i).get('isDirty');
-        }
-        if(this.get('model.isDirty') || dirty) {
-            return true;
-        }
-        return false;
-    }.property('model.isDirty', 'screens.@each.isDirty', 'screens.@each.viewControllers.@each.isDirty'),
-
-    cantChangeHasMenu: function() {
-        if(this.get('model.launcher')) {
-            return true;
-        }
-        return false;
-    }.property('model.launcher'),
-
-    varyForTabletsObserver: function() {
-        if(!this.get('model.isDeleted') && !this.get('model.varyForTablets')) {
-            // Remove all view controllers from screens
-            this.get('model.sceneScreens').forEach(function(sc) {
-                var vcs = sc.get('viewControllers');
-                vcs.forEach(function(vc) {
-                    vcs.removeObject(vc);
+        var tab = "&nbsp&nbsp&nbsp&nbsp&nbsp";
+        var sep = "_______________________________________________________";
+        return new Promise(function (resolve) {
+            var report = "<b>REPORT</b> scene <aid>" + self.get('model.id') + '-' + self.get('model.name') + "</aid>:<br>";
+            if(self.get('model') && self.get('model.viewControllers')) {
+                self.getReportTextReachability(tab).then(function(reach) {
+                    report = report + reach + sep + "<br><br>VIEW CONTROLLERS<br><br>";
+                    sep = tab + ".........................................................................................";
+                    self.get('model.viewControllers').forEach(function(vc) {
+                        report = report + tab + "View Controller <aid>" + vc.get('id') + '-' + vc.get('name') + "</aid>:<br>";
+                        report = report + self.getReportTextPosition(tab, vc);
+                        report = report + self.getReportTextInvalids(tab, vc);
+                        report = report + sep + "<br><br>";
+                    });
+                    resolve(report);
                 });
-                sc.save();
-            });
-        }
-    }.observes('model.varyForTablets'),
+            } else {
+                resolve(null);
+            }
+        });
+    },
 
-    actions: {
-        acceptChanges: function() {
-            this.get('screens').forEach(function(sc) {
-                sc.save();
-            });
-            this._super();
-        },
-
-        createViewController: function () {
-            this.get('currentNumber');
-            var name = this.get('newViewControllerName') + this.get('number');
-            var self = this;
-
-            var viewController = this.store.createRecord('viewController', {
-                scene: this.get('model'),
-                name: name
-            }).save().then(function(vc) {
-                vc.get('scene.viewControllers').addObject(vc);
-                vc.get('scene').save();
-
-                self.set('number', self.get('number') + 1);
-
-                self.transitionToRoute('viewController', vc);
-            });
-        },
-
-        deleteScene: function () {
-            if (confirm('Are you sure to delete?')) {
-                this.set('number', this.get('number') - 1);
-
-                var id = this.get('id');
-                this.store.find('navigation').then(function (navigations) {
-                    navigations.forEach(function (navigation) {
-                        if (navigation.get('destination') === ('scene/' + id)) {
-                            navigation.set('destination', null);
-                            navigation.save();
+    getReportTextReachability: function(tab) {
+        var self = this;
+        return new Promise(function (resolve) {
+            self.store.find('navigation').then(function(navigations) {
+                var report = "<br>REACHABILITY<br>";
+                var reachable;
+                // Scene
+                if(self.get('model.launcher')) {
+                    reachable = true;
+                } else {
+                    reachable = false;
+                    navigations.forEach(function(nav) {
+                        if(nav.get('destination') === ('scene/' + self.get('model.id'))) {
+                            reachable = true;
                         }
                     });
+                }
+                if(reachable) {
+                    report = report + tab + "Scene is <aok>reachable</aok>.<br>";
+                } else {
+                    report = report + tab + "Scene is <aunr>unreachable</aunr>.<br>";
+                }
+                // View controllers
+                self.get('model.viewControllers').forEach(function(vc, index) {
+                    reachable = false;
+                    if(index === 0) {
+                        reachable = true;
+                    } else if(self.get('model.smartphoneHasTabMenu') || self.get('model.tabletHasTabMenu')) {
+                        reachable = true;
+                    } else {
+                        navigations.forEach(function(nav) {
+                            if(nav.get('destination') === ('viewController/' + vc.get('id'))) {
+                                reachable = true;
+                            }
+                        });
+                    }
+                    if(reachable) {
+                        report = report + tab + "View Controller <aid>" + vc.get('id') + '-' + vc.get('name') + "</aid> is <aok>reachable</aok>.<br>";
+                    } else {
+                        report = report + tab + "View Controller <aid>" + vc.get('id') + '-' + vc.get('name') + "</aid> is <aunr>unreachable</aunr>.<br>";
+                    }
                 });
-
-                var app = this.get('model.application');
-                app.get('scenes').removeObject(this.get('model'));
-                app.save();
-                this.get('model').deleteRecord();
-                this.get('model').save();
-
-                this.transitionToRoute('scenes');
-            }
-        },
-
-        addViewController: function(index) {
-            if(this.get('addedViewController') && this.get('screens.content.' + index + '.viewControllers.length') <= 4) {
-                this.set('addedViewController.sceneScreen', this.get('screens.content.' + index));
-                var screenViewControllers = this.get('screens.content.' + index + '.viewControllers');
-                screenViewControllers.addObject(this.get('addedViewController'));
-                screenViewControllers.forEach(function(vc) {
-                    vc.set('widthPercentInScreen', 1 / screenViewControllers.get('length'));
-                    vc.save();
-                });
-            }
-        },
-
-        removeViewController: function(index, viewController) {
-            var screenViewControllers = this.get('screens').objectAt(index).get('viewControllers');
-            screenViewControllers.removeObject(viewController);
-            viewController.set('sceneScreen', null);
-            screenViewControllers.forEach(function(vc) {
-                vc.set('widthPercentInScreen', 1 / screenViewControllers.get('length'));
-                vc.save();
+                resolve(report);
             });
+        });
+    },
+
+    getReportTextPosition: function(tab, vc) {
+        var report = "<br>" + tab + tab + "POSITION<br>";
+        var xConstrained, yConstrained;
+        vc.get('uiPhoneControlsToShow').forEach(function(uic) {
+            xConstrained = false;
+            yConstrained = false;
+            if(!uic.get('controlChain') || uic.get('controlChain.valid')) {
+                uic.get('constraints').forEach(function(c) {
+                    if(c.get('layoutEdge') === 'start' || c.get('layoutEdge') === 'end' || c.get('layoutEdge') === 'centerX') {
+                        xConstrained = true;
+                    }
+                    if(c.get('layoutEdge') === 'top' || c.get('layoutEdge') === 'bottom' || c.get('layoutEdge') === 'centerY') {
+                        yConstrained = true;
+                    }
+                });
+                if(uic.get('controlChain')) {
+                    if(uic.get('controlChain.axis') === 'horizontal') {
+                        xConstrained = true;
+                    } else {
+                        yConstrained = true;
+                    }
+                }
+                if(!xConstrained || !yConstrained) {
+                    if(!xConstrained) {
+                        report = report + tab + tab + "Control <aid>" + uic.get('name') + "</aid> <ainv>miss</ainv> an <ax>X-constraint</ax>.<br>";
+                    }
+                    if(!yConstrained) {
+                        report = report + tab + tab + "Control <aid>" + uic.get('name') + "</aid> <ainv>miss</ainv> an <ay>Y-constraint</ay>.<br>";
+                    }
+                } else {
+                    report = report + tab + tab + "Control <aid>" + uic.get('name') + "</aid> is well <aok>positioned</aok>.<br>";
+                }
+            }
+        });
+        if(vc.get('uiPhoneControlsToShow.length') === 0) {
+            report = report + tab + tab + "No phone controls in this view controller.<br>";
+        }
+        return report;
+    },
+
+    getReportTextInvalids: function(tab, vc) {
+        var report = "<br>" + tab + tab + "INVALID objects (not exported in the model)<br>";
+        var nInvalids;
+        report = report + tab + tab + "Control Chains:<br>";
+        nInvalids = 0;
+        vc.get('controlChains').forEach(function(c) {
+            if(!c.get('valid')) {
+                nInvalids++;
+                report = report + tab + tab + tab + "Chain <aid>" + c.get('name') + "</aid> is <ainv>not valid</ainv>.<br>";
+                report = report + tab + tab + tab + "So, also the chain's controls aren't valid:<br>";
+                c.get('uiPhoneControls').forEach(function(uic) {
+                    report = report + tab + tab + tab + "<ainv>" + uic.get('name') + "</ainv><br>";
+                });
+            }
+        });
+        if(vc.get('controlChains.length') === 0) {
+            report = report + tab + tab + tab + "No control chains in this view controller.<br>";
+        } else if(nInvalids === 0) {
+            report = report + tab + tab + tab + "all <aok>right</aok>.<br>";
+        }
+        nInvalids = 0;
+        var nConstraints = 0;
+        report = report + tab + tab + "Constraints:<br>";
+        vc.get('uiPhoneControlsToShow').forEach(function(uic) {
+            uic.get('constraints').forEach(function(c) {
+                nConstraints++;
+                if(!c.get('valid')) {
+                    nInvalids++;
+                    report = report + tab + tab + tab + "Constraint <aid>" + c.get('id') + "</aid> of <aid>" + uic.get('name') + "</aid> is <ainv>not valid</ainv>.<br>";
+                }
+            });
+        });
+        if(vc.get('uiPhoneControlsToShow.length') === 0) {
+            report = report + tab + tab + tab + "No phone controls in this view controller.<br>";
+        } else if(nConstraints === 0) {
+            report = report + tab + tab + tab + "No constraints in this view controller.<br>";
+        } else if(nInvalids === 0) {
+            report = report + tab + tab + tab + "all <aok>right</aok>.<br>";
+        }
+        return report;
+    },
+
+    // END REPORTS
+
+    isRotatedObserver: function() {
+        if(!this.get('isDeleted') && this.get('device.type') === 'tablet') {
+            var mustUpdate = (this.get('isRotated') && !this.get('device.isDirty')) ||
+                (!this.get('isRotated') && this.get('device.isDirty'));
+            if(mustUpdate) {
+                var device = this.get('device');
+                // Invert dimensions
+                var temp = device.get('screenWidth');
+                device.set('screenWidth', device.get('screenHeight'));
+                device.set('screenHeight', temp);
+                // Invert css dimensions
+                temp = device.get('cssWidth');
+                device.set('cssWidth', device.get('cssHeight'));
+                device.set('cssHeight', temp);
+                // Calculate view top and bottom
+                if(device.get('platform') === 'ios') {
+                    device.set('viewTop', 65);
+                    device.set('viewBottom', device.get('screenHeight'));
+                } else {
+                    device.set('viewTop', 88); // 24 status_bar + 64 action_bar
+                    device.set('viewBottom', device.get('screenHeight') - 47);
+                }
+            }
+            if(this.get('model.varyForTablets') && this.get('isRotated')) {
+                this.set('isRotated', false);
+            }
+        }
+    }.observes('isRotated', 'device'),
+
+    actions: {
+        transitionToRoute: function(route, model) {
+            this.transitionToRoute(route, model);
         }
     }
 

@@ -77,6 +77,7 @@ App.ApplicationRoute = Ember.Route.extend({
             videoViews: this.store.find('videoView'),
             videocameraControllers: this.store.find('videocameraController'),
             webViews: this.store.find('webView'),
+            containers: this.store.find('container'),
             constraints: this.store.find('constraint'),
             chains: this.store.find('controlChain'),
 
@@ -110,7 +111,6 @@ App.ApplicationRoute = Ember.Route.extend({
                     'entityRelationship',
                     'entityAttribute',
                     'objectAttribute',
-                    'container',
                     'scene',
                     'watchController',
                     'smartphone',

@@ -20,7 +20,15 @@ App.UiDroppable = Ember.Mixin.create({
 
   drop: function(event) {
     event.preventDefault();
-    this.get('controller').send('addUiPhoneControl', this.get('context'), event.dataTransfer.getData('uiPhoneControlType'));
+    var receiver;
+    if(this.get('context').constructor.toString() === 'App.SceneController') {
+        receiver = this.get('context.viewControllerToShow');
+    } else if(this.get('context').constructor.toString() === 'App.Container') {
+        receiver = this.get('context.childViewController');
+    } else {
+        receiver = this.get('context.viewControllerToShow');
+    }
+    this.get('controller').send('addUiPhoneControl', receiver, event.dataTransfer.getData('uiPhoneControlType'));
     this.set('draggingOver', false);
 
     // used to prevent multiple fires of drop in nested views

@@ -41,6 +41,10 @@ body,
     color: #333333;
 }
 
+.panel-dark .panel-heading {
+    border-bottom: 1px solid #ddd;
+}
+
 .panel-info {
     border-color: #ddd;
 }
@@ -101,11 +105,6 @@ body,
     border-top: none;
     border-bottom: 1px solid #ddd;
     list-style: none;
-}
-
-.tab-pane .list-group-item {
-    margin-bottom: -1px;
-    border-top: 1px solid #ddd;
 }
 
 .list-item-simple {
@@ -193,11 +192,24 @@ body,
     background-color: #ccc;
 }
 
+.invalid-report {
+    display: flex;
+    width: 100%;
+    height: auto;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    padding: 10px 10px 10px 10px;
+    white-space: pre-wrap;
+    color: #ff0000;
+}
+
 .report-text-area {
     display: flex;
     width: 100%;
     height: auto;
-    resize: none;
     border-style: solid;
     border-width: 1px;
     border-color: #ccc;
@@ -236,6 +248,10 @@ body,
     color: #cc0000;
 }
 
+.green-link a {
+    color:#009900;
+}
+
 /*============ CONTROL PICKER ============*/
 
 .control-ui-picker,
@@ -269,6 +285,7 @@ body,
     //Dimensione immagine dispositivo originale
     width: 500px;
     height: 1000px;
+    z-index: 0;
 }
 
 .smartphone-view .smartphone-screen-view {
@@ -276,6 +293,7 @@ body,
     position: relative;
     width: 100%;
     height: 100%;
+    z-index: 1;
 }
 
 .smartphone-view .smartphone-screen-view .expanded-area {
@@ -286,8 +304,14 @@ body,
     height: 100%;
 }
 
-.smartphone-view .smartphone-screen-view.dragging-over {
-    box-shadow: 0 0 5px 5px #cc181e;
+.smartphone-view .smartphone-screen-view .view-controller-preview-view {
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
+}
+
+.smartphone-view .smartphone-screen-view .view-controller-preview-view.dragging-over {
+    box-shadow: 0 0 5px 5px #cc181e inset;
 }
 
 .tablet-view {
@@ -301,6 +325,7 @@ body,
     //Dimensione immagine dispositivo originale
     width: 1600px;
     height: 1200px;
+    z-index: 0;
 }
 
 .tablet-view.rotated {
@@ -314,6 +339,7 @@ body,
     //Dimensione immagine dispositivo originale
     width: 1200px;
     height: 1600px;
+    z-index: 0;
 }
 
 .tablet-view .tablet-screen-view,
@@ -322,18 +348,19 @@ body,
     position: relative;
     width: 100%;
     height: 100%;
+    z-index: 1;
 }
 
-.tablet-view .tablet-screen-view .tablet-screen-view-controller,
-.tablet-view.rotated .tablet-screen-view .tablet-screen-view-controller {
-    position: absolute;
+.tablet-view .tablet-screen-view .view-controller-preview-view,
+.tablet-view.rotated .tablet-screen-view .view-controller-preview-view {
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
 }
 
-.tablet-view .tablet-screen-view .tablet-screen-view-controller.dragging-over,
-.tablet-view.rotated .tablet-screen-view .tablet-screen-view-controller.dragging-over {
-    border-style: dotted;
-    border-color: #cc181e;
-    border-width: 3px;
+.tablet-view .tablet-screen-view .view-controller-preview-view.dragging-over,
+.tablet-view.rotated .tablet-screen-view .view-controller-preview-view.dragging-over {
+    box-shadow: 0 0 5px 5px #cc181e inset;
 }
 
 .screen-canvas {
@@ -343,6 +370,7 @@ body,
     width: 100%;
     height: 100%;
     pointer-events: none;
+    z-index: 4;
 }
 
 /*============ SMARTWATCH VIEW ============*/
@@ -401,6 +429,7 @@ body,
     position: absolute;
     box-sizing: border-box;
     -moz-box-sizing: border-box;
+    z-index: 3;
 }
 
 .ui-phone-control:hover {
@@ -437,6 +466,22 @@ body,
 .ui-watch-control .expanded {
     width: 100%;
     height: 100%;
+}
+
+/*============ CONTAINER ============*/
+
+.control-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.control-container:hover {
+    cursor: default;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #bbb;
+    border-radius: 5px;
+    background-color: #fff;
 }
 
 /*============ BUTTON ============*/

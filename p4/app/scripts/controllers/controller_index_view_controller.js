@@ -35,6 +35,8 @@ App.ViewControllerIndexController = Ember.ObjectController.extend(App.Saveable, 
             var viewController = this.get('model');
             var controlChain = this.store.createRecord('controlChain', {
                 viewController: viewController,
+                axis: 'horizontal',
+                type: 'spread',
                 spacing: 0
             });
             controlChain.save();
@@ -48,14 +50,6 @@ App.ViewControllerIndexController = Ember.ObjectController.extend(App.Saveable, 
                 var scene = viewController.get('scene');
                 scene.get('viewControllers').removeObject(viewController);
                 scene.save();
-                var screens = scene.get('sceneScreens');
-                screens.forEach(function(sc) {
-                    var vcs = sc.get('viewControllers');
-                    if(vcs.contains(viewController)) {
-                        vcs.removeObject(viewController);
-                        vcs.save();
-                    }
-                });
                 var id = this.get('id');
                 this.store.find('navigation').then(function (navigations) {
                     navigations.forEach(function (navigation) {
@@ -65,6 +59,10 @@ App.ViewControllerIndexController = Ember.ObjectController.extend(App.Saveable, 
                         }
                     });
                 });
+                if(viewController.get('parentContainer')) {
+                    viewController.get('parentContainer').deleteFromVCController();
+                    viewController.get('parentContainer').save();
+                }
                 viewController.deleteRecord();
                 viewController.save();
                 this.transitionToRoute('scene', scene);

@@ -1,14 +1,7 @@
-{{screen-canvas model=model}}
-{{#link-to "viewController" model tagName="div" class="expanded-area"}}{{/link-to}}
-
-{{#each uiPhoneControls}}
-    {{view App.UiPhoneControlView}}
-{{/each}}
-
 <div class="status-bar"></div>
 
 <!-- App Menu button and Back navigation button -->
-{{#if model.hasBackButton}}
+{{#if viewControllerToShow.hasBackButton}}
     <div class="action-bar">
         <div class="icon-back"></div>
         <div class="bar-content-menu">{{controllers.editor.name}}</div>
@@ -21,14 +14,17 @@
 {{/if}}
 
 <!-- Tab Menu (Multiple screens in a scene) -->
-{{#if model.scene.mustShowTabMenu}}
+{{#if model.smartphoneMustShowTabMenu}}
     {{view App.MenuTabView}}
 {{/if}}
 
 <!-- App Menu -->
-{{#if model.scene.hasMenu}}
+{{#if model.hasMenu}}
     {{view App.MenuView}}
-    {{#link-to "viewController" model}}{{view App.MenuViewShadow}}{{/link-to}}
+    {{#link-to "viewController" viewControllerToShow}}{{view App.MenuViewShadow}}{{/link-to}}
 {{/if}}
 
 <div class="command-bar"></div>
+
+{{view App.ViewControllerPreviewView id="view-controller-background"}}
+{{screen-canvas model=model viewControllerToShow=viewControllerToShow}}

@@ -35,7 +35,8 @@ App.ScenesController = Ember.ArrayController.extend({
             // Application model is in editor.model
             this.store.createRecord('scene', {
                 name: name,
-                application: app
+                application: app,
+                type: 'singleVC'
             }).save().then(function (scene) {
                 app.get('scenes').addObject(scene);
                 app.save();

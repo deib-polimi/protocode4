@@ -34,6 +34,14 @@ App.Router.map(function () {
             this.resource('scene', {
                 path: '/scene/:scene_id'
             }, function () {
+                this.resource('appMenu', {
+                    path: '/menu/:menu_id'
+                }, function () {
+                });
+                this.resource('appMenuItem', {
+                    path: '/menuItem/:menu_item_id'
+                }, function () {
+                });
                 this.resource('viewController', {
                     path: '/viewController/:viewController_id'
                 }, function () {
@@ -127,14 +135,6 @@ App.Router.map(function () {
                     });
                     this.resource('controlWebView', {
                         path: '/webView/:webView_id'
-                    }, function () {
-                    });
-                    this.resource('appMenu', {
-                        path: '/menu/:menu_id'
-                    }, function () {
-                    });
-                    this.resource('appMenuItem', {
-                        path: '/menuItem/:menu_item_id'
                     }, function () {
                     });
                     this.resource('asyncTask', {

@@ -28,6 +28,20 @@ App.ControlChainIndexController = Ember.ObjectController.extend(App.Saveable, {
     ],
     newControlType: null,
 
+    // USED by partial _invalid_report.hbs
+    invalidReport: function() {
+        if(!this.get('model.valid')) {
+            return 'Chain is invalid due to the number of phone controls:\nit contains only '
+                + this.get('model.uiPhoneControls.length') +
+                ' controls (control chains must have at least 2 phone controls).';
+        }
+        return null;
+    }.property(
+        'model.valid',
+        'model.uiPhoneControls.length'
+    ),
+    // END partial _invalid_report.hbs
+
     actions: {
         addControl: function() {
             var chain = this.get('model');

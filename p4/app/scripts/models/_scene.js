@@ -1,49 +1,60 @@
 App.Scene = DS.Model.extend({
     application: DS.belongsTo('application', {inverse: 'scenes'}),
     viewControllers: DS.hasMany('viewController', {inverse: 'scene'}),
-    sceneScreens: DS.hasMany('sceneScreen', {inverse: 'scene'}),
+    parentViewController: DS.belongsTo('viewController'),
 
     name: DS.attr('string'),
     launcher: DS.attr('boolean', {defaultValue: false}),
-    varyForTablets: DS.attr('boolean', {defaultValue: false}),
     hasMenu: DS.attr('boolean', {defaultValue: false}),
-    hasTabMenu: DS.attr('boolean', {defaultValue: true}),
+    type: DS.attr('string'),
+    smartphoneHasTabMenu: DS.attr('boolean', {defaultValue: true}),
+    tabletHasTabMenu: DS.attr('boolean', {defaultValue: true}),
 
     xmlName: 'scene',
 
-    screensNumber: function() {
-        var n = 0;
-        this.get('sceneScreens').forEach(function(sc) {
-            if(sc.get('valid')) {
-                n++;
-            }
-        });
-        return n;
-    }.property('sceneScreens.@each.valid'),
+    valid: function() {
+        /*  viewControllers.length < 3 means that scene has parentVC and another VC
+            this is not enough for a multiVC scene which must have at least 2 childVCs (excluded the parentVC) */
+        if((this.get('type') === 'multiVC') && (this.get('viewControllers.length') < 3)) {
+            return false;
+        }
+        return true;
+    }.property('type', 'viewControllers.length'),
 
-    mustShowTabMenu: function() {
-        if(this.get('hasTabMenu')) {
-            if(this.get('application.device.type') === 'smartphone' || !this.get('varyForTablets')) {
-                if(this.get('viewControllers.length') > 1) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                if(this.get('screensNumber') > 1) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
+    childViewControllers: function() {
+        return this.get('viewControllers').without(this.get('parentViewController'));
+    }.property('parentViewController', 'viewControllers.[]'),
+
+    smartphoneMustShowTabMenu: function() {
+        if(!this.get('singleViewControllerScene') && this.get('smartphoneHasTabMenu')) {
+            return true;
         }
         return false;
     }.property(
-        'hasTabMenu',
+        'singleViewControllerScene',
+        'smartphoneHasTabMenu'
+    ),
+
+    tabletMustShowTabMenu: function() {
+        if(!this.get('singleViewControllerScene') && this.get('tabletHasTabMenu')) {
+            return true;
+        }
+        return false;
+    }.property(
+        'singleViewControllerScene',
+        'tabletHasTabMenu'
+    ),
+
+    isTabbed: function() {
+        if(this.get('application.device.type') === 'smartphone') {
+            return this.get('smartphoneHasTabMenu');
+        } else {
+            return this.get('tabletHasTabMenu');
+        }
+    }.property(
         'application.device.type',
-        'varyForTablets',
-        'viewControllers.length',
-        'screensNumber'
+        'smartphoneHasTabMenu',
+        'tabletHasTabMenu'
     ),
 
     referenceName: function() {
@@ -57,39 +68,47 @@ App.Scene = DS.Model.extend({
         }
     }.observes('launcher'),
 
-    didCreate: function() {
-        var self = this;
-        var i, name, newScreen;
-        for(i = 0; i < 4; i++) {
-            name = 'screen' + (i+1);
-            newScreen = this.store.createRecord('sceneScreen', {
-                scene: this,
-                name: name
-            }).save().then(function(sc) {
-                self.get('sceneScreens').addObject(sc);
-            });
+    typeObserver: function() {
+        if(!this.get('isDeleted')) {
+            // Case multiVC --> singleVC
+            if(this.get('type') === 'singleVC') {
+                this.set('parentViewController.name', 'viewController');
+                var controls = this.get('parentViewController.uiPhoneControls');
+                var containers = controls.filter(function(upc) {
+                    return upc.constructor.toString() === 'App.Container';
+                });
+                containers.forEach(function(cont) {
+                    controls.removeObject(cont);
+                    cont.deleteFromScene();
+                    cont.save();
+                });
+                this.get('parentViewController').save();
+            } else {
+                // Case singleVC --> multiVC
+                this.set('parentViewController.name', 'parentVC');
+                this.get('parentViewController').save();
+            }
+            this.save();
         }
-        this.get('sceneScreens').save();
+    }.observes('type'),
+
+    didCreate: function() {
+        var viewController = this.store.createRecord('viewController', {
+            scene: this,
+            parentContainer: null,
+            name: 'viewController'
+        });
+        this.set('parentViewController', viewController);
+        this.save();
+        viewController.save();
     },
 
     deleteRecord: function() {
-        var self = this;
-
-        var sceneScreens = this.get('sceneScreens');
-        sceneScreens.forEach(function (s) {
-            Ember.run.once(self, function () {
-                s.deleteRecord();
-                s.save();
-            });
-        });
-
-        var viewControllers = this.get('viewControllers');
-        viewControllers.forEach(function (vc) {
-            Ember.run.once(self, function () {
-                vc.deleteRecord();
-                vc.save();
-            });
-        });
+        var parent = this.get('parentViewController');
+        if(parent) {
+            parent.deleteRecord();
+            parent.save();
+        }
 
         this._super();
     },
@@ -97,26 +116,42 @@ App.Scene = DS.Model.extend({
     toXml: function (xmlDoc) {
         var scene = xmlDoc.createElement(this.get('xmlName'));
         scene.setAttribute('id', this.get('id'));
+        scene.setAttribute('type', this.get('type'));
         scene.setAttribute('name', this.get('name'));
         scene.setAttribute('launcher', this.get('launcher'));
-        scene.setAttribute('varyForTablets', this.get('varyForTablets'));
         scene.setAttribute('hasMenu', this.get('hasMenu'));
-        scene.setAttribute('hasTabMenu', this.get('hasTabMenu'));
-
         var vcs = xmlDoc.createElement('viewControllers');
-        scene.appendChild(vcs);
-
-        this.get('viewControllers').map(function (vc) {
-            return vcs.appendChild(vc.toXml(xmlDoc));
-        });
-
-        var screens = xmlDoc.createElement('screens');
-        scene.appendChild(screens);
-        this.get('sceneScreens').map(function (s) {
-            if(s.get('viewControllers.length') > 0) {
-                screens.appendChild(s.toXml(xmlDoc));
+        /*
+            singleVC:   no smartphoneHasTabMenu
+                        no tabletHasTabMenu
+                        no parentViewController
+            multiVC:    smartphoneHasTabMenu
+                        tabletHasTabMenu
+                        if !smartphoneHasTabMenu or !tabletHasTabMenu
+                            parentViewController
+        */
+        if(this.get('type') === 'singleVC') {
+            // end scene attributes - begin view controllers xmlns
+            scene.appendChild(vcs);
+            vcs.appendChild(this.get('parentViewController').toXml(xmlDoc));
+        } else {
+            scene.setAttribute('smartphoneHasTabMenu', this.get('smartphoneHasTabMenu'));
+            scene.setAttribute('tabletHasTabMenu', this.get('tabletHasTabMenu'));
+            if(this.get('smartphoneHasTabMenu') && this.get('tabletHasTabMenu')) {
+                // end scene attributes - begin view controllers xmlns
+                scene.appendChild(vcs);
+                this.get('childViewControllers').map(function (vc) {
+                    return vcs.appendChild(vc.toXml(xmlDoc));
+                });
+            } else {
+                scene.setAttribute('parentViewController', this.get('parentViewController').getRefPath(''));
+                // end scene attributes - begin view controllers xmlns
+                scene.appendChild(vcs);
+                this.get('viewControllers').map(function (vc) {
+                    return vcs.appendChild(vc.toXml(xmlDoc));
+                });
             }
-        });
+        }
 
         return scene;
     }

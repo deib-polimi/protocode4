@@ -1,24 +1,29 @@
 App.Container = App.UiPhoneControl.extend({
-    name: DS.attr('string', {defaultValue: 'DummyContainer'}),
-    title: DS.attr('string', {defaultValue: 'Dummy Container'}),
-    widthFixed: DS.attr('number', {defaultValue: 200}),
-    heightFixed: DS.attr('number', {defaultValue: 100}),
+    minWidth: 0,
+    minHeight: 0,
+    defaultWidth: 300,
+    defaultHeight: 400,
+    widthFixed: DS.attr('number', {defaultValue: 300}),
+    heightFixed: DS.attr('number', {defaultValue: 400}),
 
-    uiPhoneControls: DS.hasMany('uiPhoneControl', {polymorphic: true, inverse: 'parentContainer'}),
+    childViewController: DS.belongsTo('viewController', {inverse: 'parentContainer'}),
 
-    centerX: function() {
-        return this.get('posX') + (this.get('width') / 2);
-    }.property(
-        'posX',
-        'width'
-    ),
+    xmlName: "containerView",
 
-    centerY: function() {
-        return this.get('posY') + (this.get('height') / 2);
-    }.property(
-        'posY',
-        'height'
-    ),
+    didCreate: function() {
+        var nameVC = this.get('name');
+        var scene = this.get('viewController.scene');
+        var childViewController = this.store.createRecord('viewController', {
+            scene: scene,
+            parentContainer: this,
+            name: nameVC
+        });
+        this.set('childViewController', childViewController);
+        scene.get('viewControllers').addObject(childViewController);
+        this.set('name', 'Container-' + nameVC);
+        childViewController.save();
+        this.save();
+    },
 
     getWidthFromPercent: function(widthPercent) {
         return widthPercent * this.get('width');
@@ -28,18 +33,40 @@ App.Container = App.UiPhoneControl.extend({
         return heightPercent * this.get('height');
     },
 
+    deleteFromApp: function() {
+        var child = this.get('childViewController');
+        if(child) {
+            child.deleteRecord();
+            child.save();
+        }
+        this.deleteRecord();
+    },
+
+    deleteFromScene: function() {
+        var child = this.get('childViewController');
+        if(child) {
+            var scene = child.get('scene');
+            scene.get('viewControllers').removeObject(child);
+            child.deleteRecord();
+            child.save();
+        }
+        this.deleteRecord();
+    },
+
+    deleteFromVCController: function() {
+        this.deleteRecord();
+    },
+
     toXml: function (xmlDoc) {
         var elem = xmlDoc.createElement('container');
         this.decorateXml(xmlDoc, elem);
 
-        elem.setAttribute('title', this.get('title'));
-
-        var uiPhoneControls = this.get('uiPhoneControls');
-
-        uiPhoneControls.map(function (item) {
-            elem.appendChild(item.toXml(xmlDoc));
-        });
+        elem.setAttribute('childViewController', this.get('childViewController').getRefPath(''));
 
         return elem;
+    },
+
+    getRefPath: function (path) {
+        return '//@' + this.get('xmlName') + '[id=\'' + this.get('id') + '\']' + path;
     }
 });

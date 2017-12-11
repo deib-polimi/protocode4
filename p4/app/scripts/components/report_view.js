@@ -1,7 +1,7 @@
 App.ReportViewComponent = Ember.Component.extend({
     tagName: 'div',
     classNames: ['report-text-area'],
-    sceneBinding: 'controller.scene',
+    sceneBinding: 'controller.model',
     routerBinding: 'controller.target',
 
     didInsertElement: function() {

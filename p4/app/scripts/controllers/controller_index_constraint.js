@@ -4,6 +4,76 @@
 App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
     needs: ['scenes'],
 
+    // USED by partial _invalid_report.hbs
+    invalidReport: function() {
+        if(!this.get('model.valid')) {
+            var outcome = this.areGoodConstraints(this.get('model'));
+            var message;
+            switch(outcome) {
+                case 1:
+                    message = "Invalid constraint attributes.\nThis constraint will not be active nor it will be exported in the model.";
+                    break;
+
+                case 2:
+                    message = "The control is over-binded on x-axis due to this constraint.\nThis constraint will not be active nor it will be exported in the model.";
+                    break;
+
+                case 3:
+                    message = "The control is over-binded on y-axis due to this constraint.\nThis constraint will not be active nor it will be exported in the model.";
+                    break;
+
+                case 4:
+                    message = "This constraint puts the control over the top of the screen.\nIt will not be active nor it will be exported in the model.";
+                    break;
+
+                case 5:
+                    message = "This constraint puts the control under the bottom of the screen.\nIt will not be active nor it will be exported in the model.";
+                    break;
+
+                case 6:
+                    message = "This constraint puts the control before the left edge of the screen.\nIt will not be active nor it will be exported in the model.";
+                    break;
+
+                case 7:
+                    message = "This constraint puts the control after the right edge of the screen.\nIt will not be active nor it will be exported in the model.";
+                    break;
+
+                case 8:
+                    message = "This constraint is in conflict with another constraint on the bottom edge.\nIt will not be active nor it will be exported in the model.";
+                    break;
+
+                case 9:
+                    message = "This constraint is in conflict with another constraint on the top edge.\nIt will not be active nor it will be exported in the model.";
+                    break;
+
+                case 10:
+                    message = "This constraint is in conflict with another constraint on the end edge.\nIt will not be active nor it will be exported in the model.";
+                    break;
+
+                case 11:
+                    message = "This constraint is in conflict with another constraint on the start edge.\nIt will not be active nor it will be exported in the model.";
+                    break;
+
+                case 12:
+                    message = "This constraint puts the control overlapped on another control.\nIt will not be active nor it will be exported in the model.";
+                    break;
+
+                case 13:
+                    message = "This constraint's reference element has a constraint with this constraint's control (circularity).\nIt will not be active nor it will be exported in the model.";
+                    break;
+            }
+            return message;
+        }
+        return null;
+    }.property(
+        'model.valid',
+        'model.layoutEdge',
+        'model.withParent',
+        'model.referenceElement',
+        'model.referenceLayoutEdge'
+    ),
+    // END partial _invalid_report.hbs
+
     /*
         Return codes:
         0 - Constraint is valid
@@ -193,63 +263,7 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
         acceptChanges: function() {
             var constraint = this.get('model');
             var outcome = this.areGoodConstraints(constraint);
-            if(outcome !== 0) {
-                var message;
-                switch(outcome) {
-                    case 1:
-                        message = "Invalid constraint attributes.\nThis constraint will not be active nor it will be exported in the model.";
-                        break;
-
-                    case 2:
-                        message = "The control is over-binded on x-axis due to this constraint.\nThis constraint will not be active nor it will be exported in the model.";
-                        break;
-
-                    case 3:
-                        message = "The control is over-binded on y-axis due to this constraint.\nThis constraint will not be active nor it will be exported in the model.";
-                        break;
-
-                    case 4:
-                        message = "This constraint puts the control over the top of the screen.\nIt will not be active nor it will be exported in the model.";
-                        break;
-
-                    case 5:
-                        message = "This constraint puts the control under the bottom of the screen.\nIt will not be active nor it will be exported in the model.";
-                        break;
-
-                    case 6:
-                        message = "This constraint puts the control before the left edge of the screen.\nIt will not be active nor it will be exported in the model.";
-                        break;
-
-                    case 7:
-                        message = "This constraint puts the control after the right edge of the screen.\nIt will not be active nor it will be exported in the model.";
-                        break;
-
-                    case 8:
-                        message = "This constraint is in conflict with another constraint on the bottom edge.\nIt will not be active nor it will be exported in the model.";
-                        break;
-
-                    case 9:
-                        message = "This constraint is in conflict with another constraint on the top edge.\nIt will not be active nor it will be exported in the model.";
-                        break;
-
-                    case 10:
-                        message = "This constraint is in conflict with another constraint on the end edge.\nIt will not be active nor it will be exported in the model.";
-                        break;
-
-                    case 11:
-                        message = "This constraint is in conflict with another constraint on the start edge.\nIt will not be active nor it will be exported in the model.";
-                        break;
-
-                    case 12:
-                        message = "This constraint puts the control overlapped on another control.\nIt will not be active nor it will be exported in the model.";
-                        break;
-
-                    case 13:
-                        message = "This constraint's reference element has a constraint with this constraint's control (circularity).\nIt will not be active nor it will be exported in the model.";
-                        break;
-                }
-                alert(message);
-            } else {
+            if(outcome === 0) {
                 constraint.set('valid', true);
                 if(constraint.get('referenceElement') !== null) {
                     constraint.get('uiPhoneControl.bindedControls').pushObject(constraint.get('referenceElement'));

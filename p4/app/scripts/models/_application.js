@@ -38,7 +38,9 @@ App.Application = DS.Model.extend({
             var watchControllers = self.get('watchControllers');
 
             Promise.all(scenes.map(function (item_scenes) {
-                return item_scenes.toXml(xmlDoc);
+                if(item_scenes.get('valid')) {
+                    return item_scenes.toXml(xmlDoc);
+                }
             })).then(function (values_scenes) {
 
                 Promise.all(watchControllers.map(function (item_watchControllers) {

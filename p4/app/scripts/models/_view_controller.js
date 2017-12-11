@@ -4,11 +4,9 @@ App.ViewController = DS.Model.extend({
     backgroundImage: DS.attr('string', {defaultValue: ''}),
 
     scene: DS.belongsTo('scene', {inverse: 'viewControllers'}),
-    sceneScreen: DS.belongsTo('sceneScreen', {inverse: 'viewControllers'}),
-    widthPercentInScreen: DS.attr('number', {defaultValue: 0.35}),
-    /*nameInScreen: DS.attr('string'),*/
+    parentContainer: DS.belongsTo('container', {inverse: 'childViewController'}),
 
-    uiPhoneControls: DS.hasMany('uiPhoneControl', {polymorphic: true}),
+    uiPhoneControls: DS.hasMany('uiPhoneControl', {inverse: 'viewController', polymorphic: true}),
     controlChains: DS.hasMany('controlChain', {inverse: 'viewController'}),
     alertDialogs: DS.hasMany('alertDialog', {inverse: 'viewController'}),
     progressDialogs: DS.hasMany('progressDialog', {inverse: 'viewController'}),
@@ -16,15 +14,20 @@ App.ViewController = DS.Model.extend({
 
     xmlName: 'viewController',
 
-    maxWidthPercentInScreen: function() {
-        if(this.get('sceneScreen')) {
-            return this.get('sceneScreen').getMaxWidthPercentInScreen(this);
+    isParent: function() {
+        return this === this.get('scene.parentViewController');
+    }.property('scene.parentViewController'),
+
+    uiPhoneControlsToShow: function() {
+        if(this.get('scene.isTabbed')) {
+            return this.get('uiPhoneControls').filter(function(upc) {
+                return upc.constructor.toString() !== 'App.Container';
+            });
         }
-        return -1;
+        return this.get('uiPhoneControls');
     }.property(
-        'widthPercentInScreen',
-        'sceneScreen',
-        'sceneScreen.viewControllers.@each.widthPercentInScreen'
+        'scene.isTabbed',
+        'uiPhoneControls.[]'
     ),
 
     horizontalMinimumSpace: function() {
@@ -48,96 +51,121 @@ App.ViewController = DS.Model.extend({
         'uiPhoneControls.@each'
     ),
 
-    start: function() {
-        if(this.get('scene.application.device.type') === 'smartphone') {
-            return 0;
-        } else {
-            if(this.get('sceneScreen')) {
-                return this.get('sceneScreen').getPrecedentEnd(this);
-            } else {
-                return 0;
-            }
-        }
+    isInAContainer: function() {
+        return (this.get('parentContainer') !== null) && (!this.get('scene.isTabbed'));
     }.property(
-        'sceneScreen',
-        'sceneScreen.viewControllers.@each.widthPercentInScreen',
-        'scene.application.device.type'
+        'parentContainer',
+        'scene.isTabbed'
+    ),
+
+    start: function() {
+        if(this.get('isInAContainer')) {
+            return this.get('parentContainer.start');
+        }
+        return 0;
+    }.property(
+        'isInAContainer',
+        'parentContainer.start'
     ),
 
     end: function() {
-        return this.get('start') + this.get('width');
-    }.property(
-        'width',
-        'start'
-    ),
-
-    top: function() {
-        if(this.get('scene.mustShowTabMenu') && (this.get('scene.application.device.platform') === 'android')) {
-            return (this.get('scene.application.device.viewTop') + 48);
+        if(this.get('isInAContainer')) {
+            return this.get('parentContainer.end');
         }
-        return this.get('scene.application.device.viewTop');
+        return this.get('scene.application.device.screenWidth');
     }.property(
-        'scene.application.device.viewTop',
-        'scene.application.device.platform',
-        'scene.mustShowTabMenu'
-    ),
-
-    bottom: function() {
-        if(this.get('scene.mustShowTabMenu') && (this.get('scene.application.device.platform') === 'ios')) {
-            return (this.get('scene.application.device.viewBottom') - 48);
-        }
-        return this.get('scene.application.device.viewBottom');
-    }.property(
-        'scene.application.device.viewBottom',
-        'scene.application.device.platform',
-        'scene.mustShowTabMenu'
-    ),
-
-    width: function() {
-        var width = this.get('scene.application.device.screenWidth');
-        if(this.get('scene.application.device.type') === 'smartphone') {
-            return width;
-        } else {
-            if(this.get('sceneScreen')) {
-                return width * parseFloat(this.get('widthPercentInScreen'));
-            } else {
-                return width;
-            }
-        }
-    }.property(
-        'sceneScreen',
-        'widthPercentInScreen',
-        'scene.application.device.type',
+        'isInAContainer',
+        'parentContainer.end',
         'scene.application.device.screenWidth'
     ),
 
+    top: function() {
+        if(this.get('isInAContainer')) {
+            return this.get('parentContainer.top');
+        }
+        if(this.get('scene.application.device.platform') === 'android') {
+            var thereIsTabMenu = (this.get('scene.application.device.type') === 'smartphone') && this.get('scene.smartphoneMustShowTabMenu');
+            thereIsTabMenu = thereIsTabMenu || ((this.get('scene.application.device.type') === 'tablet') && this.get('scene.tabletMustShowTabMenu'));
+            if(thereIsTabMenu) {
+                return this.get('scene.application.device.viewTop') + 48 - 1;
+            }
+        }
+        return this.get('scene.application.device.viewTop') - 1;
+    }.property(
+        'isInAContainer',
+        'parentContainer.top',
+        'scene.application.device.type',
+        'scene.application.device.platform',
+        'scene.application.device.viewTop'
+    ),
+
+    bottom: function() {
+        if(this.get('isInAContainer')) {
+            return this.get('parentContainer.bottom');
+        }
+        if(this.get('scene.application.device.platform') === 'ios') {
+            var thereIsTabMenu = (this.get('scene.application.device.type') === 'smartphone') && this.get('scene.smartphoneMustShowTabMenu');
+            thereIsTabMenu = thereIsTabMenu || ((this.get('scene.application.device.type') === 'tablet') && this.get('scene.tabletMustShowTabMenu'));
+            if(thereIsTabMenu) {
+                return this.get('scene.application.device.viewBottom') - 48;
+            }
+        }
+        return this.get('scene.application.device.viewBottom');
+    }.property(
+        'isInAContainer',
+        'parentContainer.bottom',
+        'scene.application.device.type',
+        'scene.application.device.platform',
+        'scene.application.device.viewBottom'
+    ),
+
+    width: function() {
+        if(this.get('isInAContainer')) {
+            return this.get('parentContainer.width');
+        }
+        return this.get('end') - this.get('start');
+    }.property(
+        'isInAContainer',
+        'parentContainer.width',
+        'start',
+        'end'
+    ),
+
     height: function() {
+        if(this.get('isInAContainer')) {
+            return this.get('parentContainer.height');
+        }
         return this.get('bottom') - this.get('top');
     }.property(
+        'isInAContainer',
+        'parentContainer.height',
         'top',
         'bottom'
     ),
 
     centerX: function() {
+        if(this.get('isInAContainer')) {
+            return this.get('parentContainer.centerX');
+        }
         return (this.get('start') + (this.get('width') / 2));
     }.property(
+        'isInAContainer',
+        'parentContainer.centerX',
         'start',
         'width'
     ),
 
     centerY: function() {
+        if(this.get('isInAContainer')) {
+            return this.get('parentContainer.centerY');
+        }
         return (this.get('top') + (this.get('height') / 2));
     }.property(
+        'isInAContainer',
+        'parentContainer.centerY',
         'top',
         'height'
     ),
-
-    isInAScreen: function() {
-        if(this.get('sceneScreen')) {
-            return true;
-        }
-        return false;
-    }.property('sceneScreen'),
 
     /* NAVIGATION for smartphones and tablet with no screen
         Scene has:
@@ -157,9 +185,26 @@ App.ViewController = DS.Model.extend({
             - others VCs go back to first VC
     */
     hasBackButton: function() {
-        if(this.get('scene.application.device.type') === 'smartphone' || !this.get('scene.varyForTablets')) {
+        if(this.get('scene.application.device.type') === 'smartphone') {
             if(this.get('scene.hasMenu')) {
-                if(this.get('scene.hasTabMenu')) {
+                if(this.get('scene.smartphoneHasTabMenu')) {
+                    // Case 1
+                    return false;
+                } else {
+                    // Case 2
+                    if(this.get('scene.viewControllers').indexOf(this) === 0) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            } else {
+                // Cases 3 and 4
+                return true;
+            }
+        } else {
+            if(this.get('scene.hasMenu')) {
+                if(this.get('scene.tabletHasTabMenu')) {
                     // Case 1
                     return false;
                 } else {
@@ -175,12 +220,11 @@ App.ViewController = DS.Model.extend({
                 return true;
             }
         }
-        return false;
     }.property(
         'scene.application.device.type',
-        'scene.varyForTablets',
-        'scene.hasMenu',
-        'scene.hasTabMenu'
+        'scene.smartphoneHasTabMenu',
+        'scene.tabletHasTabMenu',
+        'scene.hasMenu'
     ),
 
     referenceName: function() {
@@ -202,10 +246,17 @@ App.ViewController = DS.Model.extend({
         // The uiPhoneControls in chains will be deleted by the chains themselves
         this.get('uiPhoneControls').forEach(function (uiPhoneControl) {
             if(uiPhoneControl.get('controlChain') === null) {
-                Ember.run.once(self, function () {
-                    uiPhoneControl.deleteRecord();
-                    uiPhoneControl.save();
-                });
+                if(uiPhoneControl.constructor.toString() !== 'App.Container') {
+                    Ember.run.once(self, function () {
+                        uiPhoneControl.deleteRecord();
+                        uiPhoneControl.save();
+                    });
+                } else {
+                    Ember.run.once(self, function () {
+                        uiPhoneControl.deleteFromApp();
+                        uiPhoneControl.save();
+                    });
+                }
             }
         });
 
@@ -236,6 +287,9 @@ App.ViewController = DS.Model.extend({
         viewController.setAttribute('name', this.get('name'));
         viewController.setAttribute('backgroundColor', this.get('backgroundColor'));
         viewController.setAttribute('backgroundImage', this.get('backgroundImage'));
+        if(this.get('parentContainer')) {
+            viewController.setAttribute('parentContainer', this.get('parentContainer').getRefPath(''));
+        }
         if(this.get('hasBackButton')) {
             viewController.setAttribute('hasMenuButton', false);
             viewController.setAttribute('hasBackButton', true);

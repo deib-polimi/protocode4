@@ -75,6 +75,11 @@
         padding-top: 15px;
     }
 
+    .smartphone-screen-view {
+        border-bottom-left-radius: 35px;
+        border-bottom-right-radius: 35px;
+    }
+
     .control-grid-view-cell,
     .control-grid-view-cell .grid-image,
     .control-grid-view-cell .grid-image-empty {
@@ -359,15 +364,8 @@
         line-height: 64px;
     }
 
-    .action-bar .bar-content {
-        margin-left: 10px;
-        background-size: auto 93%;
-        color: #FFFFFF;
-        font-size: 22px;
-    }
-
     .action-bar .bar-content-menu {
-        margin-left: 68px;
+        margin-left: 58px;
         background-size: auto 93%;
         color: #FFFFFF;
         font-size: 22px;
@@ -430,15 +428,8 @@
         line-height: 64px;
     }
 
-    .action-bar .bar-content {
-        margin-left: 10px;
-        background-size: auto 93%;
-        color: #FFFFFF;
-        font-size: 22px;
-    }
-
     .action-bar .bar-content-menu {
-        margin-left: 68px;
+        margin-left: 58px;
         background-size: auto 93%;
         color: #FFFFFF;
         font-size: 22px;
@@ -503,13 +494,6 @@
         line-height: 56px;
     }
 
-    .action-bar .bar-content {
-        margin-left: 5px;
-        background-size: auto 93%;
-        color: #FFFFFF;
-        font-size: 18px;
-    }
-
     .status-bar,
     .status-bar-menu {
         //Altezza status bar in pixel = altezza in points
@@ -519,7 +503,7 @@
     }
 
     .action-bar .bar-content-menu {
-        margin-left: 68px;
+        margin-left: 58px;
         background-size: auto 93%;
         color: #FFFFFF;
         font-size: 22px;
@@ -579,15 +563,8 @@
         line-height: 64px;
     }
 
-    .action-bar .bar-content {
-        margin-left: 10px;
-        background-size: auto 93%;
-        color: #FFFFFF;
-        font-size: 22px;
-    }
-
     .action-bar .bar-content-menu {
-        margin-left: 68px;
+        margin-left: 58px;
         background-size: auto 93%;
         color: #FFFFFF;
         font-size: 22px;
@@ -669,15 +646,8 @@
         line-height: 64px;
     }
 
-    .action-bar .bar-content {
-        margin-left: 10px;
-        background-size: auto 93%;
-        color: #FFFFFF;
-        font-size: 22px;
-    }
-
     .action-bar .bar-content-menu {
-        margin-left: 68px;
+        margin-left: 58px;
         background-size: auto 93%;
         color: #FFFFFF;
         font-size: 22px;
@@ -759,15 +729,8 @@
         line-height: 64px;
     }
 
-    .action-bar .bar-content {
-        margin-left: 10px;
-        background-size: auto 93%;
-        color: #FFFFFF;
-        font-size: 22px;
-    }
-
     .action-bar .bar-content-menu {
-        margin-left: 68px;
+        margin-left: 58px;
         background-size: auto 93%;
         color: #FFFFFF;
         font-size: 22px;

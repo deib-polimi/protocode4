@@ -1,0 +1,9 @@
+{{#if viewControllerToShow}}
+    {{#each viewControllerToShow.uiPhoneControlsToShow}}
+        {{view App.UiPhoneControlView}}
+    {{/each}}
+{{else}}
+    {{#each childViewController.uiPhoneControlsToShow}}
+        {{view App.UiPhoneControlView}}
+    {{/each}}
+{{/if}}

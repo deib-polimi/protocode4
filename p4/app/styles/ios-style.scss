@@ -113,22 +113,20 @@
     .smartphone-screen-view .action-bar {
         position: absolute;
         width: 100%;
-        left: 0;
+        top: 0px;
+        left: 0px;
         padding-left: 15px;
         padding-top: 30px;
     }
 
-    .smartphone-screen-view .action-bar .bar-content {
-        margin-left: 64px;
-        opacity: 0;
-    }
-
     .smartphone-screen-view .action-bar .bar-content-menu {
+        position: absolute;
         margin-left: 64px;
         opacity: 0;
     }
 
     .smartphone-screen-view .action-bar .icon-menu {
+        position: absolute;
         background-image: url("../img/ui_phone_controls/ios/icon_menu.png");
         float: left;
         width: 35px;
@@ -136,6 +134,7 @@
     }
 
     .smartphone-screen-view .action-bar .icon-back {
+        position: absolute;
         background-image: url("../img/ui_phone_controls/ios/icon_back.png");
         float: left;
         width: 56px;
@@ -163,22 +162,20 @@
     .tablet-screen-view .action-bar {
         position: absolute;
         width: 100%;
-        left: 0;
+        top: 0px;
+        left: 0px;
         padding-left: 15px;
         padding-top: 18px;
     }
 
-    .tablet-screen-view .action-bar .bar-content {
-        margin-left: 64px;
-        opacity: 0;
-    }
-
     .tablet-screen-view .action-bar .bar-content-menu {
+        position: absolute;
         margin-left: 64px;
         opacity: 0;
     }
 
     .tablet-screen-view .action-bar .icon-menu {
+        position: absolute;
         background-image: url("../img/ui_phone_controls/ios/icon_menu.png");
         float: left;
         margin-top: 10px;
@@ -187,6 +184,7 @@
     }
 
     .tablet-screen-view .action-bar .icon-back {
+        position: absolute;
         background-image: url("../img/ui_phone_controls/ios/icon_back.png");
         float: left;
         margin-top: 10px;
