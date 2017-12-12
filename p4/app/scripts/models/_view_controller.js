@@ -5,6 +5,8 @@ App.ViewController = DS.Model.extend({
 
     scene: DS.belongsTo('scene', {inverse: 'viewControllers'}),
     parentContainer: DS.belongsTo('container', {inverse: 'childViewController'}),
+    //parentContainerSmartphone: DS.belongsTo('container', {inverse: 'childViewController'}),
+    //parentContainerTablet: DS.belongsTo('container', {inverse: 'childViewController'}),
 
     uiPhoneControls: DS.hasMany('uiPhoneControl', {inverse: 'viewController', polymorphic: true}),
     controlChains: DS.hasMany('controlChain', {inverse: 'viewController'}),
@@ -17,6 +19,14 @@ App.ViewController = DS.Model.extend({
     isParent: function() {
         return this === this.get('scene.parentViewController');
     }.property('scene.parentViewController'),
+
+    /*isParent: function() {
+        return (this === this.get('scene.parentViewControllerSmartphone')) ||
+            (this === this.get('scene.parentViewControllerTablet'));
+    }.property(
+        'scene.parentViewControllerSmartphone',
+        'scene.parentViewControllerTablet'
+    ),*/
 
     uiPhoneControlsToShow: function() {
         if(this.get('scene.isTabbed')) {
@@ -51,6 +61,7 @@ App.ViewController = DS.Model.extend({
         'uiPhoneControls.@each'
     ),
 
+    // DELETE
     isInAContainer: function() {
         return (this.get('parentContainer') !== null) && (!this.get('scene.isTabbed'));
     }.property(
@@ -58,7 +69,24 @@ App.ViewController = DS.Model.extend({
         'scene.isTabbed'
     ),
 
+    /*activeContainer: function() {
+        if(this.get('scene.isTabbed')) {
+            if(this.get('scene.application.device.type') === 'smartphone') {
+                return this.get('parentContainerSmartphone');
+            } else {
+                return this.get('parentContainerTablet');
+            }
+        }
+        return null;
+    }.property(
+        'scene.isTabbed',
+        'scene.application.device.type',
+        'parentContainerSmartphone',
+        'parentContainerTablet'
+    ),*/
+
     start: function() {
+        /*activeContainer*/
         if(this.get('isInAContainer')) {
             return this.get('parentContainer.start');
         }
@@ -69,6 +97,7 @@ App.ViewController = DS.Model.extend({
     ),
 
     end: function() {
+        /*activeContainer*/
         if(this.get('isInAContainer')) {
             return this.get('parentContainer.end');
         }
@@ -80,6 +109,7 @@ App.ViewController = DS.Model.extend({
     ),
 
     top: function() {
+        /*activeContainer*/
         if(this.get('isInAContainer')) {
             return this.get('parentContainer.top');
         }
@@ -102,6 +132,7 @@ App.ViewController = DS.Model.extend({
     ),
 
     bottom: function() {
+        /*activeContainer*/
         if(this.get('isInAContainer')) {
             return this.get('parentContainer.bottom');
         }
@@ -124,6 +155,7 @@ App.ViewController = DS.Model.extend({
     ),
 
     width: function() {
+        /*activeContainer*/
         if(this.get('isInAContainer')) {
             return this.get('parentContainer.width');
         }
@@ -136,6 +168,7 @@ App.ViewController = DS.Model.extend({
     ),
 
     height: function() {
+        /*activeContainer*/
         if(this.get('isInAContainer')) {
             return this.get('parentContainer.height');
         }
@@ -148,6 +181,7 @@ App.ViewController = DS.Model.extend({
     ),
 
     centerX: function() {
+        /*activeContainer*/
         if(this.get('isInAContainer')) {
             return this.get('parentContainer.centerX');
         }
@@ -160,6 +194,7 @@ App.ViewController = DS.Model.extend({
     ),
 
     centerY: function() {
+        /*activeContainer*/
         if(this.get('isInAContainer')) {
             return this.get('parentContainer.centerY');
         }
@@ -294,6 +329,12 @@ App.ViewController = DS.Model.extend({
         if(this.get('parentContainer')) {
             viewController.setAttribute('parentContainer', this.get('parentContainer').getRefPath(''));
         }
+        /*if(this.get('parentContainerSmartphone')) {
+            viewController.setAttribute('parentContainerSmartphone', this.get('parentContainerSmartphone').getRefPath(''));
+        }
+        if(this.get('parentContainerTablet')) {
+            viewController.setAttribute('parentContainerTablet', this.get('parentContainerTablet').getRefPath(''));
+        }*/
         if(this.get('hasBackButton')) {
             viewController.setAttribute('hasMenuButton', false);
             viewController.setAttribute('hasBackButton', true);
@@ -320,12 +361,8 @@ App.ViewController = DS.Model.extend({
             viewController.appendChild(controlChain.toXml(xmlDoc));
         });
 
-        this.get('uiPhoneControls').filter(function(c) {
-            if(c.get('controlChain') === null) {
-                return true;
-            } else {
-                return c.get('controlChain.valid');
-            }
+        this.get('uiPhoneControls').filter(function(control) {
+            return control.get('valid');
         }).map(function (uiPhoneControl) {
             viewController.appendChild(uiPhoneControl.toXml(xmlDoc));
         });

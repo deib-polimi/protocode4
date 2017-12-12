@@ -8,7 +8,7 @@ App.Switch = App.UiPhoneControl.extend({
     widthFixed: DS.attr('number', {defaultValue: 51}),
     heightFixed: DS.attr('number', {defaultValue: 36}),
 
-    xmlName: 'switches',
+    xmlName: 'switch',
 
     toXml: function (xmlDoc) {
         var _switch = xmlDoc.createElement(this.get('xmlName'));

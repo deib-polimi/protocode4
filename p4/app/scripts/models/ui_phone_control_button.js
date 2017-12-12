@@ -13,7 +13,7 @@ App.Button = App.UiPhoneControl.extend({
     clickColor: DS.attr('string', {defaultValue: ''}),
     borderRadius: DS.attr('number', {defaultValue: 2}),
 
-    xmlName: 'buttons',
+    xmlName: 'button',
 
     didCreate: function () {
         var self = this;

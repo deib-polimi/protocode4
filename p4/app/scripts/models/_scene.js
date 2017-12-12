@@ -2,6 +2,8 @@ App.Scene = DS.Model.extend({
     application: DS.belongsTo('application', {inverse: 'scenes'}),
     viewControllers: DS.hasMany('viewController', {inverse: 'scene'}),
     parentViewController: DS.belongsTo('viewController'),
+    //parentVCSmartphone: DS.belongsTo('viewController'),
+    //parentVCTablet: DS.belongsTo('viewController'),
 
     name: DS.attr('string'),
     launcher: DS.attr('boolean', {defaultValue: false}),
@@ -24,6 +26,14 @@ App.Scene = DS.Model.extend({
     childViewControllers: function() {
         return this.get('viewControllers').without(this.get('parentViewController'));
     }.property('parentViewController', 'viewControllers.[]'),
+
+    /*childViewControllers: function() {
+        return this.get('viewControllers').without(this.get('parentVCSmartphone')).without(this.get('parentVCTablet'));
+    }.property(
+        'parentVCSmartphone',
+        'parentVCTablet',
+        'viewControllers.[]'
+    ),*/
 
     smartphoneMustShowTabMenu: function() {
         if((this.get('type') === 'multiVC') && this.get('smartphoneHasTabMenu')) {
@@ -92,6 +102,44 @@ App.Scene = DS.Model.extend({
         }
     }.observes('type'),
 
+    /*typeObserver: function() {
+        if(!this.get('isDeleted') && this.get('parentVCSmartphone') && this.get('parentVCTablet')) {
+            // Case multiVC --> singleVC
+            if(this.get('type') === 'singleVC') {
+                this.set('parentVCSmartphone.name', 'viewController');
+                // Delete smartphoneVC containers
+                var controls = this.get('parentVCSmartphone.uiPhoneControls');
+                var containers = controls.filter(function(upc) {
+                    return upc.constructor.toString() === 'App.Container';
+                });
+                containers.forEach(function(cont) {
+                    controls.removeObject(cont);
+                    cont.deleteFromScene();
+                    cont.save();
+                });
+                this.get('parentVCSmartphone').save();
+                // Delete tabletVC containers
+                controls = this.get('parentVCTablet.uiPhoneControls');
+                containers = controls.filter(function(upc) {
+                    return upc.constructor.toString() === 'App.Container';
+                });
+                containers.forEach(function(cont) {
+                    controls.removeObject(cont);
+                    cont.deleteFromScene();
+                    cont.save();
+                });
+                this.get('parentVCTablet').save();
+            } else {
+                // Case singleVC --> multiVC
+                this.set('parentVCSmartphone.name', 'parentVC-Smartphone');
+                this.get('parentVCSmartphone').save();
+                this.set('parentVCTablet.name', 'parentVC-Tablet');
+                this.get('parentVCTablet').save();
+            }
+            this.save();
+        }
+    }.observes('type'),*/
+
     didCreate: function() {
         var self = this;
         var viewController = this.store.createRecord('viewController', {
@@ -104,6 +152,26 @@ App.Scene = DS.Model.extend({
         });
     },
 
+    /*didCreate: function() {
+        var self = this;
+        var viewController = this.store.createRecord('viewController', {
+            scene: this,
+            parentContainer: null,
+            name: 'viewController'
+        }).save().then(function(vc) {
+            self.set('parentVCSmartphone', vc);
+            self.save();
+        });
+        viewController = this.store.createRecord('viewController', {
+            scene: this,
+            parentContainer: null,
+            name: 'viewController'
+        }).save().then(function(vc) {
+            self.set('parentVCTablet', vc);
+            self.save();
+        });
+    },*/
+
     deleteRecord: function() {
         var parent = this.get('parentViewController');
         if(parent) {
@@ -113,6 +181,21 @@ App.Scene = DS.Model.extend({
 
         this._super();
     },
+
+    /*deleteRecord: function() {
+        var parent = this.get('parentVCSmartphone');
+        if(parent) {
+            parent.deleteRecord();
+            parent.save();
+        }
+        parent = this.get('parentVCTablet');
+        if(parent) {
+            parent.deleteRecord();
+            parent.save();
+        }
+
+        this._super();
+    },*/
 
     toXml: function (xmlDoc) {
         var scene = xmlDoc.createElement(this.get('xmlName'));

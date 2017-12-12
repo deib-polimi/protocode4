@@ -205,25 +205,8 @@ App.UiPhoneControlController = Ember.ObjectController.extend(App.Saveable, {
         },
 
         deleteUiPhoneControl: function () {
+            var self = this;
             var controlToDelete = this.get('model');
-
-            if (this.get('parentContainer')) {
-                var uiPhoneControls = this.get('parentContainer.uiPhoneControls');
-                uiPhoneControls.removeObject(controlToDelete);
-                this.get('parentContainer').save();
-            } else {
-                var viewController = this.get('viewController');
-                var uiPhoneControls = viewController.get('uiPhoneControls');
-                uiPhoneControls.removeObject(controlToDelete);
-                viewController.save();
-
-            }
-
-            if(controlToDelete.get('controlChain')) {
-                var chain = controlToDelete.get('controlChain');
-                chain.get('uiPhoneControls').removeObject(controlToDelete);
-                chain.save();
-            }
 
             controlToDelete.get('bindedControls').forEach(function(control) {
                 control.get('bindedControls').removeObject(controlToDelete);
@@ -236,10 +219,27 @@ App.UiPhoneControlController = Ember.ObjectController.extend(App.Saveable, {
                 control.save();
             });
 
-            this.set('number', this.get('number') - 1);
-
-            controlToDelete.deleteRecord();
-            controlToDelete.save();
+            if(controlToDelete.get('controlChain')) {
+                var chain = controlToDelete.get('controlChain');
+                chain.get('uiPhoneControls').removeObject(controlToDelete);
+                chain.save().then(function(c) {
+                    var viewController = self.get('viewController');
+                    var uiPhoneControls = viewController.get('uiPhoneControls');
+                    uiPhoneControls.removeObject(controlToDelete);
+                    viewController.save().then(function(vc) {
+                        controlToDelete.deleteRecord();
+                        controlToDelete.save();
+                    });
+                });
+            } else {
+                var viewController = this.get('viewController');
+                var uiPhoneControls = viewController.get('uiPhoneControls');
+                uiPhoneControls.removeObject(controlToDelete);
+                viewController.save().then(function(vc) {
+                    controlToDelete.deleteRecord();
+                    controlToDelete.save();
+                });
+            }
 
             this.transitionToRoute('viewController');
         }

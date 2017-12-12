@@ -17,7 +17,7 @@ App.Card = App.UiPhoneControl.extend({
 
     numActions: DS.attr('number', {defaultValue: 2}),
 
-    xmlName: 'cards',
+    xmlName: 'card',
 
     hasOneAction: function () {
         return this.get('numActions') === 1;

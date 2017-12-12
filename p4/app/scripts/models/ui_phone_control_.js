@@ -26,6 +26,17 @@ App.UiPhoneControl = App.UiControl.extend({
     ratioWidth: DS.attr('number', {defaultValue: 1}),
     ratioHeight: DS.attr('number', {defaultValue: 1}),
 
+    valid: function() {
+        if(this.get('controlChain')) {
+            if(this.get('controlChain.valid')) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }.property('controlChain', 'controlChain.valid'),
+
     validConstraints: function() {
         return this.get('constraints').filter(function(c) {
     		return c.get('valid');

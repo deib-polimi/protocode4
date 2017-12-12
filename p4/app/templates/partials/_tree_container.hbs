@@ -14,13 +14,13 @@
 {{/each}}
 {{#each controlChains}}
     {{#if uiPhoneControls}}
-        <li><span {{bind-attr class="invalid"}}><i class="fa fa-plus-square-o"></i> {{#link-to 'controlChain'
+        <li><span {{bind-attr class="valid::invalid"}}><i class="fa fa-plus-square-o"></i> {{#link-to 'controlChain'
                                                                  this}}{{name}}{{/link-to}}</span>
             <ul>
                 {{partial "partials/subtree_container"}}
             </ul>
         </li>
     {{else}}
-        <li><span {{bind-attr class="invalid"}}><i class="fa fa-plus-square-o"></i> {{#link-to 'controlChain' this}}{{name}}{{/link-to}}</span></li>
+        <li><span {{bind-attr class="valid::invalid"}}><i class="fa fa-plus-square-o"></i> {{#link-to 'controlChain' this}}{{name}}{{/link-to}}</span></li>
     {{/if}}
 {{/each}}

@@ -8,7 +8,7 @@ App.GridView = App.UiPhoneControl.extend({
 
     gridType: DS.attr('string', {defaultValue: 'simple'}),
 
-    xmlName: 'gridViews',
+    xmlName: 'gridView',
 
     defaultWidth: function() {
         return this.get('viewController.scene.application.device.screenWidth');

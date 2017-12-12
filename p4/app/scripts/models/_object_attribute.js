@@ -6,7 +6,7 @@ App.ObjectAttribute = DS.Model.extend({
 
     cloudObject: DS.belongsTo('cloudObject'),
 
-    xmlName: 'objectAttributes',
+    xmlName: 'objectAttribute',
 
     toXml: function (xmlDoc) {
 

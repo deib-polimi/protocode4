@@ -7,7 +7,7 @@ App.Datepicker = App.UiPhoneControl.extend({
     widthFixed: DS.attr('number', {defaultValue: 348}),
     heightFixed: DS.attr('number', {defaultValue: 365}),
 
-    xmlName: 'datepickers',
+    xmlName: 'datepicker',
 
     toXml: function (xmlDoc) {
         var datepicker = xmlDoc.createElement(this.get('xmlName'));

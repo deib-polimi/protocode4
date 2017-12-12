@@ -8,7 +8,7 @@ App.VideoView = App.UiPhoneControl.extend({
     widthFixed: DS.attr('number', {defaultValue: 240}),
     heightFixed: DS.attr('number', {defaultValue: 128}),
 
-    xmlName: 'videoViews',
+    xmlName: 'videoView',
 
     didCreate: function () {
         this._super();

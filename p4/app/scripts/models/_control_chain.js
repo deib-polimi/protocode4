@@ -22,10 +22,6 @@ App.ControlChain = DS.Model.extend({
         }
     }.property('axis', 'type', 'uiPhoneControls.@each'),
 
-    invalid: function() {
-        return !this.get('valid');
-    }.property('valid'),
-
     totalValue: function() {
         var total = 0;
         this.get('uiPhoneControls').forEach(function(c) {
@@ -435,7 +431,7 @@ App.ControlChain = DS.Model.extend({
         var self = this;
         controls.forEach(function(control, index) {
             var elem = xmlDoc.createElement('uiPhoneControl');
-            elem.setAttribute('id', control.get('id'));
+            elem.setAttribute('id', control.getRefPath(''));
             elem.setAttribute('type', control.get('xmlName'));
             elem.setAttribute('index', index);
             if(self.get('type') === 'weighted') {

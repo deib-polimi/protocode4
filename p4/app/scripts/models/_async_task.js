@@ -3,7 +3,7 @@ App.AsyncTask = DS.Model.extend({
 
     viewController: DS.belongsTo('viewController', {inverse: 'asyncTasks'}),
 
-    xmlName: 'asyncTasks',
+    xmlName: 'asyncTask',
 
     toXml: function (xmlDoc) {
         var elem = xmlDoc.createElement(this.get('xmlName'));

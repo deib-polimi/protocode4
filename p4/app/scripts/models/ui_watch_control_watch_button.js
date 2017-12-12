@@ -2,7 +2,7 @@ App.WatchButton = App.UiWatchControl.extend({
     title: DS.attr('string', {defaultValue: 'Button'}),
     watchClickListener: DS.belongsTo('watchClickListener'),
 
-    xmlName: 'watchButtons',
+    xmlName: 'watchButton',
 
     deleteRecord: function () {
         var watchClickListener = this.get('watchClickListener');

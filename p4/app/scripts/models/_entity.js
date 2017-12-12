@@ -10,7 +10,7 @@ App.Entity = DS.Model.extend({
 
     databaseHandler: DS.belongsTo('databaseHandler'),
 
-    xmlName: 'entities',
+    xmlName: 'entity',
 
     toXml: function (xmlDoc) {
 

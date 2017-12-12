@@ -44,6 +44,10 @@
     text-decoration: none
 }
 
+.tree li.invalid a {
+    color: #ff0000;
+}
+
 .tree li span.invalid a {
     color: #ff0000;
 }

@@ -6,7 +6,7 @@ App.PrefRecord = DS.Model.extend({
 
     prefHandler: DS.belongsTo('prefHandler'),
 
-    xmlName: 'preferenceRecords',
+    xmlName: 'preferenceRecord',
 
     toXml: function (xmlDoc) {
 

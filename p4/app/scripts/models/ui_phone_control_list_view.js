@@ -11,7 +11,7 @@ App.ListView = App.UiPhoneControl.extend({
     backgroundColor: DS.attr('string', {defaultValue: ''}),
     listType: DS.attr('string', {defaultValue: 'simple'}),
 
-    xmlName: 'listViews',
+    xmlName: 'listView',
 
     didCreate: function () {
         var self = this;

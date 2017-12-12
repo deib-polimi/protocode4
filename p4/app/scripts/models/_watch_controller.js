@@ -6,7 +6,7 @@ App.WatchController = DS.Model.extend({
 
     uiWatchControls: DS.hasMany('uiWatchControl', {polymorphic: true, async: true}),
 
-    xmlName: 'watchControllers',
+    xmlName: 'watchController',
 
     deleteRecord: function () {
         var self = this;

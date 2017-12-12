@@ -2,7 +2,7 @@ App.WatchSwitch = App.UiWatchControl.extend({
     name: DS.attr('string', {defaultValue: 'Label'}),
     title: DS.attr('string', {defaultValue: 'Switch Label'}),
 
-    xmlName: 'watchSwitches',
+    xmlName: 'watchSwitch',
 
     toXml: function (xmlDoc) {
         var _switch = xmlDoc.createElement(this.get('xmlName'));

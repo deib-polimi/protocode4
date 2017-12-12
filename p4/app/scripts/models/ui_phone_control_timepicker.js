@@ -8,7 +8,7 @@ App.Timepicker = App.UiPhoneControl.extend({
     widthFixed: DS.attr('number', {defaultValue: 346}),
     heightFixed: DS.attr('number', {defaultValue: 346}),
 
-    xmlName: 'timepickers',
+    xmlName: 'timepicker',
 
     toXml: function (xmlDoc) {
         var timepicker = xmlDoc.createElement(this.get('xmlName'));

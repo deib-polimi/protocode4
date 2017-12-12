@@ -6,7 +6,7 @@ App.CloudObject = DS.Model.extend({
 
     cloudHandler: DS.belongsTo('cloudHandler'),
 
-    xmlName: 'cloudObjects',
+    xmlName: 'cloudObject',
 
     toXml: function (xmlDoc) {
 

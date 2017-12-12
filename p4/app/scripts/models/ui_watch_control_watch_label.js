@@ -5,7 +5,7 @@ App.WatchLabel = App.UiWatchControl.extend({
     textAlign: DS.attr('string', {defaultValue: 'center'}),
     textDecoration: DS.attr('string', {defaultValue: 'none'}),
 
-    xmlName: 'watchTextViews',
+    xmlName: 'watchTextView',
 
     isBold: function () {
         return this.get('textDecoration') === 'bold';
