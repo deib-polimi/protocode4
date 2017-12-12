@@ -54,7 +54,13 @@ App.Container = App.UiPhoneControl.extend({
     },
 
     deleteFromVCController: function() {
+        var parent = this.get('viewController');
+        if(parent) {
+            parent.get('uiPhoneControls').removeObject(this);
+            parent.save();
+        }
         this.deleteRecord();
+        this.save();
     },
 
     toXml: function (xmlDoc) {

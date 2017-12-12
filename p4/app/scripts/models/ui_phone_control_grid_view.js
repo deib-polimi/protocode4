@@ -18,10 +18,6 @@ App.GridView = App.UiPhoneControl.extend({
         return this.get('defaultWidth');
     }.property('defaultWidth'),
 
-    widthCanBeConstrained: function() {
-        return false;
-    }.property(),
-
     didCreate: function () {
         var self = this;
         this._super();

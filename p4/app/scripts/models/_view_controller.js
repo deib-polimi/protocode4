@@ -95,6 +95,8 @@ App.ViewController = DS.Model.extend({
         'isInAContainer',
         'parentContainer.top',
         'scene.application.device.type',
+        'scene.smartphoneMustShowTabMenu',
+        'scene.tabletMustShowTabMenu',
         'scene.application.device.platform',
         'scene.application.device.viewTop'
     ),
@@ -115,6 +117,8 @@ App.ViewController = DS.Model.extend({
         'isInAContainer',
         'parentContainer.bottom',
         'scene.application.device.type',
+        'scene.smartphoneMustShowTabMenu',
+        'scene.tabletMustShowTabMenu',
         'scene.application.device.platform',
         'scene.application.device.viewBottom'
     ),

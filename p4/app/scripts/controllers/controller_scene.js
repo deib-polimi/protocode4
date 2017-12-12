@@ -48,6 +48,17 @@ App.SceneController = Ember.ObjectController.extend({
         }
     }.observes('model', 'model.isTabbed', 'target.location.lastSetURL'),
 
+    /*  Redirection in case user switch from a device type to another (smartphone to tablet or
+        tablet to smartphone), one type is tabbed and the other isn't, and the current route's
+        view controller is parentViewController */
+    deviceTypeObserver: function() {
+        if(this.get('model') && !this.get('model.isDeleted')) {
+            if(this.get('model.isTabbed') && this.get('viewControllerToShow.isParent')) {
+                this.transitionToRoute('scene', this.get('model'));
+            }
+        }
+    }.observes('model.isTabbed'),
+
     hasMenu: function () {
         return this.get('menu.menuItems.length') > 0;
     }.property('menu.menuItems.@each'),

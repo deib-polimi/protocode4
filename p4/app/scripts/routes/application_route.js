@@ -33,7 +33,6 @@ App.ApplicationRoute = Ember.Route.extend({
 
             // view part
             scenes: this.store.find('scene'),
-            sceneScreens: this.store.find('sceneScreen'),
             viewControllers: this.store.find('viewController'),
             watchControllers: this.store.find('watchController'),
 

@@ -23,6 +23,162 @@ App.UiPhoneControlController = Ember.ObjectController.extend(App.Saveable, {
         'model.constraints.@each.name'
     ),
 
+    isntWidthConstrained: function() {
+        return !this.get('model.isWidthConstrained');
+    }.property('model.isWidthConstrained'),
+
+    isntHeightConstrained: function() {
+        return !this.get('model.isHeightConstrained');
+    }.property('model.isHeightConstrained'),
+
+    isntWidthPercentConstrained: function() {
+        return !this.get('model.isWidthPercentConstrained');
+    }.property('model.isWidthPercentConstrained'),
+
+    isntHeightPercentConstrained: function() {
+        return !this.get('model.isHeightPercentConstrained');
+    }.property('model.isHeightPercentConstrained'),
+
+    isntRatioConstrained: function() {
+        return !this.get('model.isRatioConstrained');
+    }.property('model.isRatioConstrained'),
+
+    widthCanBeConstrained: function() {
+        if(this.get('model.isRatioConstrained')) {
+            return false;
+        } else if(this.get('model.isWidthPercentConstrained')) {
+            return false;
+        } else if(this.get('model').widthIsBindedByConstraints(this.get('model.constraints'))) {
+            return false;
+        } else if(this.get('model.controlChain')) {
+            if(this.get('model.controlChain.axis') === 'horizontal' && this.get('model.controlChain.type') === 'weighted') {
+                return false;
+            }
+        }
+        return true;
+    }.property(
+        'model.isRatioConstrained',
+        'model.isWidthPercentConstrained',
+        'model.constraints.@each.layoutEdge',
+        'model.constraints.@each.valid',
+        'model.controlChain',
+        'model.controlChain.axis',
+        'model.controlChain.type'
+    ),
+
+    heightCanBeConstrained: function() {
+        if(this.get('model.isRatioConstrained')) {
+            return false;
+        } else if(this.get('model.isHeightPercentConstrained')) {
+            return false;
+        } if (this.get('model').heightIsBindedByConstraints(this.get('model.constraints'))) {
+            return false;
+        } else if(this.get('model.controlChain')) {
+            if(this.get('model.controlChain.axis') === 'vertical' && this.get('model.controlChain.type') === 'weighted') {
+                return false;
+            }
+        }
+        return true;
+    }.property(
+        'model.isRatioConstrained',
+        'model.isHeightPercentConstrained',
+        'model.constraints.@each.layoutEdge',
+        'model.constraints.@each.valid',
+        'model.controlChain',
+        'model.controlChain.axis',
+        'model.controlChain.type'
+    ),
+
+    widthPercentCanBeConstrained: function() {
+        if(this.get('model.isRatioConstrained') && this.get('model.isHeightPercentConstrained')) {
+            return false;
+        } else if(this.get('model.isWidthConstrained')) {
+            return false;
+        } else if(this.get('model').widthIsBindedByConstraints(this.get('model.constraints'))) {
+            return false;
+        } else if(this.get('model.controlChain')) {
+            if(this.get('model.controlChain.axis') === 'horizontal' && this.get('model.controlChain.type') === 'weighted') {
+                return false;
+            }
+        }
+        return true;
+    }.property(
+        'model.isRatioConstrained',
+        'model.isHeightPercentConstrained',
+        'model.isWidthConstrained',
+        'model.constraints.@each.layoutEdge',
+        'model.constraints.@each.valid',
+        'model.controlChain',
+        'model.controlChain.axis',
+        'model.controlChain.type'
+    ),
+
+    heightPercentCanBeConstrained: function() {
+        if(this.get('model.isRatioConstrained') && this.get('model.isWidthPercentConstrained')) {
+            return false;
+        } else if(this.get('model.isHeightConstrained')) {
+            return false;
+        } if (this.get('model').heightIsBindedByConstraints(this.get('model.constraints'))) {
+            return false;
+        } else if(this.get('model.controlChain')) {
+            if(this.get('model.controlChain.axis') === 'vertical' && this.get('model.controlChain.type') === 'weighted') {
+                return false;
+            }
+        }
+        return true;
+    }.property(
+        'model.isRatioConstrained',
+        'model.isWidthPercentConstrained',
+        'model.isHeightConstrained',
+        'model.constraints.@each.layoutEdge',
+        'model.constraints.@each.valid',
+        'model.controlChain',
+        'model.controlChain.axis',
+        'model.controlChain.type'
+    ),
+
+    ratioCanBeConstrained: function() {
+        if(this.get('model.isRatioConstrained')) {
+            return true;
+        }
+        if(!(this.get('widthCanBeConstrained')) && !(this.get('heightCanBeConstrained'))) {
+            return false;
+        } else if(this.get('model.isWidthConstrained') || this.get('model.isHeightConstrained')) {
+            return false;
+        } else if(this.get('model.isWidthPercentConstrained') && this.get('model.isHeightPercentConstrained')) {
+            return false;
+        }
+        return true;
+    }.property(
+        'model.isRatioConstrained',
+        'model.isWidthConstrained',
+        'model.isHeightConstrained',
+        'model.isWidthPercentConstrained',
+        'model.isHeightPercentConstrained',
+        'widthCanBeConstrained',
+        'heightCanBeConstrained'
+    ),
+
+    widthCantBeConstrained: function() {
+        return !this.get('widthCanBeConstrained');
+    }.property('widthCanBeConstrained'),
+
+    heightCantBeConstrained: function() {
+        return !this.get('heightCanBeConstrained');
+    }.property('heightCanBeConstrained'),
+
+    widthPercentCantBeConstrained: function() {
+        return !this.get('widthPercentCanBeConstrained');
+    }.property('widthPercentCanBeConstrained'),
+
+    heightPercentCantBeConstrained: function() {
+        return !this.get('heightPercentCanBeConstrained');
+    }.property('heightPercentCanBeConstrained'),
+
+    ratioCantBeConstrained: function() {
+        return !this.get('ratioCanBeConstrained');
+    }.property('ratioCanBeConstrained'),
+
     actions: {
         createConstraint: function () {
             this.get('currentNumber');

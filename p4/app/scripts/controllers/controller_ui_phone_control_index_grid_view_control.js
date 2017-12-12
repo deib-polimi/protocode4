@@ -24,6 +24,10 @@ App.ControlGridViewIndexController = App.UiPhoneControlController.extend(App.Nav
         'model.viewController.scene.viewControllers.[]'
     ),
 
+    widthCanBeConstrained: function() {
+        return false;
+    }.property('model'),
+
     simpleGrid: function (key, value) {
         return this.gridType(key, value, 'simple');
     }.property('model.gridType'),

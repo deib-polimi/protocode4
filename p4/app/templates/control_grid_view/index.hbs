@@ -84,10 +84,10 @@
                 </div>
                 <div class="tab-pane fade form-horizontal" id="dimension">
                     <br>
-                    {{input-checkbox label="Height Fixed" checked=isHeightConstrained disabled=heightCantBeConstrained}}
-                    {{input-number label="Height" disabled=isntHeightConstrained min=minHeight value=height action='acceptChanges' }}
-                    {{input-checkbox label="Height Percent" checked=isHeightPercentConstrained disabled=heightPercentCantBeConstrained}}
-                    {{input-number label="Height %" disabled=isntHeightPercentConstrained min=heightPercentMin max="1" step="0.1" value=heightPercent action='acceptChanges' }}
+                    {{input-checkbox label="Height Fixed" checked=isHeightConstrained disabled=controller.heightCantBeConstrained}}
+                    {{input-number label="Height" disabled=controller.isntHeightConstrained min=minHeight value=height action='acceptChanges' }}
+                    {{input-checkbox label="Height Percent" checked=isHeightPercentConstrained disabled=controller.heightPercentCantBeConstrained}}
+                    {{input-number label="Height %" disabled=controller.isntHeightPercentConstrained min=heightPercentMin max="1" step="0.1" value=heightPercent action='acceptChanges' }}
                 </div>
             </div>
         </div>

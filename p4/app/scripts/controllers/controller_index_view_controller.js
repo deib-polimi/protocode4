@@ -61,7 +61,6 @@ App.ViewControllerIndexController = Ember.ObjectController.extend(App.Saveable, 
                 });
                 if(viewController.get('parentContainer')) {
                     viewController.get('parentContainer').deleteFromVCController();
-                    viewController.get('parentContainer').save();
                 }
                 viewController.deleteRecord();
                 viewController.save();

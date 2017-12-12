@@ -46,7 +46,7 @@ App.ScreenCanvasComponent = Ember.Component.extend({
                 controls.pushObject(upc);
             });
             this.get('viewControllerToShow.uiPhoneControls').forEach(function(upc) {
-                if(upc.constructor.toString() === 'App.Container') {
+                if((upc.constructor.toString() === 'App.Container') && upc.get('childViewController')) {
                     upc.get('childViewController.uiPhoneControls').forEach(function(c) {
                         controls.pushObject(c);
                     });
