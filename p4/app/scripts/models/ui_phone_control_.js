@@ -473,20 +473,26 @@ App.UiPhoneControl = App.UiControl.extend({
         'marginBottom'),
 
     width: function() {
-        if(this.get('isWidthConstrained')) {
-            return parseFloat(this.get('widthFixed'));
-        } else if(this.get('isWidthPercentConstrained')) {
-            return this.get('viewController').getWidthFromPercent(this.get('widthPercent'));
-        } else if(this.widthIsBindedByConstraints(this.get('constraints'))) {
-            return this.get('computedWidth');
-        } else if(this.get('isRatioConstrained')) {
-            if(this.get('isHeightPercentConstrained') || this.heightIsBindedByConstraints(this.get('constraints'))) {
-                return this.get('height') * (this.get('ratioWidth') / this.get('ratioHeight'));
+        /*  Check viewController because when controller delete a control, first it remove
+            the viewController and then it delete the control. Without check an error occur */
+        if(this.get('viewController')) {
+            if(this.get('isWidthConstrained')) {
+                return parseFloat(this.get('widthFixed'));
+            } else if(this.get('isWidthPercentConstrained')) {
+                return this.get('viewController').getWidthFromPercent(this.get('widthPercent'));
+            } else if(this.widthIsBindedByConstraints(this.get('constraints'))) {
+                return this.get('computedWidth');
+            } else if(this.get('isRatioConstrained')) {
+                if(this.get('isHeightPercentConstrained') || this.heightIsBindedByConstraints(this.get('constraints'))) {
+                    return this.get('height') * (this.get('ratioWidth') / this.get('ratioHeight'));
+                }
+                return this.get('defaultWidth');
             }
             return this.get('defaultWidth');
         }
-        return this.get('defaultWidth');
+        return null;
     }.property(
+        'viewController',
         'isWidthConstrained',
         'widthFixed',
         'isWidthPercentConstrained',
@@ -502,17 +508,23 @@ App.UiPhoneControl = App.UiControl.extend({
     ),
 
     height: function() {
-        if(this.get('isHeightConstrained')) {
-            return parseFloat(this.get('heightFixed'));
-        } else if(this.get('isHeightPercentConstrained')) {
-            return this.get('viewController').getHeightFromPercent(this.get('heightPercent'));
-        } else if(this.heightIsBindedByConstraints(this.get('constraints'))) {
-            return this.get('computedHeight');
-        } else if(this.get('isRatioConstrained')) {
-            return this.get('width') * (this.get('ratioHeight') / this.get('ratioWidth'));
+        /*  Check viewController because when controller delete a control, first it remove
+            the viewController and then it delete the control. Without check an error occur */
+        if(this.get('viewController')) {
+            if(this.get('isHeightConstrained')) {
+                return parseFloat(this.get('heightFixed'));
+            } else if(this.get('isHeightPercentConstrained')) {
+                return this.get('viewController').getHeightFromPercent(this.get('heightPercent'));
+            } else if(this.heightIsBindedByConstraints(this.get('constraints'))) {
+                return this.get('computedHeight');
+            } else if(this.get('isRatioConstrained')) {
+                return this.get('width') * (this.get('ratioHeight') / this.get('ratioWidth'));
+            }
+            return this.get('defaultHeight');
         }
-        return this.get('defaultHeight');
+        return null;
     }.property(
+        'viewController',
         'isHeightConstrained',
         'heightFixed',
         'isHeightPercentConstrained',

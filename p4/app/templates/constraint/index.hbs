@@ -25,10 +25,8 @@
                     {{input-select label="Layout Edge:" content=filteredLayoutEdges optionLabelPath="content"
                         optionValuePath="content" selection=layoutEdge prompt="Select edge"}}
                     {{input-checkbox label="With Parent" checked=withParent}}
-                    {{#unless withParent}}
-                        {{input-select label="Reference Element:" content=uiPhoneControl.siblings  optionLabelPath="content.name"
-                            optionValuePath="content" selection=referenceElement prompt="Select element"}}
-                    {{/unless}}
+                    {{input-select label="Reference Element:" content=uiPhoneControl.siblings  optionLabelPath="content.name"
+                        optionValuePath="content" selection=referenceElement prompt="Select element" disabled=withParent}}
                     {{input-select label="Reference Layout Edge:" content=filteredReferenceLayoutEdges optionLabelPath="content"
                         optionValuePath="content" selection=referenceLayoutEdge prompt="Select edge"}}
                 </div>

@@ -49,8 +49,8 @@ body,
     border-color: #ddd;
 }
 
-.panel-info .panel-default .panel-heading,
-.panel-info .panel-default .panel-footer {
+.panel-info .panel-dark .panel-heading,
+.panel-info .panel-dark .panel-footer {
     background-color: #f1f1f1;
     color: #333333;
 }
@@ -67,6 +67,14 @@ body,
 
 .panel-group .panel-heading {
     border-bottom: 1px solid #ddd;
+}
+
+.list-group {
+    border-top: 1px solid #ddd;
+}
+
+.panel-dark .list-group {
+    border-top: none;
 }
 
 .list-group-item {

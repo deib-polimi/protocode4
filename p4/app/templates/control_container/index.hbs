@@ -21,6 +21,10 @@
             <div class="tab-content">
                 <div class="tab-pane fade form-horizontal in active" id="position">
                     <br>
+                    <div class="form-group">
+                        <label class="col-sm-5" style="padding:8px 10px;text-align:right">Child VC</label>
+                        <label class="col-sm-5" style="padding:8px 10px;">{{#link-to 'viewController' childViewController}}{{childViewController.name}}{{/link-to}}</label>
+                    </div>
                     {{partial "partials/ui_control_position"}}
                 </div>
                 <div class="tab-pane fade form-horizontal" id="dimension_constraint">

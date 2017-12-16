@@ -88,16 +88,20 @@ App.SceneController = Ember.ObjectController.extend({
         var sep = "_______________________________________________________";
         return new Promise(function (resolve) {
             var report = "<b>REPORT</b> scene <aid>" + self.get('model.id') + '-' + self.get('model.name') + "</aid>:<br>";
+            // Check model and viewControllers because during transition it may become null
             if(self.get('model') && self.get('model.viewControllers')) {
                 self.getReportTextReachability(tab).then(function(reach) {
                     report = report + reach + sep + "<br><br>VIEW CONTROLLERS<br><br>";
                     sep = tab + ".........................................................................................";
-                    self.get('model.viewControllers').forEach(function(vc) {
-                        report = report + tab + "View Controller <aid>" + vc.get('id') + '-' + vc.get('name') + "</aid>:<br>";
-                        report = report + self.getReportTextPosition(tab, vc);
-                        report = report + self.getReportTextInvalids(tab, vc);
-                        report = report + sep + "<br><br>";
-                    });
+                    // Check model  and viewControllers because during transition it may become null
+                    if(self.get('model') && self.get('model.viewControllers')) {
+                        self.get('model.viewControllers').forEach(function(vc) {
+                            report = report + tab + "View Controller <aid>" + vc.get('id') + '-' + vc.get('name') + "</aid>:<br>";
+                            report = report + self.getReportTextPosition(tab, vc);
+                            report = report + self.getReportTextInvalids(tab, vc);
+                            report = report + sep + "<br><br>";
+                        });
+                    }
                     resolve(report);
                 });
             } else {

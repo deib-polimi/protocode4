@@ -5,8 +5,8 @@ App.ViewController = DS.Model.extend({
 
     scene: DS.belongsTo('scene', {inverse: 'viewControllers'}),
     parentContainer: DS.belongsTo('container', {inverse: 'childViewController'}),
-    //parentContainerSmartphone: DS.belongsTo('container', {inverse: 'childViewController'}),
-    //parentContainerTablet: DS.belongsTo('container', {inverse: 'childViewController'}),
+    //parentContainerSmartphone: DS.belongsTo('container', {inverse: 'childVCSmartphone'}),
+    //parentContainerTablet: DS.belongsTo('container', {inverse: 'childVCTablet'}),
 
     uiPhoneControls: DS.hasMany('uiPhoneControl', {inverse: 'viewController', polymorphic: true}),
     controlChains: DS.hasMany('controlChain', {inverse: 'viewController'}),

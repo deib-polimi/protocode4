@@ -61,23 +61,24 @@ App.ControlChainIndexController = Ember.ObjectController.extend(App.Saveable, {
         },
 
         delete: function () {
+            var self = this;
             var chainToDelete = this.get('model');
             var viewController = chainToDelete.get('viewController');
-            var uiPhoneControls = chainToDelete.get('uiPhoneControls');
+            var uiPhoneControls = [].addObjects(chainToDelete.get('uiPhoneControls'));
             uiPhoneControls.forEach(function(c) {
-                Ember.run.once(this, function () {
-                    uiPhoneControls.removeObject(c);
-                    viewController.get('uiPhoneControls').removeObject(c);
-                    viewController.save();
-                    c.deleteRecord();
-                    c.save();
-                });
+                viewController.get('uiPhoneControls').removeObject(c);
             });
             viewController.get('controlChains').removeObject(chainToDelete);
-            viewController.save();
-            this.get('model').deleteRecord();
-            this.get('model').save();
-            this.transitionToRoute('viewController', viewController);
+            viewController.save().then(function(vc) {
+                chainToDelete.deleteRecord();
+                chainToDelete.save().then(function(chain) {
+                    uiPhoneControls.forEach(function(c) {
+                        c.deleteRecord();
+                        c.save();
+                    });
+                    self.transitionToRoute('viewController', vc);
+                });
+            });
         }
     }
 });

@@ -7,6 +7,8 @@ App.Container = App.UiPhoneControl.extend({
     heightFixed: DS.attr('number', {defaultValue: 400}),
 
     childViewController: DS.belongsTo('viewController', {inverse: 'parentContainer'}),
+    //childVCSmartphone: DS.belongsTo('viewController', {inverse: 'parentContainerSmartphone'}),
+    //childVCTablet: DS.belongsTo('viewController', {inverse: 'parentContainerTablet'}),
 
     xmlName: "containerView",
 
