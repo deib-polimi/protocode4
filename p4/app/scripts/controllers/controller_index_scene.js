@@ -2,34 +2,14 @@
  templates/scene/index.hbs
 */
 App.SceneIndexController = Ember.ObjectController.extend(App.Saveable, {
-    number: 1,
-    newViewControllerName: 'newView',
-    sceneTypes: ['singleVC', 'multiVC'],
 
     viewControllers: Ember.computed.alias('model.viewControllers'),
 
     addedViewController: null,
 
-    currentNumber: function() {
-        var viewControllers = this.get('viewControllers');
-        var n = 0;
-        viewControllers.forEach(function(viewController) {
-            var name = viewController.get('name');
-            var i = parseInt(name.charAt(name.length - 1));
-            if(i > n) {
-                n = i;
-            }
-        });
-        this.set('number', n + 1);
-        return n + 1;
-    }.property(
-        'model.viewControllers.@each',
-        'model.viewControllers.@each.name'
-    ),
-
-    singleVCScene: function() {
-        return this.get('model.type') === 'singleVC';
-    }.property('model.type'),
+    currentDeviceIsSmartphone: function() {
+        return this.get('model.application.device.type') === 'smartphone';
+    }.property('model.application.device.type'),
 
     cantChangeHasMenu: function() {
         if(this.get('model.launcher')) {
@@ -38,44 +18,68 @@ App.SceneIndexController = Ember.ObjectController.extend(App.Saveable, {
         return false;
     }.property('model.launcher'),
 
+    availableViewControllers: function() {
+        var scene = this.get('model');
+        return scene.get('application.viewControllers').filter(function(vc) {
+            return !(scene.get('viewControllers').contains(vc));
+        });
+    }.property('model.application.viewControllers.[]'),
+
     // USED by partial _invalid_report.hbs
     invalidReport: function() {
         if(!this.get('model.valid')) {
-            return 'Scene is invalid due to the number of view controllers:\nit contains only '
-                + this.get('model.childViewControllers.length') +
-                ' view controllers while multiVC type scenes must have at least 2 view controllers.';
+            return 'Scene is invalid since it has no view controllers.';
         }
         return null;
-    }.property('model.valid', 'model.childViewControllers.length'),
+    }.property('model.valid'),
     // END partial _invalid_report.hbs
 
     actions: {
+        addViewController: function() {
+            if(this.get('model') && this.get('addedViewController')) {
+                var vc = this.get('addedViewController');
+                var scene = this.get('model');
+                this.store.createRecord('container', {
+                    viewController: scene.get('parentVCSmartphone'),
+                    childViewController: vc
+                }).save().then(function(containerSmartphone) {
+                    scene.get('parentVCSmartphone.uiPhoneControls').pushObject(containerSmartphone);
+                    scene.get('parentVCSmartphone').save();
+                });
+                this.store.createRecord('container', {
+                    viewController: scene.get('parentVCTablet'),
+                    childViewController: vc
+                }).save().then(function(containerTablet) {
+                    scene.get('parentVCTablet.uiPhoneControls').pushObject(containerTablet);
+                    scene.get('parentVCTablet').save();
+                });
+            }
+        },
 
-        createViewController: function () {
-            this.get('currentNumber');
-            var nameVC = this.get('newViewControllerName') + this.get('number');
-
-            // Create container; the view controller is created by container's didCreate
-            var parentViewController = this.get('model.parentViewController');
-            var container = this.store.createRecord('container', {
-                name: nameVC,
-                viewController: parentViewController,
-                childViewController: null
-            });
-
-            // Add container to parentViewController's uiPhoneControls
-            parentViewController.get('uiPhoneControls').addObject(container);
-            parentViewController.save();
-            container.save();
-
-            this.set('number', this.get('number') + 1);
+        removeViewController: function(containerSmartphone) {
+            if(this.get('model')) {
+                var scene = this.get('model');
+                var index = scene.get('parentVCSmartphone.uiPhoneControls').indexOf(containerSmartphone);
+                var containerTablet = scene.get('parentVCTablet.uiPhoneControls').objectAt(index);
+                // Delete container in smartphone - cont is already the container for the removed vc in the parentVCSmartphone
+                scene.get('parentVCSmartphone.uiPhoneControls').removeObject(containerSmartphone);
+                scene.get('parentVCSmartphone').save().then(function(parentVCSmartphone) {
+                    containerSmartphone.deleteRecord();
+                    containerSmartphone.save();
+                });
+                // Delete container in tablet
+                scene.get('parentVCTablet.uiPhoneControls').removeObject(containerTablet);
+                scene.get('parentVCTablet').save().then(function(parentVCTablet) {
+                    containerTablet.deleteRecord();
+                    containerTablet.save();
+                });
+            }
         },
 
         deleteScene: function () {
             if (confirm('Are you sure to delete?')) {
-                this.set('number', this.get('number') - 1);
-
-                var id = this.get('id');
+                var scene = this.get('model');
+                var id = scene.get('id');
                 this.store.find('navigation').then(function (navigations) {
                     navigations.forEach(function (navigation) {
                         if (navigation.get('destination') === ('scene/' + id)) {
@@ -85,11 +89,23 @@ App.SceneIndexController = Ember.ObjectController.extend(App.Saveable, {
                     });
                 });
 
-                var app = this.get('model.application');
-                app.get('scenes').removeObject(this.get('model'));
-                app.save();
-                this.get('model').deleteRecord();
-                this.get('model').save();
+                var parentVCSmartphone = scene.get('parentVCSmartphone');
+                if(parentVCSmartphone) {
+                    parentVCSmartphone.deleteRecord();
+                    parentVCSmartphone.save();
+                }
+                var parentVCTablet = scene.get('parentVCTablet');
+                if(parentVCTablet) {
+                    parentVCTablet.deleteRecord();
+                    parentVCTablet.save();
+                }
+
+                var app = scene.get('application');
+                app.get('scenes').removeObject(scene);
+                app.save().then(function(app) {
+                    scene.deleteRecord();
+                    scene.save();
+                });
 
                 this.transitionToRoute('scenes');
             }

@@ -6,7 +6,8 @@ App.ViewControllerPreviewView = Ember.View.extend(App.UiDroppable, {
   templateName: 'views/view_controller_preview_view',
 
   viewController: function() {
-      if(this.get('context').constructor.toString() === 'App.SceneController') {
+      var c = this.get('context').constructor.toString();
+      if((c === 'App.SceneController') || (c === 'App.ViewControllerController')) {
           return this.get('controller.viewControllerToShow');
       }
       return this.get('context.childViewController');
@@ -25,7 +26,8 @@ App.ViewControllerPreviewView = Ember.View.extend(App.UiDroppable, {
 
   style: function() {
     var style = "", viewController;
-    if(this.get('context').constructor.toString() === 'App.SceneController') {
+    var c = this.get('context').constructor.toString();
+    if((c === 'App.SceneController') || (c === 'App.ViewControllerController')) {
         // Set top
         style = style + "top:" + this.get('viewController.top') + "px;";
         // Set start

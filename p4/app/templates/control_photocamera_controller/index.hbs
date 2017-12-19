@@ -2,9 +2,15 @@
     <div class="panel panel-info">
         <div class="panel-heading">
             <h3 class="panel-title">
-                {{#link-to 'viewController' viewController class="btn btn-default btn-sm"}}
-                    <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-                {{/link-to}}
+                {{#if controller.currentRouteIsViewController}}
+                    {{#link-to 'viewController' viewController class="btn btn-default btn-sm"}}
+                        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                    {{/link-to}}
+                {{else}}
+                    {{#link-to 'vc' viewController class="btn btn-default btn-sm"}}
+                        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                    {{/link-to}}
+                {{/if}}
                 Photocamera Controller
             </h3>
         </div>

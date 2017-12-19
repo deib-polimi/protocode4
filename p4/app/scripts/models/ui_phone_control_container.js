@@ -6,24 +6,12 @@ App.Container = App.UiPhoneControl.extend({
     widthFixed: DS.attr('number', {defaultValue: 300}),
     heightFixed: DS.attr('number', {defaultValue: 400}),
 
-    childViewController: DS.belongsTo('viewController', {inverse: 'parentContainer'}),
-    //childVCSmartphone: DS.belongsTo('viewController', {inverse: 'parentContainerSmartphone'}),
-    //childVCTablet: DS.belongsTo('viewController', {inverse: 'parentContainerTablet'}),
+    childViewController: DS.belongsTo('viewController'),
 
     xmlName: "containerView",
 
     didCreate: function() {
-        var nameVC = this.get('name');
-        var scene = this.get('viewController.scene');
-        var childViewController = this.store.createRecord('viewController', {
-            scene: scene,
-            parentContainer: this,
-            name: nameVC
-        });
-        this.set('childViewController', childViewController);
-        scene.get('viewControllers').addObject(childViewController);
-        this.set('name', 'Container-' + nameVC);
-        childViewController.save();
+        this.set('name', 'Container-' + this.get('id'));
         this.save();
     },
 
@@ -33,36 +21,6 @@ App.Container = App.UiPhoneControl.extend({
 
     getHeightFromPercent: function(heightPercent) {
         return heightPercent * this.get('height');
-    },
-
-    deleteFromApp: function() {
-        var child = this.get('childViewController');
-        if(child) {
-            child.deleteRecord();
-            child.save();
-        }
-        this.deleteRecord();
-    },
-
-    deleteFromScene: function() {
-        var child = this.get('childViewController');
-        if(child) {
-            var scene = child.get('scene');
-            scene.get('viewControllers').removeObject(child);
-            child.deleteRecord();
-            child.save();
-        }
-        this.deleteRecord();
-    },
-
-    deleteFromVCController: function() {
-        var parent = this.get('viewController');
-        if(parent) {
-            parent.get('uiPhoneControls').removeObject(this);
-            parent.save();
-        }
-        this.deleteRecord();
-        this.save();
     },
 
     toXml: function (xmlDoc) {

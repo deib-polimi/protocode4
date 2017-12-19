@@ -105,7 +105,7 @@ body,
     list-style: none;
 }
 
-.list-screen-item {
+.list-scene-item {
     margin-top: 10px;
     margin-bottom: 0;
     padding-bottom: 10px;
@@ -139,8 +139,13 @@ body,
     line-height: 30px;
 }
 
-#scenes-panel {
+.fixed-height-50 {
+    height: 50px;
+}
+
+#application-panel {
     border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
 #watch-controllers-panel {
@@ -189,15 +194,6 @@ body,
 .btn-add-colored:focus {
     color: #ffffff;
     background-color: #669900;
-}
-
-.separation-line {
-    position: absolute;
-    display: flex;
-    overflow: hidden;
-    width: 1px;
-    margin: 0px 0px 0px 0px;
-    background-color: #ccc;
 }
 
 .invalid-report {
@@ -258,6 +254,41 @@ body,
 
 .green-link a {
     color:#009900;
+}
+
+.link-not-active a {
+    color:#bbbbbb;
+    font-weight: normal;
+    pointer-events: none;
+    cursor: default;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+    display: none;
+    /*visibility: hidden;
+    opacity: 0;
+    height: 0px;
+    padding: 0px;
+    //transform: translateY(-2em);
+    transition: all 0.5s ease-in-out;*/
+}
+
+.dropdown-rotate {
+    transition: all 0.5s ease-in-out;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+    /*visibility: visible;
+    opacity: 1;
+    height: auto;
+    padding: 15px;
+    //transform: translateY(0%);*/
+}
+
+.dropdown:hover .dropdown-rotate {
+    transform: rotate(90deg);
 }
 
 /*============ CONTROL PICKER ============*/

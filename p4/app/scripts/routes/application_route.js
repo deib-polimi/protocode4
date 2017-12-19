@@ -111,6 +111,7 @@ App.ApplicationRoute = Ember.Route.extend({
                     'entityAttribute',
                     'objectAttribute',
                     'scene',
+                    'viewController',
                     'watchController',
                     'smartphone',
                     'tablet',

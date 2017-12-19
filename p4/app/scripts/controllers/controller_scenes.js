@@ -1,54 +1,58 @@
 /*
  templates/view_scenes.hbs
  */
-App.ScenesController = Ember.ArrayController.extend({
+App.ScenesController = Ember.ObjectController.extend({
+    needs: ['uiPhoneControlTemplates', 'editor'],
 
-    isCreating: false,
-    newNameScene: Ember.computed('scenesCount', function () {
+    vcsCount: function() {
+        return this.get('model.viewControllers.length');
+    }.property('model.viewControllers.length'),
+
+    newNameVC: function () {
+        if (this.get('vcsCount') !== 0) {
+            return 'newView' + this.get('vcsCount');
+        } else {
+            return 'newView';
+        }
+    }.property('vcsCount'),
+
+    scenesCount: function() {
+        return this.get('model.scenes.length');
+    }.property('model.scenes.length'),
+
+    newNameScene: function () {
         if (this.get('scenesCount') !== 0) {
             return 'newScene' + this.get('scenesCount');
         } else {
             return 'newScene';
         }
-    }),
-    scenesCount: Ember.computed.alias('content.length'),
-    needs: ['editor'],
+    }.property('scenesCount'),
 
     actions: {
-        setCreating: function (value) {
-            if (this.get('scenesCount') !== 0) {
-                this.set('newNameScene', 'newScene' + this.get('scenesCount'));
-            } else {
-                this.set('newNameScene', 'newScene');
-            }
-            this.set('isCreating', value);
+        createViewController: function () {
+            var name = this.get('newNameVC');
+            var app = this.get('model');
+
+            this.store.createRecord('viewController', {
+                name: name,
+                application: app
+            }).save().then(function (vc) {
+                app.get('viewControllers').addObject(vc);
+                app.save();
+            });
         },
 
         createScene: function () {
             var name = this.get('newNameScene');
-            var app = this.get('controllers.editor.model');
+            var app = this.get('model');
 
-            if (!name.trim()) {
-                return;
-            }
-
-            // Application model is in editor.model
             this.store.createRecord('scene', {
                 name: name,
-                application: app,
-                type: 'singleVC'
+                application: app
             }).save().then(function (scene) {
                 app.get('scenes').addObject(scene);
                 app.save();
             });
-
-            if (this.get('scenesCount') !== 0) {
-                this.set('newNameScene', 'newScene' + this.get('scenesCount'));
-            } else {
-                this.set('newNameScene', 'newScene');
-            }
-            this.set('isCreating', false);
-            this.send('refreshModel');
         }
     }
 });

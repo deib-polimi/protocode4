@@ -1,23 +1,47 @@
 <!-- /editor/ -->
-<div class="row">
-    <div class="col-md-3">
-        <ul class="nav nav-tabs nav-justified">
-            <li role="presentation"
-                style="border: 1px solid #ddd;border-top-left-radius:4px;border-top-right-radius:4px;border-bottom:none;border-right:none">
-                {{#link-to "scenes"}}Smartphone & Tablet{{/link-to}}
-            </li>
-            <li role="presentation"
-                style="border: 1px solid #ddd;border-top-left-radius:4px;border-top-right-radius:4px;border-bottom:none;">
-                {{#link-to "watchControllers"}}Smartwatch{{/link-to}}
-            </li>
-        </ul>
-        <div class="panel-group">
-            <div class="panel panel-default" style="border-top-left-radius:0;border-top-right-radius:0;">
-                <div class="panel-heading" data-toggle="collapse" data-target="#collapse-views">
-                    <h3 class="panel-title">&nbsp;</h3>
-                </div>
+<div class="col-md-3">
+    <div class="form-inline">
+        <div class="input-group" style="width:100%">
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-phone" aria-hidden="true"></span>
+            </span>
+            {{view Ember.Select
+                   content=controller.controllers.editor.devices
+                   optionLabelPath='content.label'
+                   optionValuePath="content"
+                   class="form-control input-sm"
+                   value=controller.controllers.editor.device
+            }}
+        </div>
+    </div>
+    <br>
+    <div class="panel panel-default">
+        <div class="panel-heading collapsed" data-toggle="collapse" data-target="#collapse-application"
+             style="cursor:pointer">
+            Application <span style="float:right">&#9660;</span>
+        </div>
+        <div class="panel-body collapse" id="collapse-application">
+            <div class="input-group">
+                <span class="input-group-addon input-sm">Application</span>
+                {{input value=model.application.name class="form-control input-sm" placeholder="name" type="text"
+                        focus-out="acceptChanges" insert-newline="acceptChanges"}}
+            </div>
+            <br>
+            <div class="input-group">
+                <span class="input-group-addon input-sm">Company Identifier</span>
+                {{input value=model.application.companyIdentifier class="form-control input-sm" placeholder="companyId"
+                        type="text" focus-out="acceptChanges" insert-newline="acceptChanges"}}
             </div>
         </div>
     </div>
-    {{outlet}}
+    <ul class="nav nav-tabs nav-justified">
+        <li role="presentation"
+            style="border: 1px solid #ddd;border-top-left-radius:4px;border-top-right-radius:4px;border-bottom:none;border-right:none">
+            {{#link-to "scenes"}}Smartphone & Tablet{{/link-to}}
+        </li>
+        <li role="presentation"
+            style="border: 1px solid #ddd;border-top-left-radius:4px;border-top-right-radius:4px;border-bottom:none;">
+            {{#link-to "watchControllers"}}Smartwatch{{/link-to}}
+        </li>
+    </ul>
 </div>

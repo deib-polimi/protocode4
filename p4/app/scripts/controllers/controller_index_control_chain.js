@@ -28,6 +28,20 @@ App.ControlChainIndexController = Ember.ObjectController.extend(App.Saveable, {
     ],
     newControlType: null,
 
+    currentRouteIsViewController: function() {
+        var path = this.get('target.location.lastSetURL');
+        if(!path) {
+            path = this.get('target.url');
+        }
+        if(path) {
+            var splittedPath = path.split('/');
+            return splittedPath[3] === 'viewController';
+        }
+        return false;
+    }.property(
+        'target.location.lastSetURL'
+    ),
+
     // USED by partial _invalid_report.hbs
     invalidReport: function() {
         if(!this.get('model.valid')) {

@@ -1,12 +1,13 @@
 /*
- templates/view_controller.hbs
+ templates/scene.hbs
  */
 App.SceneController = Ember.ObjectController.extend({
-    needs: ['uiPhoneControlTemplates', 'editor'],
+    needs: ['editor'],
     isActive: false,
     zoomLevel: 1,
     isRotated: false,
     viewControllerToShow: null,
+    isScene: true,
 
     menu: Ember.computed.alias('controllers.editor.menu'),
     device: Ember.computed.alias('controllers.editor.device'),
@@ -18,46 +19,52 @@ App.SceneController = Ember.ObjectController.extend({
         }
         if(this.get('model') && path) {
             var splittedPath = path.split('/');
-            var selectedType;
-            var selectedId;
-            var i, end;
-            for(i = 1, end = false; i < 4 && !end; i+=2) {
-                selectedType = splittedPath[splittedPath.get('length') - i - 1];
-                selectedId = splittedPath[splittedPath.get('length') - i];
-                if(this.get('model.isTabbed')) {
-                    if(selectedType === 'viewController') {
-                        var viewController = this.get('model.viewControllers').find(function(vc) {return vc.get('id') === selectedId});
-                        if(viewController) {
-                            this.set('viewControllerToShow', viewController);
-                        }
-                        end = true;
-                    } else if(selectedType === 'scene'){
-                        this.set('viewControllerToShow', null);
-                        end = true;
-                    }
+            var selectedType = splittedPath[splittedPath.get('length') - 2];
+            var selectedId = splittedPath[splittedPath.get('length') - 1];
+            if(this.get('model.isTabbed')) {
+                if(selectedType === 'scene') {
+                    this.set('viewControllerToShow', null);
                 } else {
-                    if(selectedType === 'viewController') {
-                        this.set('viewControllerToShow', this.get('model.parentViewController'));
-                        end = true;
-                    } else if(selectedType === 'scene') {
-                        this.set('viewControllerToShow', null);
-                        end = true;
+                    var viewController = this.get('model.viewControllers').find(function(vc) {return vc.get('id') === selectedId});
+                    if(viewController) {
+                        this.set('viewControllerToShow', viewController);
                     }
+                }
+            } else {
+                if(selectedType === 'scene') {
+                    this.set('viewControllerToShow', null);
+                } else {
+                    this.set('viewControllerToShow', this.get('model.activeParentVC'));
                 }
             }
         }
     }.observes('model', 'model.isTabbed', 'target.location.lastSetURL'),
 
     /*  Redirection in case user switch from a device type to another (smartphone to tablet or
-        tablet to smartphone), one type is tabbed and the other isn't, and the current route's
-        view controller is parentViewController */
-    deviceTypeObserver: function() {
+        tablet to smartphone) and the current route's view controller is a parent vc */
+    redirectionObserver: function() {
         if(this.get('model') && !this.get('model.isDeleted')) {
-            if(this.get('model.isTabbed') && this.get('viewControllerToShow.isParent')) {
+            if(this.get('viewControllerToShow.isParent')) {
                 this.transitionToRoute('scene', this.get('model'));
             }
         }
-    }.observes('model.isTabbed'),
+    }.observes('device.type'),
+
+    deviceTypeObserver: function() {
+        var scene = this.get('model');
+        var parentVC = scene.get('activeParentVC');
+        var containers = parentVC.get('containers')
+        scene.get('viewControllers').forEach(function(vc) {
+            vc.set('activeScene', scene);
+            var activeContainer;
+            activeContainer = containers.find(function(c) {
+                return c.get('childViewController') === vc;
+            });
+            if(activeContainer) {
+                vc.set('activeContainer', activeContainer);
+            }
+        });
+    }.observes('device.type'),
 
     hasMenu: function () {
         return this.get('menu.menuItems.length') > 0;

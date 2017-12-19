@@ -1,12 +1,10 @@
 App.ViewController = DS.Model.extend({
     name: DS.attr('string'),
-    backgroundColor: DS.attr('string', {defaultValue: ''}),
+    backgroundColor: DS.attr('string', {defaultValue: '#ffffff'}),
     backgroundImage: DS.attr('string', {defaultValue: ''}),
+    isParent: DS.attr('boolean', {defaultValue: false}),
 
-    scene: DS.belongsTo('scene', {inverse: 'viewControllers'}),
-    parentContainer: DS.belongsTo('container', {inverse: 'childViewController'}),
-    //parentContainerSmartphone: DS.belongsTo('container', {inverse: 'childVCSmartphone'}),
-    //parentContainerTablet: DS.belongsTo('container', {inverse: 'childVCTablet'}),
+    application: DS.belongsTo('application', {inverse: 'viewControllers'}),
 
     uiPhoneControls: DS.hasMany('uiPhoneControl', {inverse: 'viewController', polymorphic: true}),
     controlChains: DS.hasMany('controlChain', {inverse: 'viewController'}),
@@ -14,33 +12,32 @@ App.ViewController = DS.Model.extend({
     progressDialogs: DS.hasMany('progressDialog', {inverse: 'viewController'}),
     asyncTasks: DS.hasMany('asyncTask', {inverse: 'viewController'}),
 
+    activeScene: null,
+    activeContainer: null,
     xmlName: 'viewController',
 
-    isParent: function() {
-        return this === this.get('scene.parentViewController');
-    }.property('scene.parentViewController'),
-
-    /*isParent: function() {
-        return (this === this.get('scene.parentViewControllerSmartphone')) ||
-            (this === this.get('scene.parentViewControllerTablet'));
-    }.property(
-        'scene.parentViewControllerSmartphone',
-        'scene.parentViewControllerTablet'
-    ),*/
-
     uiPhoneControlsToShow: function() {
-        if(this.get('scene.isTabbed')) {
+        if(!this.get('isParent') && (this.get('activeScene') === null || this.get('activeScene.isTabbed'))) {
             return this.get('uiPhoneControls').filter(function(upc) {
                 return upc.constructor.toString() !== 'App.Container';
             });
         }
         return this.get('uiPhoneControls');
     }.property(
-        'scene.isTabbed',
+        'activeScene',
+        'activeScene.isTabbed',
         'uiPhoneControls.[]'
     ),
 
-    horizontalMinimumSpace: function() {
+    containers: function() {
+        return this.get('uiPhoneControls').filter(function(upc) {
+            return upc.constructor.toString() === 'App.Container';
+        });
+    }.property(
+        'uiPhoneControls.[]'
+    ),
+
+    /*horizontalMinimumSpace: function() {
         var minimumSpace = 0;
         this.get('controlChains').forEach(function(chain) {
             if(chain.get('axis') === 'horizontal') {
@@ -50,164 +47,138 @@ App.ViewController = DS.Model.extend({
                 }
             }
         });
-        /*this.get('uiPhoneControls').then(function(controls) {
+        this.get('uiPhoneControls').then(function(controls) {
             controls.forEach(function(control) {
 
             });
-        });*/
+        });
         return minimumSpace;
     }.property(
         'controlChains.@each',
         'uiPhoneControls.@each'
-    ),
-
-    // DELETE
-    isInAContainer: function() {
-        return (this.get('parentContainer') !== null) && (!this.get('scene.isTabbed'));
-    }.property(
-        'parentContainer',
-        'scene.isTabbed'
-    ),
-
-    /*activeContainer: function() {
-        if(this.get('scene.isTabbed')) {
-            if(this.get('scene.application.device.type') === 'smartphone') {
-                return this.get('parentContainerSmartphone');
-            } else {
-                return this.get('parentContainerTablet');
-            }
-        }
-        return null;
-    }.property(
-        'scene.isTabbed',
-        'scene.application.device.type',
-        'parentContainerSmartphone',
-        'parentContainerTablet'
     ),*/
 
     start: function() {
-        /*activeContainer*/
-        if(this.get('isInAContainer')) {
-            return this.get('parentContainer.start');
+        if(this.get('activeContainer')) {
+            return this.get('activeContainer.start');
         }
         return 0;
     }.property(
-        'isInAContainer',
-        'parentContainer.start'
+        'activeContainer',
+        'activeContainer.start'
     ),
 
     end: function() {
-        /*activeContainer*/
-        if(this.get('isInAContainer')) {
-            return this.get('parentContainer.end');
+        if(this.get('activeContainer')) {
+            return this.get('activeContainer.end');
         }
-        return this.get('scene.application.device.screenWidth');
+        return this.get('application.device.screenWidth');
     }.property(
-        'isInAContainer',
-        'parentContainer.end',
-        'scene.application.device.screenWidth'
+        'activeContainer',
+        'activeContainer.end',
+        'application.device.screenWidth'
     ),
 
     top: function() {
-        /*activeContainer*/
-        if(this.get('isInAContainer')) {
-            return this.get('parentContainer.top');
+        if(this.get('activeContainer')) {
+            return this.get('activeContainer.top');
         }
-        if(this.get('scene.application.device.platform') === 'android') {
-            var thereIsTabMenu = (this.get('scene.application.device.type') === 'smartphone') && this.get('scene.smartphoneMustShowTabMenu');
-            thereIsTabMenu = thereIsTabMenu || ((this.get('scene.application.device.type') === 'tablet') && this.get('scene.tabletMustShowTabMenu'));
-            if(thereIsTabMenu) {
-                return this.get('scene.application.device.viewTop') + 48 - 1;
+        if(this.get('activeScene')) {
+            if(this.get('application.device.platform') === 'android') {
+                var thereIsTabMenu = (this.get('application.device.type') === 'smartphone') && this.get('activeScene.smartphoneMustShowTabMenu');
+                thereIsTabMenu = thereIsTabMenu || ((this.get('application.device.type') === 'tablet') && this.get('activeScene.tabletMustShowTabMenu'));
+                if(thereIsTabMenu) {
+                    return this.get('application.device.viewTop') + 48 - 1;
+                }
             }
         }
-        return this.get('scene.application.device.viewTop') - 1;
+        return this.get('application.device.viewTop') - 1;
     }.property(
-        'isInAContainer',
-        'parentContainer.top',
-        'scene.application.device.type',
-        'scene.smartphoneMustShowTabMenu',
-        'scene.tabletMustShowTabMenu',
-        'scene.application.device.platform',
-        'scene.application.device.viewTop'
+        'activeContainer',
+        'activeContainer.top',
+        'application.device.type',
+        'activeScene',
+        'activeScene.smartphoneMustShowTabMenu',
+        'activeScene.tabletMustShowTabMenu',
+        'application.device.platform',
+        'application.device.viewTop'
     ),
 
     bottom: function() {
-        /*activeContainer*/
-        if(this.get('isInAContainer')) {
-            return this.get('parentContainer.bottom');
+        if(this.get('activeContainer')) {
+            return this.get('activeContainer.bottom');
         }
-        if(this.get('scene.application.device.platform') === 'ios') {
-            var thereIsTabMenu = (this.get('scene.application.device.type') === 'smartphone') && this.get('scene.smartphoneMustShowTabMenu');
-            thereIsTabMenu = thereIsTabMenu || ((this.get('scene.application.device.type') === 'tablet') && this.get('scene.tabletMustShowTabMenu'));
-            if(thereIsTabMenu) {
-                return this.get('scene.application.device.viewBottom') - 48;
+        if(this.get('activeScene')) {
+            if(this.get('application.device.platform') === 'ios') {
+                var thereIsTabMenu = (this.get('application.device.type') === 'smartphone') && this.get('activeScene.smartphoneMustShowTabMenu');
+                thereIsTabMenu = thereIsTabMenu || ((this.get('application.device.type') === 'tablet') && this.get('activeScene.tabletMustShowTabMenu'));
+                if(thereIsTabMenu) {
+                    return this.get('application.device.viewBottom') - 48;
+                }
             }
         }
-        return this.get('scene.application.device.viewBottom');
+        return this.get('application.device.viewBottom');
     }.property(
-        'isInAContainer',
-        'parentContainer.bottom',
-        'scene.application.device.type',
-        'scene.smartphoneMustShowTabMenu',
-        'scene.tabletMustShowTabMenu',
-        'scene.application.device.platform',
-        'scene.application.device.viewBottom'
+        'activeContainer',
+        'activeContainer.bottom',
+        'application.device.type',
+        'activeScene',
+        'activeScene.smartphoneMustShowTabMenu',
+        'activeScene.tabletMustShowTabMenu',
+        'application.device.platform',
+        'application.device.viewBottom'
     ),
 
     width: function() {
-        /*activeContainer*/
-        if(this.get('isInAContainer')) {
-            return this.get('parentContainer.width');
+        if(this.get('activeContainer')) {
+            return this.get('activeContainer.width');
         }
         return this.get('end') - this.get('start');
     }.property(
-        'isInAContainer',
-        'parentContainer.width',
+        'activeContainer',
+        'activeContainer.width',
         'start',
         'end'
     ),
 
     height: function() {
-        /*activeContainer*/
-        if(this.get('isInAContainer')) {
-            return this.get('parentContainer.height');
+        if(this.get('activeContainer')) {
+            return this.get('activeContainer.height');
         }
         return this.get('bottom') - this.get('top');
     }.property(
-        'isInAContainer',
-        'parentContainer.height',
+        'activeContainer',
+        'activeContainer.height',
         'top',
         'bottom'
     ),
 
     centerX: function() {
-        /*activeContainer*/
-        if(this.get('isInAContainer')) {
-            return this.get('parentContainer.centerX');
+        if(this.get('activeContainer')) {
+            return this.get('activeContainer.centerX');
         }
         return (this.get('start') + (this.get('width') / 2));
     }.property(
-        'isInAContainer',
-        'parentContainer.centerX',
+        'activeContainer',
+        'activeContainer.centerX',
         'start',
         'width'
     ),
 
     centerY: function() {
-        /*activeContainer*/
-        if(this.get('isInAContainer')) {
-            return this.get('parentContainer.centerY');
+        if(this.get('activeContainer')) {
+            return this.get('activeContainer.centerY');
         }
         return (this.get('top') + (this.get('height') / 2));
     }.property(
-        'isInAContainer',
-        'parentContainer.centerY',
+        'activeContainer',
+        'activeContainer.centerY',
         'top',
         'height'
     ),
 
     /* NAVIGATION for smartphones and tablet with no screen
-        Scene has:
+        activeScene has:
             Case 1: menu YES, tab menu YES
             all VCs have menu button
 
@@ -216,54 +187,58 @@ App.ViewController = DS.Model.extend({
             - other VCs have back button (to the first VC)
 
             Case 3: menu NO, tab menu YES
-            all VCs have back button to the precedent scene
+            all VCs have back button to the precedent activeScene
 
             Case 4: menu NO, tab menu NO
             all VCs have back button but:
-            - first VC go back to precedent scene
+            - first VC go back to precedent activeScene
             - others VCs go back to first VC
     */
     hasBackButton: function() {
-        if(this.get('scene.application.device.type') === 'smartphone') {
-            if(this.get('scene.hasMenu')) {
-                if(this.get('scene.smartphoneHasTabMenu')) {
-                    // Case 1
-                    return false;
-                } else {
-                    // Case 2
-                    if(this.get('scene.viewControllers').indexOf(this) === 0) {
+        if(this.get('activeScene')) {
+            if(this.get('application.device.type') === 'smartphone') {
+                if(this.get('activeScene.hasMenu')) {
+                    if(this.get('activeScene.smartphoneHasTabMenu')) {
+                        // Case 1
                         return false;
                     } else {
-                        return true;
+                        // Case 2
+                        if(this.get('activeScene.viewControllers').indexOf(this) === 0) {
+                            return false;
+                        } else {
+                            return true;
+                        }
                     }
+                } else {
+                    // Cases 3 and 4
+                    return true;
                 }
             } else {
-                // Cases 3 and 4
-                return true;
-            }
-        } else {
-            if(this.get('scene.hasMenu')) {
-                if(this.get('scene.tabletHasTabMenu')) {
-                    // Case 1
-                    return false;
-                } else {
-                    // Case 2
-                    if(this.get('scene.viewControllers').indexOf(this) === 0) {
+                if(this.get('activeScene.hasMenu')) {
+                    if(this.get('activeScene.tabletHasTabMenu')) {
+                        // Case 1
                         return false;
                     } else {
-                        return true;
+                        // Case 2
+                        if(this.get('activeScene.viewControllers').indexOf(this) === 0) {
+                            return false;
+                        } else {
+                            return true;
+                        }
                     }
+                } else {
+                    // Cases 3 and 4
+                    return true;
                 }
-            } else {
-                // Cases 3 and 4
-                return true;
             }
         }
+        return null;
     }.property(
-        'scene.application.device.type',
-        'scene.smartphoneHasTabMenu',
-        'scene.tabletHasTabMenu',
-        'scene.hasMenu'
+        'application.device.type',
+        'activeScene',
+        'activeScene.smartphoneHasTabMenu',
+        'activeScene.tabletHasTabMenu',
+        'activeScene.hasMenu'
     ),
 
     referenceName: function() {
@@ -285,17 +260,10 @@ App.ViewController = DS.Model.extend({
         // The uiPhoneControls in chains will be deleted by the chains themselves
         this.get('uiPhoneControls').forEach(function (uiPhoneControl) {
             if(uiPhoneControl.get('controlChain') === null) {
-                if(uiPhoneControl.constructor.toString() !== 'App.Container') {
-                    Ember.run.once(self, function () {
-                        uiPhoneControl.deleteRecord();
-                        uiPhoneControl.save();
-                    });
-                } else {
-                    Ember.run.once(self, function () {
-                        uiPhoneControl.deleteFromApp();
-                        uiPhoneControl.save();
-                    });
-                }
+                Ember.run.once(self, function () {
+                    uiPhoneControl.deleteRecord();
+                    uiPhoneControl.save();
+                });
             }
         });
 
@@ -326,22 +294,13 @@ App.ViewController = DS.Model.extend({
         viewController.setAttribute('name', this.get('name'));
         viewController.setAttribute('backgroundColor', this.get('backgroundColor'));
         viewController.setAttribute('backgroundImage', this.get('backgroundImage'));
-        if(this.get('parentContainer')) {
-            viewController.setAttribute('parentContainer', this.get('parentContainer').getRefPath(''));
-        }
-        /*if(this.get('parentContainerSmartphone')) {
-            viewController.setAttribute('parentContainerSmartphone', this.get('parentContainerSmartphone').getRefPath(''));
-        }
-        if(this.get('parentContainerTablet')) {
-            viewController.setAttribute('parentContainerTablet', this.get('parentContainerTablet').getRefPath(''));
-        }*/
-        if(this.get('hasBackButton')) {
+        /*if(this.get('hasBackButton')) {
             viewController.setAttribute('hasMenuButton', false);
             viewController.setAttribute('hasBackButton', true);
         } else {
             viewController.setAttribute('hasMenuButton', true);
             viewController.setAttribute('hasBackButton', false);
-        }
+        }*/
 
         this.get('alertDialogs').map(function (alertDialog) {
             viewController.appendChild(alertDialog.toXml(xmlDoc));

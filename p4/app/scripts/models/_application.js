@@ -8,6 +8,7 @@ App.Application = DS.Model.extend({
     dataHandler: DS.belongsTo('dataHandler'),
 
     watchControllers: DS.hasMany('watchController', {inverse: 'application', async: true}),
+    viewControllers: DS.hasMany('viewController', {inverse: 'application', async: true}),
     scenes: DS.hasMany('scene', {inverse: 'application', async: true}),
 
     deleteRecord: function () {
@@ -34,32 +35,48 @@ App.Application = DS.Model.extend({
 
             appModel.appendChild(self.get('dataHandler').toXml(xmlDoc));
 
+            var viewControllers = self.get('viewControllers');
             var scenes = self.get('scenes');
             var watchControllers = self.get('watchControllers');
 
-            Promise.all(scenes.map(function (item_scenes) {
-                if(item_scenes.get('valid')) {
-                    return item_scenes.toXml(xmlDoc);
-                }
-            })).then(function (values_scenes) {
+            Promise.all(viewControllers.map(function (item_viewControllers) {
+                return item_viewControllers.toXml(xmlDoc);
+            })).then(function (values_viewControllers) {
 
-                Promise.all(watchControllers.map(function (item_watchControllers) {
-                    return item_watchControllers.toXml(xmlDoc);
-                })).then(function (values_watchControllers) {
+                Promise.all(scenes.map(function (item_scenes) {
+                    if(item_scenes.get('valid')) {
+                        return item_scenes.toXml(xmlDoc);
+                    }
+                })).then(function (values_scenes) {
 
-                    values_scenes.map(function (value) {
-                        appModel.appendChild(value);
+                    Promise.all(watchControllers.map(function (item_watchControllers) {
+                        return item_watchControllers.toXml(xmlDoc);
+                    })).then(function (values_watchControllers) {
+
+                        var vcs = xmlDoc.createElement('viewControllers');
+                        appModel.appendChild(vcs);
+                        values_viewControllers.map(function (value) {
+                            vcs.appendChild(value);
+                        });
+
+                        var ss = xmlDoc.createElement('scenes');
+                        appModel.appendChild(ss);
+                        values_scenes.map(function (value) {
+                            ss.appendChild(value);
+                        });
+
+                        var wcs = xmlDoc.createElement('watchControllers');
+                        appModel.appendChild(wcs);
+                        values_watchControllers.map(function (value) {
+                            wcs.appendChild(value);
+                        });
+
+                        appModel.appendChild(self.get('menu').toXml(xmlDoc));
+
+                        xmlDoc.appendChild(appModel);
+
+                        resolve(xmlDoc);
                     });
-
-                    values_watchControllers.map(function (value) {
-                        appModel.appendChild(value);
-                    });
-
-                    appModel.appendChild(self.get('menu').toXml(xmlDoc));
-
-                    xmlDoc.appendChild(appModel);
-
-                    resolve(xmlDoc);
                 });
             });
         });

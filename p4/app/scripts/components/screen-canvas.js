@@ -28,8 +28,8 @@ App.ScreenCanvasComponent = Ember.Component.extend({
     ctx: null,
 
     device: function() {
-        return this.get('model.application.device');
-    }.property('model.application.device'),
+        return this.get('viewControllerToShow.application.device');
+    }.property('viewControllerToShow.application.device'),
 
     width: function() {
         return this.get('device.screenWidth');

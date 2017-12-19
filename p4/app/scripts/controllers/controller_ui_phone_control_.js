@@ -23,6 +23,20 @@ App.UiPhoneControlController = Ember.ObjectController.extend(App.Saveable, {
         'model.constraints.@each.name'
     ),
 
+    currentRouteIsViewController: function() {
+        var path = this.get('target.location.lastSetURL');
+        if(!path) {
+            path = this.get('target.url');
+        }
+        if(path) {
+            var splittedPath = path.split('/');
+            return splittedPath[3] === 'viewController';
+        }
+        return false;
+    }.property(
+        'target.location.lastSetURL'
+    ),
+
     isntWidthConstrained: function() {
         return !this.get('model.isWidthConstrained');
     }.property('model.isWidthConstrained'),

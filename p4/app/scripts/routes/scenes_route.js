@@ -1,15 +1,13 @@
 App.ScenesRoute = Ember.Route.extend({
 
-    model: function () {
-        return this.store.find('application', 'newAppId').then(function (app) {
-            return app.get('scenes');
-        });
+    init: function () {
+        this._super();
+        this.generateController('uiPhoneControlTemplates', []).set('model', this.store.find('uiPhoneControlTemplate'));
     },
 
-    actions: {
-
-        refreshModel: function () {
-            this.refresh();
-        }
+    model: function () {
+        return this.store.find('application').then(function (app) {
+            return app.get('content.0');
+        });
     }
 });

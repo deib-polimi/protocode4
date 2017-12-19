@@ -1,12 +1,47 @@
 App.SceneRoute = Ember.Route.extend({
     zIndex: 5,
 
-    init: function () {
-        this._super();
-        this.generateController('uiPhoneControlTemplates', []).set('model', this.store.find('uiPhoneControlTemplate'));
+    lastRouteWasntScene: function() {
+        var path = this.get('router.location.lastSetURL');
+        if(!path) {
+            path = this.get('router.url');
+        }
+        if(path) {
+            var splittedPath = path.split('/');
+            return splittedPath[3] !== 'scene';
+        }
+        return false;
+    }.property('router.location.lastSetURL'),
+
+    deviceTypeObserver: function() {
+        this.setupActiveItems();
+    }.observes('context.application.device.type'),
+
+    setupActiveItems: function() {
+        var scene = this.get('context');
+        var parentVC = scene.get('activeParentVC');
+        var containers = parentVC.get('containers')
+        scene.get('viewControllers').forEach(function(vc) {
+            vc.set('activeScene', scene);
+            var activeContainer;
+            activeContainer = containers.find(function(c) {
+                return c.get('childViewController') === vc;
+            });
+            if(activeContainer) {
+                vc.set('activeContainer', activeContainer);
+            }
+        });
     },
 
     actions: {
+
+        // Sets view controller's activeScene and activeContainer
+        didTransition: function() {
+            if(this.get('lastRouteWasntScene')) {
+                this.setupActiveItems();
+            }
+        },
+
         increaseZoom: function () {
             this.set('controller.zoomLevel', Math.round((this.get('controller.zoomLevel') + 0.2) * 100) / 100);
         },

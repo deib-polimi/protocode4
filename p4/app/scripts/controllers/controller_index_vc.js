@@ -1,7 +1,9 @@
 /*
- templates/view_controller/index.hbs
+ templates/vc/index.hbs
  */
-App.ViewControllerIndexController = Ember.ObjectController.extend(App.Saveable, {
+App.VcIndexController = Ember.ObjectController.extend({
+    needs: ['scene'],
+    scene: Ember.computed.alias('controllers.scene.model'),
 
     actions: {
         createAsyncTask: function (value) {
