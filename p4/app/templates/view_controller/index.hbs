@@ -67,7 +67,7 @@
                     <ul class="list-group">
                         {{#each item in alertDialogs}}
                             <li class="list-group-item">
-                                {{#link-to "alertDialog" item}}{{item.name}}{{/link-to}}
+                                {{#link-to "viewController.alertDialog" item}}{{item.name}}{{/link-to}}
                             </li>
                         {{/each}}
                     </ul>
@@ -81,7 +81,7 @@
                     <ul class="list-group">
                         {{#each item in progressDialogs}}
                             <li class="list-group-item">
-                                {{#link-to "progressDialog" item}}{{item.name}}{{/link-to}}
+                                {{#link-to "viewController.progressDialog" item}}{{item.name}}{{/link-to}}
                             </li>
                         {{/each}}
                     </ul>
@@ -95,7 +95,7 @@
                     <ul class="list-group">
                         {{#each item in asyncTasks}}
                             <li class="list-group-item">
-                                {{#link-to "asyncTask" item}}{{item.name}}{{/link-to}}
+                                {{#link-to "viewController.asyncTask" item}}{{item.name}}{{/link-to}}
                             </li>
                         {{/each}}
                     </ul>

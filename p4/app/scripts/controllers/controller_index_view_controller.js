@@ -3,6 +3,20 @@
  */
 App.ViewControllerIndexController = Ember.ObjectController.extend(App.Saveable, {
 
+    currentRouteIsViewController: function() {
+        var path = this.get('target.location.lastSetURL');
+        if(!path) {
+            path = this.get('target.url');
+        }
+        if(path) {
+            var splittedPath = path.split('/');
+            return splittedPath[3] === 'viewController';
+        }
+        return false;
+    }.property(
+        'target.location.lastSetURL'
+    ),
+
     actions: {
         createAsyncTask: function (value) {
             var viewController = this.get('model');

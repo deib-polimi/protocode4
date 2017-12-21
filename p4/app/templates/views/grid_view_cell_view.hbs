@@ -11,4 +11,8 @@
         {{/if}}
     {{/if}}
 </div>
-{{#link-to "controlGridViewCell" this tagName="div" class="inner-control"}}{{/link-to}}
+{{#if controller.currentRouteIsViewController}}
+    {{#link-to "viewController.controlGridViewCell" this tagName="div" class="inner-control"}}{{/link-to}}
+{{else}}
+    {{#link-to "scene.controlGridViewCell" this tagName="div" class="inner-control"}}{{/link-to}}
+{{/if}}

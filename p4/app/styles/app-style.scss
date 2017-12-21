@@ -143,13 +143,14 @@ body,
     height: 50px;
 }
 
-#application-panel {
+#application-scenes-panel {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }
 
-#watch-controllers-panel {
+#application-watch-controllers-panel {
     border-top-right-radius: 0;
+    border-top-left-radius: 0;
 }
 
 .spacer {

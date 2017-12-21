@@ -5,4 +5,8 @@
         <span class="placeholder">{{placeholder}}</span>
     {{/if}}
 </div>
-{{#link-to "controlEditText" this tagName="div" class="inner-control"}}{{/link-to}}
+{{#if controller.currentRouteIsViewController}}
+    {{#link-to "viewController.controlEditText" this tagName="div" class="inner-control"}}{{/link-to}}
+{{else}}
+    {{#link-to "scene.controlEditText" this tagName="div" class="inner-control"}}{{/link-to}}
+{{/if}}

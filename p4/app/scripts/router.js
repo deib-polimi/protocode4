@@ -34,115 +34,115 @@ App.Router.map(function () {
             this.resource('viewController', {
                 path: '/viewController/:viewController_id'
             }, function () {
-                this.resource('dispatchUiPhoneControl', {
+                this.resource('viewController.dispatchUiPhoneControl', {
                     path: '/uiPhoneControl/:ui_phone_control_id'
                 }, function () {
                 });
-                this.resource('controlAudioPlayer', {
+                this.resource('viewController.controlAudioPlayer', {
                     path: '/audioPlayer/:audioPlayer_id'
                 }, function () {
                 });
-                this.resource('controlAudioRecorder', {
+                this.resource('viewController.controlAudioRecorder', {
                     path: '/audioRecorder/:audioRecorder_id'
                 }, function () {
                 });
-                this.resource('controlButton', {
+                this.resource('viewController.controlButton', {
                     path: '/button/:button_id'
                 }, function () {
                 });
-                this.resource('controlCard', {
+                this.resource('viewController.controlCard', {
                     path: '/card/:card_id'
                 }, function () {
                 });
-                this.resource('controlContainer', {
+                this.resource('viewController.controlContainer', {
                     path: '/container/:container_id'
                 }, function () {
                 });
-                this.resource('controlEditText', {
+                this.resource('viewController.controlEditText', {
                     path: '/editText/:editText_id'
                 }, function () {
                 });
-                this.resource('controlGridView', {
+                this.resource('viewController.controlGridView', {
                     path: '/gridView/:gridView_id'
                 }, function () {
                 });
-                this.resource('controlGridViewCell', {
+                this.resource('viewController.controlGridViewCell', {
                     path: '/gridViewCell/:gridViewCell_id'
                 }, function () {
                 });
-                this.resource('controlImageView', {
+                this.resource('viewController.controlImageView', {
                     path: '/imageView/:imageView_id'
                 }, function () {
                 });
-                this.resource('controlLabel', {
+                this.resource('viewController.controlLabel', {
                     path: '/label/:label_id'
                 }, function () {
                 });
-                this.resource('controlListView', {
+                this.resource('viewController.controlListView', {
                     path: '/listView/:listView_id'
                 }, function () {
                 });
-                this.resource('controlListViewCell', {
+                this.resource('viewController.controlListViewCell', {
                     path: '/listViewCell/:listViewCell_id'
                 }, function () {
                 });
-                this.resource('controlMap', {
+                this.resource('viewController.controlMap', {
                     path: '/map/:map_id'
                 }, function () {
                 });
-                this.resource('controlDatepicker', {
+                this.resource('viewController.controlDatepicker', {
                     path: '/datepicker/:datepicker_id'
                 }, function () {
                 });
-                this.resource('controlTimepicker', {
+                this.resource('viewController.controlTimepicker', {
                     path: '/timepicker/:timepicker_id'
                 }, function () {
                 });
-                this.resource('controlSwitch', {
+                this.resource('viewController.controlSwitch', {
                     path: '/switch/:switch_id'
                 }, function () {
                 });
-                this.resource('controlSlider', {
+                this.resource('viewController.controlSlider', {
                     path: '/slider/:slider_id'
                 }, function () {
                 });
-                this.resource('controlSpinner', {
+                this.resource('viewController.controlSpinner', {
                     path: '/spinner/:spinner_id'
                 }, function () {
                 });
-                this.resource('controlPhotocameraController', {
+                this.resource('viewController.controlPhotocameraController', {
                     path: '/photocameraController/:photocameraController_id'
                 }, function () {
                 });
-                this.resource('controlVideocameraController', {
+                this.resource('viewController.controlVideocameraController', {
                     path: '/videocameraController/:videocameraController_id'
                 }, function () {
                 });
-                this.resource('controlVideoView', {
+                this.resource('viewController.controlVideoView', {
                     path: '/videoView/:videoView_id'
                 }, function () {
                 });
-                this.resource('controlWebView', {
+                this.resource('viewController.controlWebView', {
                     path: '/webView/:webView_id'
                 }, function () {
                 });
-                this.resource('asyncTask', {
+                this.resource('viewController.asyncTask', {
                     path: '/asyncTask/:async_task_id'
                 }, function () {
                 });
-                this.resource('alertDialog', {
+                this.resource('viewController.alertDialog', {
                     path: '/alertDialog/:alert_dialog_id'
                 }, function () {
                 });
-                this.resource('progressDialog', {
+                this.resource('viewController.progressDialog', {
                     path: '/progressDialog/:progress_dialog_id'
                 }, function () {
                 });
-                this.resource('constraint', {
+                this.resource('viewController.constraint', {
                     path: '/constraint/:constraint_id'
                 }, function () {
                 });
-                this.resource('controlChain', {
+                this.resource('viewController.controlChain', {
                     path: '/controlChain/:controlChain_id'
                 }, function () {
                 });
@@ -151,7 +151,7 @@ App.Router.map(function () {
                 path: '/scene/:scene_id'
             }, function () {
                 this.resource('vc', {
-                    path: '/vc/:vc_id'
+                    path: '/vc/:viewController_id'
                 }, function () {
                 });
                 this.resource('appMenu', {
@@ -162,115 +162,115 @@ App.Router.map(function () {
                     path: '/menuItem/:menu_item_id'
                 }, function () {
                 });
-                this.resource('dispatchUiPhoneControl', {
+                this.resource('scene.dispatchUiPhoneControl', {
                     path: '/uiPhoneControl/:ui_phone_control_id'
                 }, function () {
                 });
-                this.resource('controlAudioPlayer', {
+                this.resource('scene.controlAudioPlayer', {
                     path: '/audioPlayer/:audioPlayer_id'
                 }, function () {
                 });
-                this.resource('controlAudioRecorder', {
+                this.resource('scene.controlAudioRecorder', {
                     path: '/audioRecorder/:audioRecorder_id'
                 }, function () {
                 });
-                this.resource('controlButton', {
+                this.resource('scene.controlButton', {
                     path: '/button/:button_id'
                 }, function () {
                 });
-                this.resource('controlCard', {
+                this.resource('scene.controlCard', {
                     path: '/card/:card_id'
                 }, function () {
                 });
-                this.resource('controlContainer', {
+                this.resource('scene.controlContainer', {
                     path: '/container/:container_id'
                 }, function () {
                 });
-                this.resource('controlEditText', {
+                this.resource('scene.controlEditText', {
                     path: '/editText/:editText_id'
                 }, function () {
                 });
-                this.resource('controlGridView', {
+                this.resource('scene.controlGridView', {
                     path: '/gridView/:gridView_id'
                 }, function () {
                 });
-                this.resource('controlGridViewCell', {
+                this.resource('scene.controlGridViewCell', {
                     path: '/gridViewCell/:gridViewCell_id'
                 }, function () {
                 });
-                this.resource('controlImageView', {
+                this.resource('scene.controlImageView', {
                     path: '/imageView/:imageView_id'
                 }, function () {
                 });
-                this.resource('controlLabel', {
+                this.resource('scene.controlLabel', {
                     path: '/label/:label_id'
                 }, function () {
                 });
-                this.resource('controlListView', {
+                this.resource('scene.controlListView', {
                     path: '/listView/:listView_id'
                 }, function () {
                 });
-                this.resource('controlListViewCell', {
+                this.resource('scene.controlListViewCell', {
                     path: '/listViewCell/:listViewCell_id'
                 }, function () {
                 });
-                this.resource('controlMap', {
+                this.resource('scene.controlMap', {
                     path: '/map/:map_id'
                 }, function () {
                 });
-                this.resource('controlDatepicker', {
+                this.resource('scene.controlDatepicker', {
                     path: '/datepicker/:datepicker_id'
                 }, function () {
                 });
-                this.resource('controlTimepicker', {
+                this.resource('scene.controlTimepicker', {
                     path: '/timepicker/:timepicker_id'
                 }, function () {
                 });
-                this.resource('controlSwitch', {
+                this.resource('scene.controlSwitch', {
                     path: '/switch/:switch_id'
                 }, function () {
                 });
-                this.resource('controlSlider', {
+                this.resource('scene.controlSlider', {
                     path: '/slider/:slider_id'
                 }, function () {
                 });
-                this.resource('controlSpinner', {
+                this.resource('scene.controlSpinner', {
                     path: '/spinner/:spinner_id'
                 }, function () {
                 });
-                this.resource('controlPhotocameraController', {
+                this.resource('scene.controlPhotocameraController', {
                     path: '/photocameraController/:photocameraController_id'
                 }, function () {
                 });
-                this.resource('controlVideocameraController', {
+                this.resource('scene.controlVideocameraController', {
                     path: '/videocameraController/:videocameraController_id'
                 }, function () {
                 });
-                this.resource('controlVideoView', {
+                this.resource('scene.controlVideoView', {
                     path: '/videoView/:videoView_id'
                 }, function () {
                 });
-                this.resource('controlWebView', {
+                this.resource('scene.controlWebView', {
                     path: '/webView/:webView_id'
                 }, function () {
                 });
-                this.resource('asyncTask', {
+                this.resource('scene.asyncTask', {
                     path: '/asyncTask/:async_task_id'
                 }, function () {
                 });
-                this.resource('alertDialog', {
+                this.resource('scene.alertDialog', {
                     path: '/alertDialog/:alert_dialog_id'
                 }, function () {
                 });
-                this.resource('progressDialog', {
+                this.resource('scene.progressDialog', {
                     path: '/progressDialog/:progress_dialog_id'
                 }, function () {
                 });
-                this.resource('constraint', {
+                this.resource('scene.constraint', {
                     path: '/constraint/:constraint_id'
                 }, function () {
                 });
-                this.resource('controlChain', {
+                this.resource('scene.controlChain', {
                     path: '/controlChain/:controlChain_id'
                 }, function () {
                 });

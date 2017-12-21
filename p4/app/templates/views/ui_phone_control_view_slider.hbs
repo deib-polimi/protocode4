@@ -3,4 +3,8 @@
     <div class="slider-image"></div>
     <div class="slider-right-row"></div>
 </div>
-{{#link-to "controlSlider" this tagName="div" class="inner-control"}}{{/link-to}}
+{{#if controller.currentRouteIsViewController}}
+    {{#link-to "viewController.controlSlider" this tagName="div" class="inner-control"}}{{/link-to}}
+{{else}}
+    {{#link-to "scene.controlSlider" this tagName="div" class="inner-control"}}{{/link-to}}
+{{/if}}

@@ -17,4 +17,8 @@
         {{/if}}
     </div>
 </div>
-{{#link-to "controlCard" this tagName="div" class="inner-control"}}{{/link-to}}
+{{#if controller.currentRouteIsViewController}}
+    {{#link-to "viewController.controlCard" this tagName="div" class="inner-control"}}{{/link-to}}
+{{else}}
+    {{#link-to "scene.controlCard" this tagName="div" class="inner-control"}}{{/link-to}}
+{{/if}}

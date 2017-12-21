@@ -7,6 +7,20 @@ App.SceneIndexController = Ember.ObjectController.extend(App.Saveable, {
 
     addedViewController: null,
 
+    currentRouteIsViewController: function() {
+        var path = this.get('target.location.lastSetURL');
+        if(!path) {
+            path = this.get('target.url');
+        }
+        if(path) {
+            var splittedPath = path.split('/');
+            return splittedPath[3] === 'viewController';
+        }
+        return false;
+    }.property(
+        'target.location.lastSetURL'
+    ),
+
     currentDeviceIsSmartphone: function() {
         return this.get('model.application.device.type') === 'smartphone';
     }.property('model.application.device.type'),
@@ -20,10 +34,16 @@ App.SceneIndexController = Ember.ObjectController.extend(App.Saveable, {
 
     availableViewControllers: function() {
         var scene = this.get('model');
-        return scene.get('application.viewControllers').filter(function(vc) {
-            return !(scene.get('viewControllers').contains(vc));
-        });
-    }.property('model.application.viewControllers.[]'),
+        if(!scene.get('isDeleted')) {
+            return scene.get('application.viewControllers').filter(function(vc) {
+                return !(scene.get('viewControllers').contains(vc));
+            });
+        }
+        return null;
+    }.property(
+        'model.application.viewControllers.[]',
+        'model.viewControllers.[]'
+    ),
 
     // USED by partial _invalid_report.hbs
     invalidReport: function() {

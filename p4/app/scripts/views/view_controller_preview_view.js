@@ -18,9 +18,13 @@ App.ViewControllerPreviewView = Ember.View.extend(App.UiDroppable, {
   ),
 
   click: function(evt) {
-      //console.log('ooo '+this.get('context').constructor.toString());
+      var c = this.get('context').constructor.toString();
       if(evt.target.id === 'view-controller-background') {
-          this.get('controller').send('transitionToRoute', 'viewController', this.get('viewController'));
+          if(c === 'App.SceneController') {
+              this.get('controller').send('transitionToRoute', 'vc', this.get('viewController'));
+          } else {
+              this.get('controller').send('transitionToRoute', 'viewController', this.get('viewController'));
+          }
       }
   },
 

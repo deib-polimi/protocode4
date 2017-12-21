@@ -7,4 +7,8 @@
         {{/if}}
     {{/if}}
 </div>
-{{#link-to "controlPhotocameraController" this tagName="div" class="inner-control"}}{{/link-to}}
+{{#if controller.currentRouteIsViewController}}
+    {{#link-to "viewController.controlPhotocameraController" this tagName="div" class="inner-control"}}{{/link-to}}
+{{else}}
+    {{#link-to "scene.controlPhotocameraController" this tagName="div" class="inner-control"}}{{/link-to}}
+{{/if}}

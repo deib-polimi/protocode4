@@ -1,4 +1,8 @@
-{{#link-to "controlGridView" this tagName="div" class="inner-control"}}{{/link-to}}
+{{#if controller.currentRouteIsViewController}}
+    {{#link-to "viewController.controlGridView" this tagName="div" class="inner-control"}}{{/link-to}}
+{{else}}
+    {{#link-to "scene.controlGridView" this tagName="div" class="inner-control"}}{{/link-to}}
+{{/if}}
 <div class="control-content">
     {{#each gridViewCells}}
         {{view App.GridViewCellView}}

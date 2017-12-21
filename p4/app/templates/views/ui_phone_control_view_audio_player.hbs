@@ -15,4 +15,8 @@
         </div>
     </div>
 </div>
-{{#link-to "controlAudioPlayer" this tagName="div" class="inner-control"}}{{/link-to}}
+{{#if controller.currentRouteIsViewController}}
+    {{#link-to "viewController.controlAudioPlayer" this tagName="div" class="inner-control"}}{{/link-to}}
+{{else}}
+    {{#link-to "scene.controlAudioPlayer" this tagName="div" class="inner-control"}}{{/link-to}}
+{{/if}}

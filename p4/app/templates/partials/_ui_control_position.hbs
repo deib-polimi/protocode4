@@ -9,11 +9,19 @@
         {{#each item in constraints}}
             {{#if item.valid}}
                 <li class="list-group-item">
-                    {{#link-to "constraint" item}}{{item.name}}{{/link-to}}
+                    {{#if controller.currentRouteIsViewController}}
+                        {{#link-to 'viewController.constraint' item}}{{item.name}}{{/link-to}}
+                    {{else}}
+                        {{#link-to 'scene.constraint' item}}{{item.name}}{{/link-to}}
+                    {{/if}}
                 </li>
             {{else}}
                 <li class="list-group-item-highlight">
-                    {{#link-to "constraint" item}}{{item.name}}{{/link-to}}
+                    {{#if controller.currentRouteIsViewController}}
+                        {{#link-to 'viewController.constraint' item}}{{item.name}}{{/link-to}}
+                    {{else}}
+                        {{#link-to 'scene.constraint' item}}{{item.name}}{{/link-to}}
+                    {{/if}}
                 </li>
             {{/if}}
         {{/each}}

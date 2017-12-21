@@ -13,14 +13,11 @@ App.SceneRoute = Ember.Route.extend({
         return false;
     }.property('router.location.lastSetURL'),
 
-    deviceTypeObserver: function() {
-        this.setupActiveItems();
-    }.observes('context.application.device.type'),
-
     setupActiveItems: function() {
         var scene = this.get('context');
         var parentVC = scene.get('activeParentVC');
-        var containers = parentVC.get('containers')
+        var containers = parentVC.get('containers');
+        parentVC.set('activeScene', scene);
         scene.get('viewControllers').forEach(function(vc) {
             vc.set('activeScene', scene);
             var activeContainer;

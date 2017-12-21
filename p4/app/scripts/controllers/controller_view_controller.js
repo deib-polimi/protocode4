@@ -15,6 +15,20 @@ App.ViewControllerController = Ember.ObjectController.extend({
         return this.get('device.type') === 'smartphone';
     }.property('device.type'),
 
+    currentRouteIsViewController: function() {
+        var path = this.get('target.location.lastSetURL');
+        if(!path) {
+            path = this.get('target.url');
+        }
+        if(path) {
+            var splittedPath = path.split('/');
+            return splittedPath[3] === 'viewController';
+        }
+        return false;
+    }.property(
+        'target.location.lastSetURL'
+    ),
+
     isRotatedObserver: function() {
         if(!this.get('isDeleted') && this.get('device.type') === 'tablet') {
             var mustUpdate = (this.get('isRotated') && !this.get('device.isDirty')) ||

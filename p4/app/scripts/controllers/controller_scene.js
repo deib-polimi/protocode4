@@ -52,19 +52,36 @@ App.SceneController = Ember.ObjectController.extend({
 
     deviceTypeObserver: function() {
         var scene = this.get('model');
-        var parentVC = scene.get('activeParentVC');
-        var containers = parentVC.get('containers')
-        scene.get('viewControllers').forEach(function(vc) {
-            vc.set('activeScene', scene);
-            var activeContainer;
-            activeContainer = containers.find(function(c) {
-                return c.get('childViewController') === vc;
+        if(!scene.get('isDeleted')) {
+            var parentVC = scene.get('activeParentVC');
+            var containers = parentVC.get('containers');
+            parentVC.set('activeScene', scene);
+            scene.get('viewControllers').forEach(function(vc) {
+                vc.set('activeScene', scene);
+                var activeContainer;
+                activeContainer = containers.find(function(c) {
+                    return c.get('childViewController') === vc;
+                });
+                if(activeContainer) {
+                    vc.set('activeContainer', activeContainer);
+                }
             });
-            if(activeContainer) {
-                vc.set('activeContainer', activeContainer);
-            }
-        });
-    }.observes('device.type'),
+        }
+    }.observes('model.activeParentVC'),
+
+    currentRouteIsViewController: function() {
+        var path = this.get('target.location.lastSetURL');
+        if(!path) {
+            path = this.get('target.url');
+        }
+        if(path) {
+            var splittedPath = path.split('/');
+            return splittedPath[3] === 'viewController';
+        }
+        return false;
+    }.property(
+        'target.location.lastSetURL'
+    ),
 
     hasMenu: function () {
         return this.get('menu.menuItems.length') > 0;

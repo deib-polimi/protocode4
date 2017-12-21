@@ -17,7 +17,7 @@ App.ViewController = DS.Model.extend({
     xmlName: 'viewController',
 
     uiPhoneControlsToShow: function() {
-        if(!this.get('isParent') && (this.get('activeScene') === null || this.get('activeScene.isTabbed'))) {
+        if(this.get('activeScene') && this.get('activeScene.isTabbed')) {
             return this.get('uiPhoneControls').filter(function(upc) {
                 return upc.constructor.toString() !== 'App.Container';
             });
