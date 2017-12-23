@@ -27,13 +27,6 @@ App.Scene = DS.Model.extend({
         'parentVCSmartphone.containers.[]'
     ),
 
-    type: function() {
-        if(this.get('viewControllers.length') > 1) {
-            return 'multiVC';
-        }
-        return 'singleVC';
-    }.property('viewControllers.length'),
-
     valid: function() {
         if(this.get('viewControllers.length') === 0) {
             return false;
@@ -49,27 +42,23 @@ App.Scene = DS.Model.extend({
         }
     }.property('application.device.type', 'parentVCSmartphone', 'parentVCTablet'),
 
-    /*childViewControllers: function() {
-        return this.get('viewControllers').without(this.get('parentVCSmartphone')).without(this.get('parentVCTablet'));
-    }.property('parentVCSmartphone', 'parentVCTablet', 'viewControllers.[]'),*/
-
     smartphoneMustShowTabMenu: function() {
-        if((this.get('type') === 'multiVC') && this.get('smartphoneHasTabMenu')) {
+        if((this.get('viewControllers.length') > 1) && this.get('smartphoneHasTabMenu')) {
             return true;
         }
         return false;
     }.property(
-        'type',
+        'viewControllers.length',
         'smartphoneHasTabMenu'
     ),
 
     tabletMustShowTabMenu: function() {
-        if((this.get('type') === 'multiVC') && this.get('tabletHasTabMenu')) {
+        if((this.get('viewControllers.length') > 1) && this.get('tabletHasTabMenu')) {
             return true;
         }
         return false;
     }.property(
-        'type',
+        'viewControllers.length',
         'tabletHasTabMenu'
     ),
 
@@ -125,23 +114,17 @@ App.Scene = DS.Model.extend({
         scene.setAttribute('hasMenu', this.get('hasMenu'));
         scene.setAttribute('smartphoneHasTabMenu', this.get('smartphoneHasTabMenu'));
         scene.setAttribute('tabletHasTabMenu', this.get('tabletHasTabMenu'));
-        if(this.get('type') === 'singleVC') {
-            var vcInfo = xmlDoc.createElement(this.get('viewController'));
-            vcInfo.setAttribute('id', this.get('viewControllers.content.0').getRefPath(''));
-            scene.appendChild(vcInfo);
-        } else {
-            if(!this.get('smartphoneHasTabMenu')) {
-                scene.appendChild(this.get('parentVCSmartphone').toXml(xmlDoc));
-            }
-            if(!this.get('tabletHasTabMenu')) {
-                scene.appendChild(this.get('parentVCTablet').toXml(xmlDoc));
-            }
-            this.get('viewControllers').forEach(function(vc) {
-                var vcInfo = xmlDoc.createElement(this.get('viewController'));
-                vcInfo.setAttribute('id', vc.getRefPath(''));
-                scene.appendChild(vcInfo);
-            });
+        if(!this.get('smartphoneHasTabMenu')) {
+            scene.appendChild(this.get('parentVCSmartphone').toXml(xmlDoc));
         }
+        if(!this.get('tabletHasTabMenu')) {
+            scene.appendChild(this.get('parentVCTablet').toXml(xmlDoc));
+        }
+        this.get('viewControllers').forEach(function(vc) {
+            var vcInfo = xmlDoc.createElement('viewController');
+            vcInfo.setAttribute('id', vc.getRefPath(''));
+            scene.appendChild(vcInfo);
+        });
 
         return scene;
     }

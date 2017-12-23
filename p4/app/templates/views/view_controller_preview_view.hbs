@@ -1,6 +1,6 @@
 <!-- #if valid is used not to show controls inside invalid chains -->
 {{#if childViewController}}
-    {{#each model.childViewController.uiPhoneControlsToShow}}
+    {{#each childViewController.uiPhoneControlsToShow}}
         {{#if valid}}
             {{view App.UiPhoneControlView}}
         {{/if}}

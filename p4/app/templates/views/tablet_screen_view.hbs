@@ -14,7 +14,7 @@
             <div class="bar-content-menu">{{controllers.editor.name}}</div>
         </div>
     {{/if}}
-    
+
     <!-- Tab Menu (Multiple screens in a scene) -->
     {{#if model.tabletMustShowTabMenu}}
         {{view App.MenuTabView}}
@@ -23,7 +23,7 @@
     <!-- App Menu -->
     {{#if model.hasMenu}}
         {{view App.MenuView}}
-        {{#link-to "viewController" viewControllerToShow}}{{view App.MenuViewShadow}}{{/link-to}}
+        {{#link-to "vc" viewControllerToShow}}{{view App.MenuViewShadow}}{{/link-to}}
     {{/if}}
 {{else}}
     <div class="action-bar">

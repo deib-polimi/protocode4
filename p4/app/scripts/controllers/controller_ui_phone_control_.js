@@ -213,9 +213,13 @@ App.UiPhoneControlController = Ember.ObjectController.extend(App.Saveable, {
             constraint.save().then(function (cons) {
                 cons.get('uiPhoneControl.constraints').addObject(cons);
                 cons.get('uiPhoneControl').save();
-            });;
+            });
 
-            this.transitionToRoute('constraint', constraint);
+            if(this.get('currentRouteIsViewController')) {
+                this.transitionToRoute('viewController.constraint', constraint);
+            } else {
+                this.transitionToRoute('scene.constraint', constraint);
+            }
         },
 
         deleteUiPhoneControl: function () {
@@ -255,7 +259,11 @@ App.UiPhoneControlController = Ember.ObjectController.extend(App.Saveable, {
                 });
             }
 
-            this.transitionToRoute('viewController');
+            if(this.get('currentRouteIsViewController')) {
+                this.transitionToRoute('viewController');
+            } else {
+                this.transitionToRoute('vc');
+            }
         }
     }
 

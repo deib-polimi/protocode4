@@ -266,26 +266,33 @@ body,
 
 /* Dropdown Content (Hidden by Default) */
 .dropdown-content {
-    display: none;
-    /*visibility: hidden;
+    //display: none;
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
+    border-top: none;
+    box-sizing: border-box;
+    box-shadow: 3px 3px 2px #aaaaaa;
+    visibility: hidden;
     opacity: 0;
-    height: 0px;
-    padding: 0px;
-    //transform: translateY(-2em);
-    transition: all 0.5s ease-in-out;*/
+    //padding: 0px;
+    transform: translateY(-2em);
+    transition: all 0.3s ease-in-out;
 }
 
 .dropdown-rotate {
-    transition: all 0.5s ease-in-out;
+    transition: all 0.3s ease-in-out;
 }
 
 .dropdown:hover .dropdown-content {
-    display: block;
-    /*visibility: visible;
+    //display: block;
+    visibility: visible;
     opacity: 1;
-    height: auto;
-    padding: 15px;
-    //transform: translateY(0%);*/
+    //height: auto;
+    //padding: 15px;
+    transform: translateY(0%);
 }
 
 .dropdown:hover .dropdown-rotate {

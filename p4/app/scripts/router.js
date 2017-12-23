@@ -54,10 +54,6 @@ App.Router.map(function () {
                     path: '/card/:card_id'
                 }, function () {
                 });
-                this.resource('viewController.controlContainer', {
-                    path: '/container/:container_id'
-                }, function () {
-                });
                 this.resource('viewController.controlEditText', {
                     path: '/editText/:editText_id'
                 }, function () {
@@ -182,7 +178,7 @@ App.Router.map(function () {
                     path: '/card/:card_id'
                 }, function () {
                 });
-                this.resource('scene.controlContainer', {
+                this.resource('controlContainer', {
                     path: '/container/:container_id'
                 }, function () {
                 });

@@ -177,67 +177,17 @@ App.ViewController = DS.Model.extend({
         'height'
     ),
 
-    /* NAVIGATION for smartphones and tablet with no screen
-        activeScene has:
-            Case 1: menu YES, tab menu YES
-            all VCs have menu button
-
-            Case 2: menu YES, tab menu NO
-            - first VC has menu button
-            - other VCs have back button (to the first VC)
-
-            Case 3: menu NO, tab menu YES
-            all VCs have back button to the precedent activeScene
-
-            Case 4: menu NO, tab menu NO
-            all VCs have back button but:
-            - first VC go back to precedent activeScene
-            - others VCs go back to first VC
-    */
     hasBackButton: function() {
         if(this.get('activeScene')) {
-            if(this.get('application.device.type') === 'smartphone') {
-                if(this.get('activeScene.hasMenu')) {
-                    if(this.get('activeScene.smartphoneHasTabMenu')) {
-                        // Case 1
-                        return false;
-                    } else {
-                        // Case 2
-                        if(this.get('activeScene.viewControllers').indexOf(this) === 0) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-                } else {
-                    // Cases 3 and 4
-                    return true;
-                }
+            if(this.get('activeScene.hasMenu')) {
+                return false;
             } else {
-                if(this.get('activeScene.hasMenu')) {
-                    if(this.get('activeScene.tabletHasTabMenu')) {
-                        // Case 1
-                        return false;
-                    } else {
-                        // Case 2
-                        if(this.get('activeScene.viewControllers').indexOf(this) === 0) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-                } else {
-                    // Cases 3 and 4
-                    return true;
-                }
+                return true;
             }
         }
-        return null;
+        return false;
     }.property(
-        'application.device.type',
         'activeScene',
-        'activeScene.smartphoneHasTabMenu',
-        'activeScene.tabletHasTabMenu',
         'activeScene.hasMenu'
     ),
 
@@ -258,19 +208,25 @@ App.ViewController = DS.Model.extend({
 
         // Delete uiPhoneControls not in control chains
         // The uiPhoneControls in chains will be deleted by the chains themselves
-        this.get('uiPhoneControls').forEach(function (uiPhoneControl) {
-            if(uiPhoneControl.get('controlChain') === null) {
-                Ember.run.once(self, function () {
-                    uiPhoneControl.deleteRecord();
-                    uiPhoneControl.save();
-                });
-            }
+        this.get('uiPhoneControls').filter(function(upc) {
+            return upc.get('controlChain') === null;
+        }).forEach(function (uiPhoneControl) {
+            Ember.run.once(self, function () {
+                uiPhoneControl.deleteRecord();
+                uiPhoneControl.save();
+            });
         });
 
         this.get('controlChains').forEach(function (chain) {
             Ember.run.once(self, function () {
-                chain.delete();
-                chain.save();
+                var uiPhoneControls = [].addObjects(chain.get('uiPhoneControls'));
+                chain.deleteRecord();
+                this.save().then(function(chain) {
+                    uiPhoneControls.forEach(function(c) {
+                        c.deleteRecord();
+                        c.save();
+                    });
+                });
             });
         });
 

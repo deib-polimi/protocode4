@@ -3,6 +3,14 @@
 
 // APP MENU
 
+.app-menu {
+    z-index: 10;
+}
+
+.app-menu-shadow {
+    z-index: 10;
+}
+
 .iPhoneX .app-menu {
     position: absolute;
     display: flex;

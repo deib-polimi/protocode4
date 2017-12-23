@@ -7,6 +7,10 @@ App.SceneDispatchUiPhoneControlRoute = Ember.Route.extend({
     afterModel: function (control, transition) {
         var controlType = control.constructor.toString();
         controlType = controlType.split(".")[1];
-        this.transitionTo('scene.control' + controlType, control);
+        if(controlType !== 'Container') {
+            this.transitionTo('scene.control' + controlType, control);
+        } else {
+            this.transitionTo('control' + controlType, control);
+        }
     }
 });

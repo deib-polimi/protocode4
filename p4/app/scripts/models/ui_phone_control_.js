@@ -666,6 +666,10 @@ App.UiPhoneControl = App.UiControl.extend({
     decorateXml: function (xmlDoc, xmlElem) {
         xmlElem.setAttribute('id', this.get('name'));
 
+        if (this.get('viewController')) {
+            xmlElem.setAttribute('viewController', this.get('viewController').getRefPath(''));
+        }
+
         xmlElem.setAttribute('posX', this.get('posX'));
         xmlElem.setAttribute('posY', this.get('posY'));
 
@@ -716,10 +720,6 @@ App.UiPhoneControl = App.UiControl.extend({
             });
         }
 
-        if (this.get('viewController')) {
-            xmlElem.setAttribute('viewController', this.get('viewController').getRefPath(''));
-        }
-
         return xmlElem;
     },
 
@@ -729,37 +729,6 @@ App.UiPhoneControl = App.UiControl.extend({
         updatedPath = this.get('viewController').getRefPath(updatedPath);
 
         return updatedPath;
-    },
-
-    getRelatedUiPhoneControls: function () {
-        /*var viewController = this.get('viewController');
-        var self = this;
-
-        if (viewController) {
-            viewController.get('uiPhoneControls').then(function (uiPhoneControls) {
-                uiPhoneControls.forEach(function (uiPhoneControl) {
-                    var constraints = uiPhoneControl.get('constraints');
-                    constraints.forEach(function (constraint) {
-                        if (constraint.get('referenceElement') === self) {
-                            Ember.run.once(self, function () {
-                                constraint.deleteRecord();
-                                constraint.save();
-                            });
-                        }
-                    });
-                });
-            });
-        }
-
-
-
-
-        return constraints.map(function (constraint) {
-            return self.get(constraint);
-        }).filter(function (item) {
-            return item !== null;
-        });*/
-
     }
 
 });

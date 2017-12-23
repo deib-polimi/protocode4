@@ -25,9 +25,8 @@ App.Container = App.UiPhoneControl.extend({
 
     toXml: function (xmlDoc) {
         var elem = xmlDoc.createElement('container');
-        this.decorateXml(xmlDoc, elem);
-
         elem.setAttribute('childViewController', this.get('childViewController').getRefPath(''));
+        this.decorateXml(xmlDoc, elem);
 
         return elem;
     },
