@@ -8,7 +8,7 @@ App.WebView = App.UiPhoneControl.extend({
     widthFixed: DS.attr('number', {defaultValue: 240}),
     heightFixed: DS.attr('number', {defaultValue: 128}),
 
-    xmlName: 'webView',
+    xmlName: 'webViews',
 
     toXml: function (xmlDoc) {
         var elem = xmlDoc.createElement(this.get('xmlName'));

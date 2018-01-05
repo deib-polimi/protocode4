@@ -14,7 +14,7 @@ App.ViewController = DS.Model.extend({
 
     activeScene: null,
     activeContainer: null,
-    xmlName: 'viewController',
+    xmlName: 'viewControllers',
 
     uiPhoneControlsToShow: function() {
         if(this.get('activeScene') && this.get('activeScene.isTabbed')) {
@@ -268,12 +268,6 @@ App.ViewController = DS.Model.extend({
 
         this.get('asyncTasks').map(function (asyncTask) {
             viewController.appendChild(asyncTask.toXml(xmlDoc));
-        });
-
-        this.get('controlChains').filter(function(chain) {
-            return chain.get('valid');
-        }).map(function (controlChain) {
-            viewController.appendChild(controlChain.toXml(xmlDoc));
         });
 
         this.get('uiPhoneControls').filter(function(control) {

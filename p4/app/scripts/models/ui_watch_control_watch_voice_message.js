@@ -2,7 +2,7 @@ App.WatchVoiceMessage = App.UiWatchControl.extend({
     name: DS.attr('string', {defaultValue: 'VoiceMessage'}),
     title: DS.attr('string', {defaultValue: 'REC'}),
 
-    xmlName: 'watchVoiceMessage',
+    xmlName: 'watchVoiceMessages',
 
     toXml: function (xmlDoc) {
         var vmessage = xmlDoc.createElement(this.get('xmlName'));

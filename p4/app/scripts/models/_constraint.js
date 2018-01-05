@@ -11,7 +11,7 @@ App.Constraint = DS.Model.extend({
     valid: DS.attr('boolean'),
     flag: DS.attr('boolean', {defaultValue: false}),
 
-    xmlName: 'constraint',
+    xmlName: 'positionConstraints',
 
     filteredLayoutEdges: function() {
         var edges = this.get('layoutEdges');
@@ -91,10 +91,11 @@ App.Constraint = DS.Model.extend({
         var constraint = xmlDoc.createElement(this.get('xmlName'));
         constraint.setAttribute('id', this.get('id'));
         constraint.setAttribute('layoutEdge', this.get('layoutEdge'));
-        if(this.get('withParent') === true) {
-            constraint.setAttribute('referenceElement', 'parentView');
-        } else if(this.get('referenceElement') !== null){
-            constraint.setAttribute('referenceElement', this.get('referenceElement').getRefPath(''));
+        constraint.setAttribute('withParent', this.get('withParent'));
+        if(!this.get('withParent')) {
+            constraint.setAttribute('referenceElement', this.get('referenceElement.id'));
+        } else {
+            constraint.setAttribute('referenceElement', 'parent');
         }
         constraint.setAttribute('referenceLayoutEdge', this.get('referenceLayoutEdge'));
 

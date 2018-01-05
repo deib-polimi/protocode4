@@ -53,22 +53,22 @@ App.Application = DS.Model.extend({
                         return item_watchControllers.toXml(xmlDoc);
                     })).then(function (values_watchControllers) {
 
-                        var vcs = xmlDoc.createElement('viewControllers');
-                        appModel.appendChild(vcs);
+                        /*var vcs = xmlDoc.createElement('viewControllers');
+                        appModel.appendChild(vcs);*/
                         values_viewControllers.map(function (value) {
-                            vcs.appendChild(value);
+                            appModel.appendChild(value);
                         });
 
-                        var ss = xmlDoc.createElement('scenes');
-                        appModel.appendChild(ss);
+                        /*var ss = xmlDoc.createElement('scenes');
+                        appModel.appendChild(ss);*/
                         values_scenes.map(function (value) {
-                            ss.appendChild(value);
+                            appModel.appendChild(value);
                         });
 
-                        var wcs = xmlDoc.createElement('watchControllers');
-                        appModel.appendChild(wcs);
+                        /*var wcs = xmlDoc.createElement('watchControllers');
+                        appModel.appendChild(wcs);*/
                         values_watchControllers.map(function (value) {
-                            wcs.appendChild(value);
+                            appModel.appendChild(value);
                         });
 
                         appModel.appendChild(self.get('menu').toXml(xmlDoc));

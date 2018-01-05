@@ -13,7 +13,7 @@ App.Label = App.UiPhoneControl.extend({
     textSize: DS.attr('number', {defaultValue: 16}),
     textDecoration: DS.attr('string', {defaultValue: 'none'}),
 
-    xmlName: 'textView',
+    xmlName: 'textViews',
 
     isBold: function () {
         return this.get('textDecoration') === 'bold';

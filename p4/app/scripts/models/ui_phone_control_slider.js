@@ -7,7 +7,7 @@ App.Slider = App.UiPhoneControl.extend({
     widthFixed: DS.attr('number', {defaultValue: 150}),
     heightFixed: DS.attr('number', {defaultValue: 50}),
 
-    xmlName: 'slider',
+    xmlName: 'sliders',
 
     toXml: function (xmlDoc) {
         var slider = xmlDoc.createElement(this.get('xmlName'));

@@ -7,7 +7,7 @@ App.AudioPlayer = App.UiPhoneControl.extend({
     widthFixed: DS.attr('number', {defaultValue: 250}),
     heightFixed: DS.attr('number', {defaultValue: 75}),
 
-    xmlName: 'audioPlayer',
+    xmlName: 'audioPlayers',
 
     didCreate: function () {
         this._super();

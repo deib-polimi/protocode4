@@ -6,7 +6,7 @@ App.StorageRecord = DS.Model.extend({
 
     storageHandler: DS.belongsTo('storageHandler'),
 
-    xmlName: 'storageRecord',
+    xmlName: 'storageRecords',
 
     toXml: function (xmlDoc) {
 

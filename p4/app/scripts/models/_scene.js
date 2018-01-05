@@ -9,7 +9,7 @@ App.Scene = DS.Model.extend({
     smartphoneHasTabMenu: DS.attr('boolean', {defaultValue: true}),
     tabletHasTabMenu: DS.attr('boolean', {defaultValue: true}),
 
-    xmlName: 'scene',
+    xmlName: 'scenes',
 
     viewControllers: function() {
         if(this.get('parentVCSmartphone')) {

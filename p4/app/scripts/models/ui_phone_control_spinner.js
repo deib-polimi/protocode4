@@ -8,7 +8,7 @@ App.Spinner = App.UiPhoneControl.extend({
     widthFixed: DS.attr('number', {defaultValue: 180}),
     heightFixed: DS.attr('number', {defaultValue: 48}),
 
-    xmlName: 'spinner',
+    xmlName: 'spinners',
 
     toXml: function (xmlDoc) {
         var spinner = xmlDoc.createElement(this.get('xmlName'));

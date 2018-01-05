@@ -8,7 +8,7 @@ App.Container = App.UiPhoneControl.extend({
 
     childViewController: DS.belongsTo('viewController'),
 
-    xmlName: "containerView",
+    xmlName: "containerViews",
 
     didCreate: function() {
         this.set('name', 'Container-' + this.get('id'));

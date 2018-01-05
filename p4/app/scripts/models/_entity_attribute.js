@@ -5,7 +5,7 @@ App.EntityAttribute = DS.Model.extend({
 
     entity: DS.belongsTo('entity'),
 
-    xmlName: 'entityAttribute',
+    xmlName: 'entityAttributes',
 
     toXml: function (xmlDoc) {
 

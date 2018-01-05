@@ -482,6 +482,8 @@ App.UiPhoneControl = App.UiControl.extend({
                 return this.get('viewController').getWidthFromPercent(this.get('widthPercent'));
             } else if(this.widthIsBindedByConstraints(this.get('constraints'))) {
                 return this.get('computedWidth');
+            } else if(this.get('controlChain') && (this.get('controlChain.axis') === 'horizontal') && (this.get('controlChain.type') === 'weighted')) {
+                return this.get('computedWidth');
             } else if(this.get('isRatioConstrained')) {
                 if(this.get('isHeightPercentConstrained') || this.heightIsBindedByConstraints(this.get('constraints'))) {
                     return this.get('height') * (this.get('ratioWidth') / this.get('ratioHeight'));
@@ -499,6 +501,9 @@ App.UiPhoneControl = App.UiControl.extend({
         'widthPercent',
         'viewController.width',
         'computedWidth',
+        'controlChain',
+        'controlChain.axis',
+        'controlChain.type',
         'isRatioConstrained',
         'isHeightPercentConstrained',
         'height',
@@ -517,6 +522,8 @@ App.UiPhoneControl = App.UiControl.extend({
                 return this.get('viewController').getHeightFromPercent(this.get('heightPercent'));
             } else if(this.heightIsBindedByConstraints(this.get('constraints'))) {
                 return this.get('computedHeight');
+            } else if(this.get('controlChain') && (this.get('controlChain.axis') === 'vertical') && (this.get('controlChain.type') === 'weighted')) {
+                return this.get('computedHeight');
             } else if(this.get('isRatioConstrained')) {
                 return this.get('width') * (this.get('ratioHeight') / this.get('ratioWidth'));
             }
@@ -531,6 +538,9 @@ App.UiPhoneControl = App.UiControl.extend({
         'heightPercent',
         'viewController.height',
         'computedHeight',
+        'controlChain',
+        'controlChain.axis',
+        'controlChain.type',
         'isRatioConstrained',
         'ratioHeight',
         'ratioWidth',
@@ -673,11 +683,27 @@ App.UiPhoneControl = App.UiControl.extend({
         xmlElem.setAttribute('posX', this.get('posX'));
         xmlElem.setAttribute('posY', this.get('posY'));
 
-        xmlElem.setAttribute('width', this.get('width'));
-        xmlElem.setAttribute('height', this.get('height'));
+        xmlElem.setAttribute('defaultWidth', this.get('defaultWidth'));
+        xmlElem.setAttribute('defaultHeight', this.get('defaultHeight'));
 
         if(this.get('controlChain')) {
-            xmlElem.setAttribute('controlChain', this.get('controlChain').getRefPath(''));
+            var controlChain = this.get('controlChain');
+            var chain = xmlDoc.createElement('controlChain');
+            chain.setAttribute('axis', controlChain.get('axis'));
+            chain.setAttribute('type', controlChain.get('type'));
+            if(controlChain.get('type') === 'weighted') {
+                chain.setAttribute('weight', this.get('valueInChain'));
+            }
+            // Only first control needs chain byas
+            if((controlChain.get('type') === 'packed') && (controlChain.getPrecedentControlId(this) === 'parent')) {
+                chain.setAttribute('byas', controlChain.get('byas'));
+            }
+            if(controlChain.get('type') === 'packed' || controlChain.get('type') === 'weighted') {
+                chain.setAttribute('spacing', controlChain.get('spacing'));
+            }
+            chain.setAttribute('precedentControlId', controlChain.getPrecedentControlId(this));
+            chain.setAttribute('followingControlId', controlChain.getFollowingControlId(this));
+            xmlElem.appendChild(chain);
         }
 
         xmlElem.setAttribute('paddingTop', this.get('paddingTop'));
@@ -694,29 +720,31 @@ App.UiPhoneControl = App.UiControl.extend({
             return c.get('valid');
         });
         if(constraints.get('length') > 0 || this.get('isWidthConstrained') || this.get('isHeightConstrained')  || this.get('isWidthPercentConstrained')  || this.get('isHeightPercentConstrained') || this.get('isRatioConstrained')) {
-            var elem = xmlDoc.createElement('constraints');
+            var dimensionConstraints = xmlDoc.createElement('dimensionConstraint');
             if(this.get('isWidthConstrained')) {
-                elem.setAttribute('fixedWidth', true);
+                //elem.setAttribute('fixedWidth', true);
+                dimensionConstraints.setAttribute('fixedWidth', this.get('widthFixed'));
             }
             if(this.get('isHeightConstrained')) {
-                elem.setAttribute('fixedHeight', true);
+                //elem.setAttribute('fixedHeight', true);
+                dimensionConstraints.setAttribute('fixedHeight', this.get('heightFixed'));
             }
             if(this.get('isRatioConstrained')) {
-                elem.setAttribute('fixedRatio', true);
-                elem.setAttribute('ratio', this.get('ratioWidth') + ':' + this.get('ratioHeight'));
+                //elem.setAttribute('fixedRatio', true);
+                dimensionConstraints.setAttribute('fixedRatio', this.get('ratioWidth') + ':' + this.get('ratioHeight'));
             }
             if(this.get('isWidthPercentConstrained')) {
-                elem.setAttribute('fixedPercentWidth', true);
-                elem.setAttribute('widthPercent', this.get('widthPercent'));
+                //elem.setAttribute('fixedPercentWidth', true);
+                dimensionConstraints.setAttribute('widthPercent', this.get('widthPercent'));
             }
             if(this.get('isHeightPercentConstrained')) {
-                elem.setAttribute('fixedPercentHeight', true);
-                elem.setAttribute('heightPercent', this.get('heightPercent'));
+                //elem.setAttribute('fixedPercentHeight', true);
+                dimensionConstraints.setAttribute('heightPercent', this.get('heightPercent'));
             }
-            xmlElem.appendChild(elem);
+            xmlElem.appendChild(dimensionConstraints);
 
             constraints.forEach(function(constraint) {
-                elem.appendChild(constraint.toXml(xmlDoc));
+                xmlElem.appendChild(constraint.toXml(xmlDoc));
             });
         }
 

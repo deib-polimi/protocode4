@@ -11,7 +11,7 @@ App.EditText = App.UiPhoneControl.extend({
     textColor: DS.attr('string', {defaultValue: '#000000'}),
     textSize: DS.attr('number', {defaultValue: 16}),
 
-    xmlName: 'editText',
+    xmlName: 'editTexts',
 
     toXml: function (xmlDoc) {
         var elem = xmlDoc.createElement(this.get('xmlName'));
