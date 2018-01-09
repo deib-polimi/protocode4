@@ -1,5 +1,5 @@
 App.Navigation = DS.Model.extend({
-    destination: DS.attr('string', {default: null}),
+    destination: DS.attr('string', {default: '/null'}),
 
     toXml: function (xmlDoc) {
         var elem = xmlDoc.createElement('navigation');

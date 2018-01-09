@@ -300,6 +300,40 @@ App.SceneController = Ember.ObjectController.extend({
         }
     }.observes('isRotated', 'device'),
 
+    zoomLevelObserver: function() {
+        if(!this.get('isDeleted')) {
+            if(this.get('device.name') === 'iPhoneX') {
+                this.set('zoomLevel', 0.6);
+            } else if(this.get('device.name') === 'iPhone7Plus') {
+                this.set('zoomLevel', 0.6);
+            } else if(this.get('device.name') === 'iPhone7') {
+                this.set('zoomLevel', 0.6);
+            } else if(this.get('device.name') === 'iPhone6Plus') {
+                this.set('zoomLevel', 0.6);
+            } else if(this.get('device.name') === 'iPhone6') {
+                this.set('zoomLevel', 0.6);
+            } else if(this.get('device.name') === 'iPhone5') {
+                this.set('zoomLevel', 0.7);
+            } else if(this.get('device.name') === 'iPad12_9') {
+                this.set('zoomLevel', 0.5);
+            } else if(this.get('device.name') === 'iPad9_7') {
+                this.set('zoomLevel', 0.6);
+            } else if(this.get('device.name') === 'GooglePixel') {
+                this.set('zoomLevel', 0.6);
+            } else if(this.get('device.name') === 'Nexus6P') {
+                this.set('zoomLevel', 0.6);
+            } else if(this.get('device.name') === 'Nexus5') {
+                this.set('zoomLevel', 0.8);
+            } else if(this.get('device.name') === 'Nexus7') {
+                this.set('zoomLevel', 0.8);
+            } else if(this.get('device.name') === 'Nexus9') {
+                this.set('zoomLevel', 0.7);
+            } else if(this.get('device.name') === 'Nexus10') {
+                this.set('zoomLevel', 0.6);
+            }
+        }
+    }.observes('device.name'),
+
     actions: {
         transitionToRoute: function(route, model) {
             this.transitionToRoute(route, model);

@@ -15,6 +15,7 @@ App.ViewController = DS.Model.extend({
     activeScene: null,
     activeContainer: null,
     xmlName: 'viewControllers',
+    xmlNameParent: 'parentViewControllers',
 
     uiPhoneControlsToShow: function() {
         if(this.get('activeScene') && this.get('activeScene.isTabbed')) {
@@ -245,7 +246,12 @@ App.ViewController = DS.Model.extend({
     },
 
     toXml: function (xmlDoc) {
-        var viewController = xmlDoc.createElement(this.get('xmlName'));
+        var viewController;
+        if(this.get('isParent')) {
+            viewController = xmlDoc.createElement(this.get('xmlNameParent'));
+        } else {
+            viewController = xmlDoc.createElement(this.get('xmlName'));
+        }
         viewController.setAttribute('id', this.get('id'));
         viewController.setAttribute('name', this.get('name'));
         viewController.setAttribute('backgroundColor', this.get('backgroundColor'));
@@ -270,9 +276,15 @@ App.ViewController = DS.Model.extend({
             viewController.appendChild(asyncTask.toXml(xmlDoc));
         });
 
+        this.get('controlChains').filter(function(chain) {
+            return chain.get('valid');
+        }).map(function (controlChain) {
+            viewController.appendChild(controlChain.toXml(xmlDoc));
+        });
+
         this.get('uiPhoneControls').filter(function(control) {
             return control.get('valid');
-        }).map(function (uiPhoneControl) {
+        }).forEach(function (uiPhoneControl) {
             viewController.appendChild(uiPhoneControl.toXml(xmlDoc));
         });
 
@@ -280,7 +292,13 @@ App.ViewController = DS.Model.extend({
     },
 
     getRefPath: function (path) {
-        return '//@' + this.get('xmlName') + '[id=\'' + this.get('id') + '\']' + path;
+        if(this.get('isParent')) {
+            var updatedPath = '/@' + this.get('xmlNameParent') + '[id=\'' + this.get('id') + '\']' + path;
+            updatedPath = this.get('scene').getRefPath(updatedPath);
+            return updatedPath;
+        } else {
+            return '//@' + this.get('xmlName') + '[id=\'' + this.get('id') + '\']' + path;
+        }
     }
 
 });

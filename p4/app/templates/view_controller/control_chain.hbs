@@ -11,6 +11,10 @@
         <div class="panel-body">
             {{partial "partials/invalid_report"}}
             <br>
+            {{#if controller.warningReport}}
+                <div class="warning-report">{{controller.warningReport}}</div>
+                <br>
+            {{/if}}
             {{partial "partials/first_commands"}}
             <ul class="nav nav-tabs spacer">
                 <li class="active">

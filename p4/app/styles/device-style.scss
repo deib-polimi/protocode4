@@ -58,7 +58,7 @@
 .smartphone-view.iPhoneX {
     //Padding per centrare lo schermo
     //dimensione schermo in pixel = dimensione in dp 375x812
-    padding: 123px 67px 102px 60px;
+    padding: 72px 67px 153px 60px;
     background-image: url("../img/smartphones/ios/iPhone_X.png");
 }
 
@@ -69,6 +69,8 @@
         //Altezza status bar in pixel = altezza in points
         height: 49px; //+1 border bottom
         border-bottom: solid 1px #ccc;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
     }
 
     .smartphone-screen-view .action-bar {
@@ -76,6 +78,8 @@
     }
 
     .smartphone-screen-view {
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
         border-bottom-left-radius: 35px;
         border-bottom-right-radius: 35px;
     }
@@ -129,7 +133,7 @@
 .smartphone-view.iPhone7 {
     //Padding per centrare lo schermo
     //dimensione schermo in pixel = dimensione in dp 375x667
-    padding: 171px 60px 162px 65px;
+    padding: 121px 60px 212px 65px;
     background-image: url("../img/smartphones/ios/iPhone_7.png");
 }
 
@@ -191,7 +195,7 @@
 .smartphone-view.iPhone6 {
     //Padding per centrare lo schermo
     //dimensione schermo in pixel = dimensione in dp 375x667
-    padding: 171px 60px 162px 65px;
+    padding: 121px 60px 212px 65px;
     background-image: url("../img/smartphones/ios/iPhone_6.png");
 }
 
@@ -222,7 +226,7 @@
 .smartphone-view.iPhone5 {
     //Padding per centrare lo schermo
     //dimensione schermo in pixel = dimensione in dp 375x667
-    padding: 220px 84px 212px 96px;
+    padding: 130px 84px 302px 96px;
     background-image: url("../img/smartphones/ios/iPhone_5.png");
 }
 
@@ -253,7 +257,7 @@
 .tablet-view.iPad12_9 {
     //Padding per centrare lo schermo
     //dimensione schermo in pixel = dimensione in dp 1366x1024
-    padding: 87px 118px 89px 116px;
+    padding: 67px 118px 109px 116px;
     background-image: url("../img/tablets/ios/iPad_12_9.png");
 }
 
@@ -296,7 +300,7 @@
 .tablet-view.iPad9_7 {
     //Padding per centrare lo schermo
     //dimensione schermo in pixel = dimensione in dp 1024x768
-    padding: 101px 428px 331px 148px;
+    padding: 61px 458px 371px 118px;
     background-image: url("../img/tablets/ios/iPad_9_7.png");
 }
 
@@ -339,7 +343,7 @@
 .smartphone-view.GooglePixel {
     //Padding per centrare lo schermo
     //dimensione schermo in pixel = dimensione in dp 411x731
-    padding: 124px 43px 141px 46px;
+    padding: 104px 43px 161px 46px;
     background-image: url("../img/smartphones/android/google_pixel.png");
 }
 
@@ -403,7 +407,7 @@
 .smartphone-view.Nexus6P {
     //Padding per centrare lo schermo
     //dimensione schermo in pixel = dimensione in dp 411x731
-    padding: 135px 45px 134px 44px;
+    padding: 105px 45px 164px 44px;
     background-image: url("../img/smartphones/android/nexus_6p.png");
 }
 
@@ -467,7 +471,7 @@
 .smartphone-view.Nexus5 {
     //Padding per centrare lo schermo
     //dimensione schermo in pixel = dimensione in dp 360x640
-    padding: 156px 70px 204px 69px;
+    padding: 76px 70px 284px 69px;
     background-image: url("../img/smartphones/android/nexus_5.png");
 }
 
@@ -533,7 +537,7 @@
 .tablet-view.Nexus7 {
     //Padding per centrare lo schermo
     //dimensione schermo in pixel = dimensione in dp 960x600
-    padding: 100px 443px 500px 197px;
+    padding: 60px 493px 540px 147px;
     background-image: url("../img/tablets/android/nexus_7.png");
 }
 
@@ -616,7 +620,7 @@
 .tablet-view.Nexus9 {
     //Padding per centrare lo schermo
     //dimensione schermo in pixel = dimensione in dp 1024x768
-    padding: 98px 397px 334px 179px;
+    padding: 48px 437px 384px 139px;
     background-image: url("../img/tablets/android/nexus_9.png");
 }
 
@@ -699,7 +703,7 @@
 .tablet-view.Nexus10 {
     //Padding per centrare lo schermo
     //dimensione schermo in pixel = dimensione in dp 1280x800
-    padding: 197px 163px 203px 157px;
+    padding: 137px 183px 263px 137px;
     background-image: url("../img/tablets/android/nexus_10.png");
 }
 

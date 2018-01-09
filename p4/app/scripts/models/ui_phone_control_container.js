@@ -8,7 +8,7 @@ App.Container = App.UiPhoneControl.extend({
 
     childViewController: DS.belongsTo('viewController'),
 
-    xmlName: "containerViews",
+    xmlName: "containers",
 
     didCreate: function() {
         this.set('name', 'Container-' + this.get('id'));
@@ -24,14 +24,10 @@ App.Container = App.UiPhoneControl.extend({
     },
 
     toXml: function (xmlDoc) {
-        var elem = xmlDoc.createElement('container');
+        var elem = xmlDoc.createElement(this.get('xmlName'));
         elem.setAttribute('childViewController', this.get('childViewController').getRefPath(''));
         this.decorateXml(xmlDoc, elem);
 
         return elem;
-    },
-
-    getRefPath: function (path) {
-        return '//@' + this.get('xmlName') + '[id=\'' + this.get('id') + '\']' + path;
     }
 });

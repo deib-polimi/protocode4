@@ -3,9 +3,18 @@
  */
 App.ControlVideocameraControllerIndexController = App.UiPhoneControlController.extend({
 
+    videoViews: function() {
+        if(this.get('model.viewController.uiPhoneControls')) {
+            return this.get('model.viewController.uiPhoneControls').filter(function(control) {
+                return control.constructor.toString() === 'App.VideoView';
+            });
+        }
+        return [];
+    }.property('model.viewController.uiPhoneControls.[]'),
+
     allowedVideoViews: function () {
         return this.get('videoViews').filterBy('sourceType.type', 'hardwareFile');
-    }.property('videoViews.@each'),
+    }.property('videoViews.@each.sourceType.type'),
 
     normalBackType: function (key, value) {
         return this.backgroundType(key, value, 'normal');

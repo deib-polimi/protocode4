@@ -676,34 +676,29 @@ App.UiPhoneControl = App.UiControl.extend({
     decorateXml: function (xmlDoc, xmlElem) {
         xmlElem.setAttribute('id', this.get('name'));
 
-        if (this.get('viewController')) {
+        if(this.get('viewController')) {
             xmlElem.setAttribute('viewController', this.get('viewController').getRefPath(''));
         }
 
-        xmlElem.setAttribute('posX', this.get('posX'));
-        xmlElem.setAttribute('posY', this.get('posY'));
+        xmlElem.setAttribute('posX', this.get('start'));
+        xmlElem.setAttribute('posY', this.get('top'));
 
         xmlElem.setAttribute('defaultWidth', this.get('defaultWidth'));
         xmlElem.setAttribute('defaultHeight', this.get('defaultHeight'));
 
         if(this.get('controlChain')) {
             var controlChain = this.get('controlChain');
-            var chain = xmlDoc.createElement('controlChain');
-            chain.setAttribute('axis', controlChain.get('axis'));
-            chain.setAttribute('type', controlChain.get('type'));
+            xmlElem.setAttribute('controlChain', controlChain.getRefPath(''));
+            xmlElem.setAttribute('indexInChain', controlChain.getIndex(this));
+            if(controlChain.getPrecedentControl(this)) {
+                xmlElem.setAttribute('precedentInChain', controlChain.getPrecedentControl(this).getRefPath(''));
+            }
+            if(controlChain.getFollowingControl(this)) {
+                xmlElem.setAttribute('followingInChain', controlChain.getFollowingControl(this).getRefPath(''));
+            }
             if(controlChain.get('type') === 'weighted') {
-                chain.setAttribute('weight', this.get('valueInChain'));
+                xmlElem.setAttribute('weight', this.get('valueInChain'));
             }
-            // Only first control needs chain byas
-            if((controlChain.get('type') === 'packed') && (controlChain.getPrecedentControlId(this) === 'parent')) {
-                chain.setAttribute('byas', controlChain.get('byas'));
-            }
-            if(controlChain.get('type') === 'packed' || controlChain.get('type') === 'weighted') {
-                chain.setAttribute('spacing', controlChain.get('spacing'));
-            }
-            chain.setAttribute('precedentControlId', controlChain.getPrecedentControlId(this));
-            chain.setAttribute('followingControlId', controlChain.getFollowingControlId(this));
-            xmlElem.appendChild(chain);
         }
 
         xmlElem.setAttribute('paddingTop', this.get('paddingTop'));
@@ -721,27 +716,33 @@ App.UiPhoneControl = App.UiControl.extend({
         });
         if(constraints.get('length') > 0 || this.get('isWidthConstrained') || this.get('isHeightConstrained')  || this.get('isWidthPercentConstrained')  || this.get('isHeightPercentConstrained') || this.get('isRatioConstrained')) {
             var dimensionConstraints = xmlDoc.createElement('dimensionConstraint');
+            var mustExportDimensionConstraints = false;
+
+            dimensionConstraints.setAttribute('uiPhoneControl', this.getRefPath(''));
+
             if(this.get('isWidthConstrained')) {
-                //elem.setAttribute('fixedWidth', true);
                 dimensionConstraints.setAttribute('fixedWidth', this.get('widthFixed'));
+                mustExportDimensionConstraints = true;
             }
             if(this.get('isHeightConstrained')) {
-                //elem.setAttribute('fixedHeight', true);
                 dimensionConstraints.setAttribute('fixedHeight', this.get('heightFixed'));
+                mustExportDimensionConstraints = true;
             }
             if(this.get('isRatioConstrained')) {
-                //elem.setAttribute('fixedRatio', true);
                 dimensionConstraints.setAttribute('fixedRatio', this.get('ratioWidth') + ':' + this.get('ratioHeight'));
+                mustExportDimensionConstraints = true;
             }
             if(this.get('isWidthPercentConstrained')) {
-                //elem.setAttribute('fixedPercentWidth', true);
                 dimensionConstraints.setAttribute('widthPercent', this.get('widthPercent'));
+                mustExportDimensionConstraints = true;
             }
             if(this.get('isHeightPercentConstrained')) {
-                //elem.setAttribute('fixedPercentHeight', true);
                 dimensionConstraints.setAttribute('heightPercent', this.get('heightPercent'));
+                mustExportDimensionConstraints = true;
             }
-            xmlElem.appendChild(dimensionConstraints);
+            if(mustExportDimensionConstraints) {
+                xmlElem.appendChild(dimensionConstraints);
+            }
 
             constraints.forEach(function(constraint) {
                 xmlElem.appendChild(constraint.toXml(xmlDoc));
@@ -752,10 +753,8 @@ App.UiPhoneControl = App.UiControl.extend({
     },
 
     getRefPath: function (path) {
-        var updatedPath = '/@' + this.get('xmlName') + '[id=\'' + this.get('id') + '\']';
-
+        var updatedPath = '/@' + this.get('xmlName') + '[id=\'' + this.get('name') + '\']' + path;
         updatedPath = this.get('viewController').getRefPath(updatedPath);
-
         return updatedPath;
     }
 

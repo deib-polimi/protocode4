@@ -13,11 +13,11 @@ App.ViewControllerRoute = Ember.Route.extend({
         },
 
         increaseZoom: function () {
-            this.set('controller.zoomLevel', Math.round((this.get('controller.zoomLevel') + 0.2) * 100) / 100);
+            this.set('controller.zoomLevel', Math.round((this.get('controller.zoomLevel') + 0.1) * 100) / 100);
         },
 
         decreaseZoom: function () {
-            this.set('controller.zoomLevel', Math.round((this.get('controller.zoomLevel') - 0.2) * 100) / 100);
+            this.set('controller.zoomLevel', Math.round((this.get('controller.zoomLevel') - 0.1) * 100) / 100);
         },
 
         rotate: function() {

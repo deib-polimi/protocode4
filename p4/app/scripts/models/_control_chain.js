@@ -8,7 +8,8 @@ App.ControlChain = DS.Model.extend({
     uiPhoneControls: DS.hasMany('uiPhoneControl', {polymorphic: true}),
     spacing: DS.attr('number', {defaultValue: 0}),
 
-    xmlName: 'controlChain',
+    xmlName: 'controlChains',
+    xmlNameChild: 'controlsInChain',
 
     valid: function() {
         if(!this.get('isDeleted')) {
@@ -395,20 +396,24 @@ App.ControlChain = DS.Model.extend({
         return spaceForControls;
     },
 
-    getPrecedentControlId: function(control) {
-        var index = this.get('uiPhoneControls').indexOf(control);
-        if(index === 0) {
-            return 'parent';
-        }
-        return this.get('uiPhoneControls.content.' + (index - 1) + '.name');
+    getIndex: function(control) {
+        return this.get('uiPhoneControls').indexOf(control);
     },
 
-    getFollowingControlId: function(control) {
+    getPrecedentControl: function(control) {
+        var index = this.get('uiPhoneControls').indexOf(control);
+        if(index === 0) {
+            return null;
+        }
+        return this.get('uiPhoneControls.content.' + (index - 1));
+    },
+
+    getFollowingControl: function(control) {
         var index = this.get('uiPhoneControls').indexOf(control);
         if(index === (this.get('uiPhoneControls.length') - 1)) {
-            return 'parent';
+            return null;
         }
-        return this.get('uiPhoneControls.content.' + (index + 1) + '.name');
+        return this.get('uiPhoneControls.content.' + (index + 1));
     },
 
     didCreate: function () {
@@ -430,11 +435,13 @@ App.ControlChain = DS.Model.extend({
         this.deleteRecord();
     },
 
-    /*toXml: function (xmlDoc) {
+    toXml: function (xmlDoc) {
         var chain = xmlDoc.createElement(this.get('xmlName'));
         chain.setAttribute('id', this.get('id'));
+        chain.setAttribute('viewController', this.get('viewController').getRefPath(''));
         chain.setAttribute('axis', this.get('axis'));
         chain.setAttribute('type', this.get('type'));
+        chain.setAttribute('nControls', this.get('uiPhoneControls.length'));
         if(this.get('type') === 'packed') {
             chain.setAttribute('byas', this.get('byas'));
         }
@@ -442,11 +449,20 @@ App.ControlChain = DS.Model.extend({
             chain.setAttribute('spacing', this.get('spacing'));
         }
 
+        /*var self = this;
+        this.get('uiPhoneControls').forEach(function (uiPhoneControl) {
+            var control = xmlDoc.createElement(self.get('xmlNameChild'));
+            control.setAttribute('controlChain', self.getRefPath(''));
+            control.setAttribute('uiPhoneControl', uiPhoneControl.getRefPath(''));
+            chain.appendChild(control);
+        });*/
+
         return chain;
-    },*/
+    },
 
     getRefPath: function (path) {
-        var updatedPath = '/@' + this.get('xmlName') + '[id=\'' + this.get('id') + '\']';
+        var updatedPath = '/@' + this.get('xmlName') + '[id=\'' + this.get('id') + '\']' + path;
+        updatedPath = this.get('viewController').getRefPath(updatedPath);
         return updatedPath;
     },
 });

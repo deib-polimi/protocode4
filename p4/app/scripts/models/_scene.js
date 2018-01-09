@@ -107,7 +107,6 @@ App.Scene = DS.Model.extend({
 
     toXml: function (xmlDoc) {
         var scene = xmlDoc.createElement(this.get('xmlName'));
-        scene.setAttribute('type', this.get('type'));
         scene.setAttribute('id', this.get('id'));
         scene.setAttribute('name', this.get('name'));
         scene.setAttribute('launcher', this.get('launcher'));
@@ -120,12 +119,17 @@ App.Scene = DS.Model.extend({
         if(!this.get('tabletHasTabMenu')) {
             scene.appendChild(this.get('parentVCTablet').toXml(xmlDoc));
         }
+        // if there will be 2 parent view controllers, the first is the smartphone parent vc, the second is the tablet one
         this.get('viewControllers').forEach(function(vc) {
-            var vcInfo = xmlDoc.createElement('viewController');
-            vcInfo.setAttribute('id', vc.getRefPath(''));
+            var vcInfo = xmlDoc.createElement('sceneViewControllers');
+            vcInfo.setAttribute('viewController', vc.getRefPath(''));
             scene.appendChild(vcInfo);
         });
 
         return scene;
+    },
+
+    getRefPath: function (path) {
+        return '//@' + this.get('xmlName') + '[id=\'' + this.get('id') + '\']' + path;
     }
 });

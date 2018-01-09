@@ -3,9 +3,18 @@
  */
 App.ControlPhotocameraControllerIndexController = App.UiPhoneControlController.extend({
 
+    imageViews: function() {
+        if(this.get('model.viewController.uiPhoneControls')) {
+            return this.get('model.viewController.uiPhoneControls').filter(function(control) {
+                return control.constructor.toString() === 'App.ImageView';
+            });
+        }
+        return [];
+    }.property('model.viewController.uiPhoneControls.[]'),
+
     allowedImageViews: function () {
         return this.get('imageViews').filterBy('sourceType.type', 'hardwareFile');
-    }.property('imageViews.@each'),
+    }.property('imageViews.@each.sourceType.type'),
 
     normalBackType: function (key, value) {
         return this.backgroundType(key, value, 'normal');

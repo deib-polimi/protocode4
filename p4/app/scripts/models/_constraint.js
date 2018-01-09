@@ -90,12 +90,11 @@ App.Constraint = DS.Model.extend({
     toXml: function (xmlDoc) {
         var constraint = xmlDoc.createElement(this.get('xmlName'));
         constraint.setAttribute('id', this.get('id'));
+        constraint.setAttribute('uiPhoneControl', this.get('uiPhoneControl').getRefPath(''));
         constraint.setAttribute('layoutEdge', this.get('layoutEdge'));
         constraint.setAttribute('withParent', this.get('withParent'));
         if(!this.get('withParent')) {
-            constraint.setAttribute('referenceElement', this.get('referenceElement.id'));
-        } else {
-            constraint.setAttribute('referenceElement', 'parent');
+            constraint.setAttribute('referenceElement', this.get('referenceElement').getRefPath(''));
         }
         constraint.setAttribute('referenceLayoutEdge', this.get('referenceLayoutEdge'));
 
