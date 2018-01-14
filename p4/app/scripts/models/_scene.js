@@ -6,8 +6,8 @@ App.Scene = DS.Model.extend({
     name: DS.attr('string'),
     launcher: DS.attr('boolean', {defaultValue: false}),
     hasMenu: DS.attr('boolean', {defaultValue: false}),
-    smartphoneHasTabMenu: DS.attr('boolean', {defaultValue: true}),
-    tabletHasTabMenu: DS.attr('boolean', {defaultValue: true}),
+    typeSmartphone: DS.attr('string', {defaultValue: 'singleVC'}),
+    typeTablet: DS.attr('string', {defaultValue: 'singleVC'}),
 
     xmlName: 'scenes',
 
@@ -34,6 +34,18 @@ App.Scene = DS.Model.extend({
         return true;
     }.property('viewControllers.length'),
 
+    type: function() {
+        if(this.get('application.device.type') === 'smartphone') {
+            return this.get('typeSmartphone');
+        } else {
+            return this.get('typeTablet');
+        }
+    }.property(
+        'application.device.type',
+        'typeSmartphone',
+        'typeTablet'
+    ),
+
     activeParentVC: function() {
         if(this.get('application.device.type') === 'smartphone') {
             return this.get('parentVCSmartphone');
@@ -42,36 +54,20 @@ App.Scene = DS.Model.extend({
         }
     }.property('application.device.type', 'parentVCSmartphone', 'parentVCTablet'),
 
-    smartphoneMustShowTabMenu: function() {
-        if((this.get('viewControllers.length') > 1) && this.get('smartphoneHasTabMenu')) {
+    mustShowTabMenu: function() {
+        if((this.get('viewControllers.length') > 1) && this.get('type') === 'singleVCTab') {
             return true;
         }
         return false;
     }.property(
         'viewControllers.length',
-        'smartphoneHasTabMenu'
+        'type'
     ),
 
-    tabletMustShowTabMenu: function() {
-        if((this.get('viewControllers.length') > 1) && this.get('tabletHasTabMenu')) {
-            return true;
-        }
-        return false;
+    isNotComposed: function() {
+        return this.get('type') !== "multiVC";
     }.property(
-        'viewControllers.length',
-        'tabletHasTabMenu'
-    ),
-
-    isTabbed: function() {
-        if(this.get('application.device.type') === 'smartphone') {
-            return this.get('smartphoneHasTabMenu');
-        } else {
-            return this.get('tabletHasTabMenu');
-        }
-    }.property(
-        'application.device.type',
-        'smartphoneHasTabMenu',
-        'tabletHasTabMenu'
+        'type'
     ),
 
     referenceName: function() {
@@ -90,7 +86,8 @@ App.Scene = DS.Model.extend({
         this.store.createRecord('viewController', {
             application: self.get('application'),
             name: 'parentVCSmartphone',
-            isParent: true
+            isParent: true,
+            scene: this
         }).save().then(function(vc) {
             self.set('parentVCSmartphone', vc);
             self.save();
@@ -98,7 +95,8 @@ App.Scene = DS.Model.extend({
         this.store.createRecord('viewController', {
             application: self.get('application'),
             name: 'parentVCTablet',
-            isParent: true
+            isParent: true,
+            scene: this
         }).save().then(function(vc) {
             self.set('parentVCTablet', vc);
             self.save();
@@ -111,12 +109,12 @@ App.Scene = DS.Model.extend({
         scene.setAttribute('name', this.get('name'));
         scene.setAttribute('launcher', this.get('launcher'));
         scene.setAttribute('hasMenu', this.get('hasMenu'));
-        scene.setAttribute('smartphoneHasTabMenu', this.get('smartphoneHasTabMenu'));
-        scene.setAttribute('tabletHasTabMenu', this.get('tabletHasTabMenu'));
-        if(!this.get('smartphoneHasTabMenu')) {
+        scene.setAttribute('typeSmartphone', this.get('typeSmartphone'));
+        scene.setAttribute('typeTablet', this.get('typeTablet'));
+        if(this.get('typeSmartphone') === 'multiVC') {
             scene.appendChild(this.get('parentVCSmartphone').toXml(xmlDoc));
         }
-        if(!this.get('tabletHasTabMenu')) {
+        if(this.get('typeTablet') === 'multiVC') {
             scene.appendChild(this.get('parentVCTablet').toXml(xmlDoc));
         }
         // if there will be 2 parent view controllers, the first is the smartphone parent vc, the second is the tablet one

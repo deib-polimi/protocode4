@@ -29,16 +29,18 @@
                     {{input-text label="Name" value=name action='acceptChanges'}}
                     {{input-checkbox label="Has Menu" checked=hasMenu disabled=controller.cantChangeHasMenu}}
                     {{#if controller.currentDeviceIsSmartphone}}
-                        {{input-checkbox label="Tab view for Smartphones" checked=smartphoneHasTabMenu}}
+                        {{input-select-image-preview image=controller.imageSrc label="Type" content=controller.sceneTypes optionLabelPath="content.label"
+                            optionValuePath="content.type" value=typeSmartphone}}
                         <div class="form-group">
-                            <label class="col-sm-5" style="padding:8px 10px;text-align:right">Parent VC smartphone</label>
-                            <label style="padding:8px 10px;" {{bind-attr class=":col-sm-5 smartphoneHasTabMenu:link-not-active:green-link"}}>{{#link-to 'vc' parentVCSmartphone}}{{parentVCSmartphone.name}}{{/link-to}}</label>
+                            <label class="col-sm-5" style="padding:8px 10px;text-align:right">Parent VC Smartphone</label>
+                            <label style="padding:8px 10px;" {{bind-attr class=":col-sm-5 controller.typeSmartphoneIsComposed:green-link:link-not-active"}}>{{#link-to 'vc' parentVCSmartphone}}{{parentVCSmartphone.name}}{{/link-to}}</label>
                         </div>
                     {{else}}
-                        {{input-checkbox label="Tab view for Tablets" checked=tabletHasTabMenu}}
+                        {{input-select-image-preview image=controller.imageSrc label="Type" content=controller.sceneTypes optionLabelPath="content.label"
+                            optionValuePath="content.type" value=typeTablet}}
                         <div class="form-group">
                             <label class="col-sm-5" style="padding:8px 10px;text-align:right">Parent VC Tablet</label>
-                            <label style="padding:8px 10px;" {{bind-attr class=":col-sm-5 tabletHasTabMenu:link-not-active:green-link"}}>{{#link-to 'vc' parentVCTablet}}{{parentVCTablet.name}}{{/link-to}}</label>
+                            <label style="padding:8px 10px;" {{bind-attr class=":col-sm-5 controller.typeTabletIsComposed:green-link:link-not-active"}}>{{#link-to 'vc' parentVCTablet}}{{parentVCTablet.name}}{{/link-to}}</label>
                         </div>
                     {{/if}}
                     <div class="panel panel-dark">

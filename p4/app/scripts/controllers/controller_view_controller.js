@@ -4,7 +4,7 @@
 App.ViewControllerController = Ember.ObjectController.extend({
     needs: ['editor'],
     isActive: false,
-    zoomLevel: 1,
+    zoomLevel: 0.6,
     isRotated: false,
     isScene: false,
 

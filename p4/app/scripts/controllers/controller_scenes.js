@@ -35,7 +35,8 @@ App.ScenesController = Ember.ObjectController.extend({
 
             this.store.createRecord('viewController', {
                 name: name,
-                application: app
+                application: app,
+                scene: null
             }).save().then(function (vc) {
                 app.get('viewControllers').addObject(vc);
                 app.save();

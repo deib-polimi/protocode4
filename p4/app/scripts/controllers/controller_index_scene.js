@@ -2,6 +2,11 @@
  templates/scene/index.hbs
 */
 App.SceneIndexController = Ember.ObjectController.extend(App.Saveable, {
+    sceneTypes: [
+        {type: 'singleVC', label: 'One VC per screen, without tab menu'},
+        {type: 'singleVCTab', label: 'One VC per screen, with tab menu'},
+        {type: 'multiVC', label: 'Composed (all VCs in the same screen)'}
+    ],
 
     viewControllers: Ember.computed.alias('model.viewControllers'),
 
@@ -34,7 +39,7 @@ App.SceneIndexController = Ember.ObjectController.extend(App.Saveable, {
 
     availableViewControllers: function() {
         var scene = this.get('model');
-        if(!scene.get('isDeleted')) {
+        if(!scene.get('isDeleted') && scene.get('application')) {
             return scene.get('application.viewControllers').filter(function(vc) {
                 return !(scene.get('viewControllers').contains(vc));
             });
@@ -45,6 +50,20 @@ App.SceneIndexController = Ember.ObjectController.extend(App.Saveable, {
         'model.viewControllers.[]'
     ),
 
+    typeSmartphoneIsComposed: function() {
+        if(!this.get('model.isDeleted')) {
+            return this.get('model.typeSmartphone') === "multiVC";
+        }
+        return false;
+    }.property('model.typeSmartphone'),
+
+    typeTabletIsComposed: function() {
+        if(!this.get('model.isDeleted')) {
+            return this.get('model.typeTablet') === "multiVC";
+        }
+        return false;
+    }.property('model.typeTablet'),
+
     // USED by partial _invalid_report.hbs
     invalidReport: function() {
         if(!this.get('model.valid')) {
@@ -53,6 +72,26 @@ App.SceneIndexController = Ember.ObjectController.extend(App.Saveable, {
         return null;
     }.property('model.valid'),
     // END partial _invalid_report.hbs
+
+    imageSrc: function() {
+        if(this.get('model') && this.get('currentDeviceIsSmartphone')) {
+            if(this.get('model.typeSmartphone') === 'singleVC') {
+                return "../img/gui/scene_type_1.jpg";
+            } else if(this.get('model.typeSmartphone') === 'singleVCTab') {
+                return "../img/gui/scene_type_2.jpg";
+            } else {
+                return "../img/gui/scene_type_3.jpg";
+            }
+        } else {
+            if(this.get('model.typeTablet') === 'singleVC') {
+                return "../img/gui/scene_type_1.jpg";
+            } else if(this.get('model.typeTablet') === 'singleVCTab') {
+                return "../img/gui/scene_type_2.jpg";
+            } else {
+                return "../img/gui/scene_type_3.jpg";
+            }
+        }
+    }.property('currentDeviceIsSmartphone', 'model.typeSmartphone', 'mode.typeTablet'),
 
     actions: {
         addViewController: function() {

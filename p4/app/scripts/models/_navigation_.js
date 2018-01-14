@@ -1,4 +1,5 @@
 App.Navigation = DS.Model.extend({
+    contextId: DS.attr('string'),
     destination: DS.attr('string', {default: '/null'}),
 
     toXml: function (xmlDoc) {

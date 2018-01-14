@@ -6,7 +6,7 @@ App.Container = App.UiPhoneControl.extend({
     widthFixed: DS.attr('number', {defaultValue: 300}),
     heightFixed: DS.attr('number', {defaultValue: 400}),
 
-    childViewController: DS.belongsTo('viewController'),
+    childViewController: DS.belongsTo('viewController', {inverse: null}),
 
     xmlName: "containers",
 

@@ -2,6 +2,9 @@ App.ViewController = DS.Model.extend({
     name: DS.attr('string'),
     backgroundColor: DS.attr('string', {defaultValue: '#ffffff'}),
     backgroundImage: DS.attr('string', {defaultValue: ''}),
+
+    // For parent view controllers
+    scene: DS.belongsTo('scene', {inverse: null, defaultValue: null}),
     isParent: DS.attr('boolean', {defaultValue: false}),
 
     application: DS.belongsTo('application', {inverse: 'viewControllers'}),
@@ -18,7 +21,7 @@ App.ViewController = DS.Model.extend({
     xmlNameParent: 'parentViewControllers',
 
     uiPhoneControlsToShow: function() {
-        if(this.get('activeScene') && this.get('activeScene.isTabbed')) {
+        if(this.get('activeScene') && this.get('activeScene.isNotComposed')) {
             return this.get('uiPhoneControls').filter(function(upc) {
                 return upc.constructor.toString() !== 'App.Container';
             });
@@ -26,7 +29,7 @@ App.ViewController = DS.Model.extend({
         return this.get('uiPhoneControls');
     }.property(
         'activeScene',
-        'activeScene.isTabbed',
+        'activeScene.isNotComposed',
         'uiPhoneControls.[]'
     ),
 
@@ -86,12 +89,13 @@ App.ViewController = DS.Model.extend({
         }
         if(this.get('activeScene')) {
             if(this.get('application.device.platform') === 'android') {
-                var thereIsTabMenu = (this.get('application.device.type') === 'smartphone') && this.get('activeScene.smartphoneMustShowTabMenu');
-                thereIsTabMenu = thereIsTabMenu || ((this.get('application.device.type') === 'tablet') && this.get('activeScene.tabletMustShowTabMenu'));
-                if(thereIsTabMenu) {
-                    return this.get('application.device.viewTop') + 48 - 1;
+                if(this.get('activeScene.mustShowTabMenu')) {
+                    return this.get('application.device.viewTop') + 48;
                 }
             }
+        }
+        if(this.get('application.device.platform') === 'android' && this.get('application.device.type') === 'smartphone') {
+            return this.get('application.device.viewTop');
         }
         return this.get('application.device.viewTop') - 1;
     }.property(
@@ -99,8 +103,7 @@ App.ViewController = DS.Model.extend({
         'activeContainer.top',
         'application.device.type',
         'activeScene',
-        'activeScene.smartphoneMustShowTabMenu',
-        'activeScene.tabletMustShowTabMenu',
+        'activeScene.mustShowTabMenu',
         'application.device.platform',
         'application.device.viewTop'
     ),
@@ -111,9 +114,7 @@ App.ViewController = DS.Model.extend({
         }
         if(this.get('activeScene')) {
             if(this.get('application.device.platform') === 'ios') {
-                var thereIsTabMenu = (this.get('application.device.type') === 'smartphone') && this.get('activeScene.smartphoneMustShowTabMenu');
-                thereIsTabMenu = thereIsTabMenu || ((this.get('application.device.type') === 'tablet') && this.get('activeScene.tabletMustShowTabMenu'));
-                if(thereIsTabMenu) {
+                if(this.get('activeScene.mustShowTabMenu')) {
                     return this.get('application.device.viewBottom') - 48;
                 }
             }
@@ -124,8 +125,7 @@ App.ViewController = DS.Model.extend({
         'activeContainer.bottom',
         'application.device.type',
         'activeScene',
-        'activeScene.smartphoneMustShowTabMenu',
-        'activeScene.tabletMustShowTabMenu',
+        'activeScene.mustShowTabMenu',
         'application.device.platform',
         'application.device.viewBottom'
     ),
@@ -222,7 +222,7 @@ App.ViewController = DS.Model.extend({
             Ember.run.once(self, function () {
                 var uiPhoneControls = [].addObjects(chain.get('uiPhoneControls'));
                 chain.deleteRecord();
-                this.save().then(function(chain) {
+                chain.save().then(function(chain) {
                     uiPhoneControls.forEach(function(c) {
                         c.deleteRecord();
                         c.save();
@@ -253,7 +253,7 @@ App.ViewController = DS.Model.extend({
             viewController = xmlDoc.createElement(this.get('xmlName'));
         }
         viewController.setAttribute('id', this.get('id'));
-        viewController.setAttribute('name', this.get('name'));
+        viewController.setAttribute('name', this.get('id') + '-' + this.get('name'));
         viewController.setAttribute('backgroundColor', this.get('backgroundColor'));
         viewController.setAttribute('backgroundImage', this.get('backgroundImage'));
         /*if(this.get('hasBackButton')) {

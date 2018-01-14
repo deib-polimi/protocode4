@@ -17,6 +17,7 @@ App.ListView = App.UiPhoneControl.extend({
         var self = this;
         this._super();
         this.store.createRecord('navigation', {
+            //contextId: self.get('id'),
             destination: null
         }).save().then(function(nav) {
             self.set('navigation', nav);

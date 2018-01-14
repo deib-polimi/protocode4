@@ -20,7 +20,7 @@ App.SceneRoute = Ember.Route.extend({
         parentVC.set('activeScene', scene);
         scene.get('viewControllers').forEach(function(vc) {
             vc.set('activeScene', scene);
-            if(!scene.get('isTabbed')) {
+            if(!scene.get('isNotComposed')) {
                 var activeContainer;
                 activeContainer = containers.find(function(c) {
                     return c.get('childViewController') === vc;

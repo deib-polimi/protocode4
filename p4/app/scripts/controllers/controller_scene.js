@@ -4,7 +4,7 @@
 App.SceneController = Ember.ObjectController.extend({
     needs: ['editor'],
     isActive: false,
-    zoomLevel: 1,
+    zoomLevel: 0.6,
     isRotated: false,
     viewControllerToShow: null,
     isScene: true,
@@ -21,7 +21,7 @@ App.SceneController = Ember.ObjectController.extend({
             var splittedPath = path.split('/');
             var selectedType = splittedPath[splittedPath.get('length') - 2];
             var selectedId = splittedPath[splittedPath.get('length') - 1];
-            if(this.get('model.isTabbed')) {
+            if(this.get('model.isNotComposed')) {
                 if(selectedType === 'scene') {
                     this.set('viewControllerToShow', null);
                 } else {
@@ -38,7 +38,7 @@ App.SceneController = Ember.ObjectController.extend({
                 }
             }
         }
-    }.observes('model', 'model.isTabbed', 'target.location.lastSetURL'),
+    }.observes('model', 'model.isNotComposed', 'target.location.lastSetURL'),
 
     /*  Redirection in case user switch from a device type to another (smartphone to tablet or
         tablet to smartphone) and the current route's view controller is a parent vc */
@@ -58,7 +58,7 @@ App.SceneController = Ember.ObjectController.extend({
             parentVC.set('activeScene', scene);
             scene.get('viewControllers').forEach(function(vc) {
                 vc.set('activeScene', scene);
-                if(!scene.get('isTabbed')) {
+                if(!scene.get('isNotComposed')) {
                     var activeContainer;
                     activeContainer = containers.find(function(c) {
                         return c.get('childViewController') === vc;
@@ -73,7 +73,7 @@ App.SceneController = Ember.ObjectController.extend({
                 }
             });
         }
-    }.observes('model.activeParentVC'),
+    }.observes('model.activeParentVC', 'model.isNotComposed'),
 
     currentRouteIsViewController: function() {
         var path = this.get('target.location.lastSetURL');
@@ -164,17 +164,19 @@ App.SceneController = Ember.ObjectController.extend({
                 }
                 // View controllers
                 self.get('model.viewControllers').forEach(function(vc, index) {
-                    reachable = false;
-                    if(index === 0) {
-                        reachable = true;
-                    } else if(self.get('model.smartphoneHasTabMenu') || self.get('model.tabletHasTabMenu')) {
-                        reachable = true;
-                    } else {
-                        navigations.forEach(function(nav) {
-                            if(nav.get('destination') === ('viewController/' + vc.get('id'))) {
-                                reachable = true;
-                            }
-                        });
+                    if(reachable) {
+                        reachable = false;
+                        if(index === 0) {
+                            reachable = true;
+                        } else if(self.get('model.type') === "singleVCTab") {
+                            reachable = true;
+                        } else {
+                            navigations.forEach(function(nav) {
+                                if(nav.get('destination') === ('viewController/' + vc.get('id'))) {
+                                    reachable = true;
+                                }
+                            });
+                        }
                     }
                     if(reachable) {
                         report = report + tab + "View Controller <aid>" + vc.get('id') + '-' + vc.get('name') + "</aid> is <aok>reachable</aok>.<br>";

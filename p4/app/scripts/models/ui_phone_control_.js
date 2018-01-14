@@ -82,7 +82,7 @@ App.UiPhoneControl = App.UiControl.extend({
         return null;
     }.property('viewController.uiPhoneControls.@each'),
 
-    getTopWithMargin: function(onlyValid) {
+    getTopWithMargin: function(onlyValid, vcTop, vcCenterY) {
         // Get constraints
         var constraints;
         if(onlyValid) {
@@ -100,7 +100,7 @@ App.UiPhoneControl = App.UiControl.extend({
                 layoutEdge = 'top';
                 if(c.get('referenceLayoutEdge') === 'top') {
                     if(c.get('withParent')) {
-                        referencePosition = this.get('viewController.top');
+                        referencePosition = vcTop;
                     } else {
                         referencePosition = c.get('referenceElement.top');
                     }
@@ -113,7 +113,7 @@ App.UiPhoneControl = App.UiControl.extend({
             } else if(c.get('layoutEdge') === 'centerY') {
                 layoutEdge = 'centerY';
                 if(c.get('withParent')) {
-                    referencePosition = this.get('viewController.centerY') - (this.get('height') / 2);
+                    referencePosition = vcCenterY - (this.get('height') / 2);
                 } else {
                     referencePosition = c.get('referenceElement.centerY') - (this.get('height') / 2);
                 }
@@ -127,16 +127,16 @@ App.UiPhoneControl = App.UiControl.extend({
         if(layoutEdge !== 'empty') {
             return referencePosition;
         } else {
-            return parseFloat(this.get('posY')) + this.get('viewController.top');
+            return parseFloat(this.get('posY')) + vcTop;
         }
     },
 
     topWithMargin: function () {
         if(!this.get('isDeleted')) {
             if(this.get('controlChain') && this.get('controlChain.axis') === 'vertical') {
-                return this.get('controlChain').getTopInChain(this.get('id'));
+                return this.get('controlChain').getTopInChain(this.get('id'), this.get('viewController.top'));
             } else {
-                return this.getTopWithMargin(true);
+                return this.getTopWithMargin(true, this.get('viewController.top'), this.get('viewController.centerY'));
             }
         } else {
             return null;
@@ -170,7 +170,7 @@ App.UiPhoneControl = App.UiControl.extend({
         return this.get('topWithMargin') + parseFloat(this.get('marginTop'));
     }.property('topWithMargin'),
 
-    getBottomWithMargin: function(onlyValid) {
+    getBottomWithMargin: function(onlyValid, vcBottom) {
         // Get constraints
         var constraints;
         if(onlyValid) {
@@ -188,7 +188,7 @@ App.UiPhoneControl = App.UiControl.extend({
                 layoutEdge = 'bottom';
                 if(c.get('referenceLayoutEdge') === 'bottom') {
                     if(c.get('withParent')) {
-                        referencePosition = this.get('viewController.bottom');
+                        referencePosition = vcBottom;
                     } else {
                         referencePosition = c.get('referenceElement.bottom');
                     }
@@ -218,9 +218,9 @@ App.UiPhoneControl = App.UiControl.extend({
     bottomWithMargin: function () {
         if(!this.get('isDeleted')) {
             if(this.get('controlChain') && this.get('controlChain.axis') === 'vertical') {
-                return this.get('controlChain').getBottomInChain(this.get('id'), this.get('valueInChain'));
+                return this.get('controlChain').getBottomInChain(this.get('id'), this.get('valueInChain'), false);
             } else {
-                return this.getBottomWithMargin(true);
+                return this.getBottomWithMargin(true, this.get('viewController.bottom'));
             }
         } else {
             return null;
@@ -251,7 +251,7 @@ App.UiPhoneControl = App.UiControl.extend({
         return this.get('bottomWithMargin') - parseFloat(this.get('marginBottom'));
     }.property('bottomWithMargin'),
 
-    getStartWithMargin: function(onlyValid) {
+    getStartWithMargin: function(onlyValid, vcStart, vcCenterX) {
         // Get constraints
         var constraints;
         if(onlyValid) {
@@ -269,7 +269,7 @@ App.UiPhoneControl = App.UiControl.extend({
                 layoutEdge = 'start';
                 if(c.get('referenceLayoutEdge') === 'start') {
                     if(c.get('withParent')) {
-                        referencePosition = this.get('viewController.start');
+                        referencePosition = vcStart;
                     } else {
                         referencePosition = c.get('referenceElement.start');
                     }
@@ -282,7 +282,7 @@ App.UiPhoneControl = App.UiControl.extend({
             } else if(c.get('layoutEdge') === 'centerX') {
                 layoutEdge = 'centerX';
                 if(c.get('withParent')) {
-                    referencePosition = this.get('viewController.centerX') - (this.get('width') / 2);
+                    referencePosition = vcCenterX - (this.get('width') / 2);
                 } else {
                     referencePosition = c.get('referenceElement.centerX') - (this.get('width') / 2);
                 }
@@ -296,16 +296,16 @@ App.UiPhoneControl = App.UiControl.extend({
         if(layoutEdge !== 'empty') {
             return referencePosition;
         } else {
-            return parseFloat(this.get('posX')) + this.get('viewController.start');
+            return parseFloat(this.get('posX')) + vcStart;
         }
     },
 
     startWithMargin: function () {
         if(!this.get('isDeleted')) {
             if(this.get('controlChain') && this.get('controlChain.axis') === 'horizontal') {
-                return this.get('controlChain').getStartInChain(this.get('id'));
+                return this.get('controlChain').getStartInChain(this.get('id'), this.get('viewController.start'));
             } else {
-                return this.getStartWithMargin(true);
+                return this.getStartWithMargin(true, this.get('viewController.start'), this.get('viewController.centerX'));
             }
         } else {
             return null;
@@ -339,7 +339,7 @@ App.UiPhoneControl = App.UiControl.extend({
         return this.get('startWithMargin') + parseFloat(this.get('marginStart'));
     }.property('startWithMargin'),
 
-    getEndWithMargin: function(onlyValid) {
+    getEndWithMargin: function(onlyValid, vcEnd) {
         // Get constraints
         var constraints;
         if(onlyValid) {
@@ -357,7 +357,7 @@ App.UiPhoneControl = App.UiControl.extend({
                 layoutEdge = 'end';
                 if(c.get('referenceLayoutEdge') === 'end') {
                     if(c.get('withParent')) {
-                        referencePosition = this.get('viewController.end');
+                        referencePosition = vcEnd;
                     } else {
                         referencePosition = c.get('referenceElement.end');
                     }
@@ -387,9 +387,9 @@ App.UiPhoneControl = App.UiControl.extend({
     endWithMargin: function () {
         if(!this.get('isDeleted')) {
             if(this.get('controlChain') && this.get('controlChain.axis') === 'horizontal') {
-                return this.get('controlChain').getEndInChain(this.get('id'), this.get('valueInChain'));
+                return this.get('controlChain').getEndInChain(this.get('id'), this.get('valueInChain'), false);
             } else {
-                return this.getEndWithMargin(true);
+                return this.getEndWithMargin(true, this.get('viewController.end'));
             }
         } else {
             return null;
@@ -680,11 +680,30 @@ App.UiPhoneControl = App.UiControl.extend({
             xmlElem.setAttribute('viewController', this.get('viewController').getRefPath(''));
         }
 
-        xmlElem.setAttribute('posX', this.get('start'));
-        xmlElem.setAttribute('posY', this.get('top'));
-
         xmlElem.setAttribute('defaultWidth', this.get('defaultWidth'));
         xmlElem.setAttribute('defaultHeight', this.get('defaultHeight'));
+
+        // Export width and height of the reference device for iOS (now it's the iPhone7 Plus)
+        var width, height, start, top;
+        if(!this.get('controlChain')) {
+            width = this.getEndWithMargin(true, 414) - parseFloat(this.get('marginEnd'))
+            - (this.getStartWithMargin(true, 0, 207) + parseFloat(this.get('marginStart')));
+            height = this.getBottomWithMargin(true, 736) - parseFloat(this.get('marginBottom'))
+            - (this.getTopWithMargin(true, 64, 400) + parseFloat(this.get('marginTop')));
+            top = this.getTopWithMargin(true, 64, 400) + parseFloat(this.get('marginTop'));
+            start = this.getStartWithMargin(true, 0, 207) + parseFloat(this.get('marginStart'));
+        } else {
+            width = this.get('controlChain').getEndInChain(this.get('id'), this.get('valueInChain'), true) - parseFloat(this.get('marginEnd'))
+            - (this.get('controlChain').getStartInChain(this.get('id'), 0) + parseFloat(this.get('marginStart')));
+            height = this.get('controlChain').getBottomInChain(this.get('id'), this.get('valueInChain'), true) - parseFloat(this.get('marginBottom'))
+            - (this.get('controlChain').getTopInChain(this.get('id'), 64) + parseFloat(this.get('marginTop')));
+            top = this.get('controlChain').getTopInChain(this.get('id'), 64) + parseFloat(this.get('marginTop'));
+            start = this.get('controlChain').getStartInChain(this.get('id'), 0) + parseFloat(this.get('marginStart'));
+        }
+        xmlElem.setAttribute('width', width);
+        xmlElem.setAttribute('height', height);
+        xmlElem.setAttribute('posX', start);
+        xmlElem.setAttribute('posY', top);
 
         if(this.get('controlChain')) {
             var controlChain = this.get('controlChain');
