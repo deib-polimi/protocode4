@@ -112,12 +112,15 @@ App.SceneIndexController = Ember.ObjectController.extend(App.Saveable, {
                     scene.get('parentVCTablet.uiPhoneControls').pushObject(containerTablet);
                     scene.get('parentVCTablet').save();
                 });
+                // Create navigation object for viewController's controls with navigation
+                vc.addNavigation(scene.get('id'));
             }
         },
 
         removeViewController: function(containerSmartphone) {
             if(this.get('model')) {
                 var scene = this.get('model');
+                var vc = containerSmartphone.get('childViewController');
                 var index = scene.get('parentVCSmartphone.uiPhoneControls').indexOf(containerSmartphone);
                 var containerTablet = scene.get('parentVCTablet.uiPhoneControls').objectAt(index);
                 // Delete container in smartphone - cont is already the container for the removed vc in the parentVCSmartphone
@@ -132,41 +135,43 @@ App.SceneIndexController = Ember.ObjectController.extend(App.Saveable, {
                     containerTablet.deleteRecord();
                     containerTablet.save();
                 });
+                // Delete navigation object for vc's controls with navigation
+                vc.removeNavigation(scene.get('id'));
+                // Update navigation objects of other view controllers' controls whose navigation pointed to the removed vc
+                scene.updateNavigations(true, vc.get('id'));
             }
         },
 
         deleteScene: function () {
-            if (confirm('Are you sure to delete?')) {
+            if (confirm('Are you sure to delete this scene?')) {
                 var scene = this.get('model');
                 var id = scene.get('id');
-                this.store.find('navigation').then(function (navigations) {
-                    navigations.forEach(function (navigation) {
-                        if (navigation.get('destination') === ('scene/' + id)) {
-                            navigation.set('destination', null);
-                            navigation.save();
-                        }
+                var self = this;
+                this.store.find('viewController').then(function (viewControllers) {
+                    viewControllers.forEach(function(vc) {
+                        vc.updateNavigations(false, id);
                     });
+
+                    var parentVCSmartphone = scene.get('parentVCSmartphone');
+                    if(parentVCSmartphone) {
+                        parentVCSmartphone.deleteRecord();
+                        parentVCSmartphone.save();
+                    }
+                    var parentVCTablet = scene.get('parentVCTablet');
+                    if(parentVCTablet) {
+                        parentVCTablet.deleteRecord();
+                        parentVCTablet.save();
+                    }
+
+                    var app = scene.get('application');
+                    app.get('scenes').removeObject(scene);
+                    app.save().then(function(app) {
+                        scene.deleteRecord();
+                        scene.save();
+                    });
+
+                    self.transitionToRoute('scenes');
                 });
-
-                var parentVCSmartphone = scene.get('parentVCSmartphone');
-                if(parentVCSmartphone) {
-                    parentVCSmartphone.deleteRecord();
-                    parentVCSmartphone.save();
-                }
-                var parentVCTablet = scene.get('parentVCTablet');
-                if(parentVCTablet) {
-                    parentVCTablet.deleteRecord();
-                    parentVCTablet.save();
-                }
-
-                var app = scene.get('application');
-                app.get('scenes').removeObject(scene);
-                app.save().then(function(app) {
-                    scene.deleteRecord();
-                    scene.save();
-                });
-
-                this.transitionToRoute('scenes');
             }
         }
     }

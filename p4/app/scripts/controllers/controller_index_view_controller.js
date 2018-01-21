@@ -59,15 +59,12 @@ App.ViewControllerIndexController = Ember.ObjectController.extend(App.Saveable, 
         },
 
         deleteViewController: function () {
-            if (confirm('Are you sure to delete?')) {
+            if (confirm('Are you sure to delete this view controller?')) {
                 var viewController = this.get('model');
                 var id = viewController.get('id');
-                this.store.find('navigation').then(function (navigations) {
-                    navigations.forEach(function (navigation) {
-                        if (navigation.get('destination') === ('viewController/' + id)) {
-                            navigation.set('destination', null);
-                            navigation.save();
-                        }
+                this.store.find('viewController').then(function (viewControllers) {
+                    viewControllers.without(viewController).forEach(function(vc) {
+                        vc.updateNavigations(true, id);
                     });
                 });
 

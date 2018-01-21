@@ -1,6 +1,6 @@
 App.GridView = App.UiPhoneControl.extend({
     gridViewCells: DS.hasMany('gridViewCell', {inverse: 'parentGridView'}),
-    navigation: DS.belongsTo('navigation', {inverse: null}),
+    navigations: DS.hasMany('navigation', {inverse: null}),
 
     minHeight: 408,
     defaultHeight: 408,
@@ -18,34 +18,58 @@ App.GridView = App.UiPhoneControl.extend({
         return this.get('defaultWidth');
     }.property('defaultWidth'),
 
-    didCreate: function () {
+    addNavigation: function(id) {
         var self = this;
-        this._super();
         this.store.createRecord('navigation', {
-            //contextId: self.get('id'),
-            destination: null
+            contextId: id,
+            destinationViewController: null,
+            destinationScene: null
         }).save().then(function(nav) {
-            self.set('navigation', nav);
+            self.get('navigations').addObject(nav);
             self.save();
         });
     },
 
+    removeNavigation: function(id) {
+        var navigationToDelete = this.get('navigations').find(function(nav) { return nav.get('contextId') === id });
+        if(navigationToDelete) {
+            this.get('navigations').removeObject(navigationToDelete);
+            navigationToDelete.deleteRecord();
+            navigationToDelete.save();
+            this.save();
+        }
+    },
+
+    didCreate: function() {
+        this._super();
+        var self = this;
+        this.store.find('scene').then(function (scenes) {
+            scenes.forEach(function(scene) {
+                if(scene.get('viewControllers').findBy('id', self.get('viewController.id'))) {
+                    self.addNavigation(scene.get('id'));
+                }
+            });
+        });
+    },
+
     deleteRecord: function () {
+    var self = this;
         var gridViewCells = this.get('gridViewCells');
 
         gridViewCells.forEach(function (gridViewCell) {
-            Ember.run.once(this, function () {
+            Ember.run.once(self, function () {
                 gridViewCell.deleteRecord();
                 gridViewCell.save();
             });
         });
 
-        var navigation = this.get('navigation');
-
-        if (navigation) {
-            navigation.deleteRecord();
-            navigation.save();
-        }
+        var navigations = this.get('navigations');
+        navigations.forEach(function(nav) {
+            Ember.run.once(self, function () {
+                nav.deleteRecord();
+                nav.save();
+            });
+        });
 
         this._super();
     },
@@ -60,9 +84,9 @@ App.GridView = App.UiPhoneControl.extend({
 
         var navigation = self.get('navigation');
 
-        if (navigation !== null) {
-            elem.appendChild(navigation.toXml(xmlDoc));
-        }
+        navigations.forEach(function(nav) {
+            button.appendChild(nav.toXml(xmlDoc));
+        });
 
         self.get('gridViewCells').map(function (item) {
             elem.appendChild(item.toXml(xmlDoc));

@@ -5,7 +5,7 @@ App.WatchControllerIndexController = Ember.ObjectController.extend(App.Saveable,
 
     actions: {
         deleteWatchController: function () {
-            if (confirm('Are you sure to delete?')) {
+            if (confirm('Are you sure to delete this watch controller?')) {
                 var watchController = this.get('model');
                 var application = watchController.get('application');
 

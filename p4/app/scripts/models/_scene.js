@@ -103,6 +103,14 @@ App.Scene = DS.Model.extend({
         });
     },
 
+    updateNavigations: function(isVC, removedItemId) {
+        this.get('viewControllers').forEach(function(vc) {
+            vc.updateNavigations(isVC, removedItemId);
+        });
+        this.get('parentVCSmartphone').updateNavigations(isVC, removedItemId);
+        this.get('parentVCTablet').updateNavigations(isVC, removedItemId);
+    },
+
     toXml: function (xmlDoc) {
         var scene = xmlDoc.createElement(this.get('xmlName'));
         scene.setAttribute('id', this.get('id'));

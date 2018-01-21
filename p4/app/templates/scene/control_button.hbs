@@ -36,9 +36,9 @@
                     {{input-select
                         label="Click Listener"
                         content=controller.navigationArray
-                        optionLabelPath="content"
+                        optionLabelPath="content.name"
                         optionValuePath="content"
-                        selection=navigation.destination
+                        selection=controller.destinationSelected
                         prompt="Navigate to:"}}
                 </div>
                 <div class="tab-pane fade form-horizontal" id="position">

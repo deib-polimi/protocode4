@@ -93,7 +93,7 @@ App.ApplicationRoute = Ember.Route.extend({
     actions: {
 
         deleteApp: function () {
-            if (confirm('Are you sure to delete?')) {
+            if (confirm('Are you sure to delete the app?')) {
                 var self = this;
 
                 var models = [

@@ -73,7 +73,7 @@ App.SceneController = Ember.ObjectController.extend({
                 }
             });
         }
-    }.observes('model.activeParentVC', 'model.isNotComposed'),
+    }.observes('model.activeParentVC', 'model.isNotComposed', 'model.viewControllers.[]'),
 
     currentRouteIsViewController: function() {
         var path = this.get('target.location.lastSetURL');

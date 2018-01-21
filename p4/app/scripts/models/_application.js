@@ -36,7 +36,7 @@ App.Application = DS.Model.extend({
             appModel.appendChild(self.get('dataHandler').toXml(xmlDoc));
 
             var viewControllers = self.get('viewControllers');
-            var scenes = self.get('scenes');
+            var scenes = self.get('scenes').filter(function(s) { return s.get('valid'); });
             var watchControllers = self.get('watchControllers');
 
             Promise.all(viewControllers.map(function (item_viewControllers) {
@@ -44,9 +44,7 @@ App.Application = DS.Model.extend({
             })).then(function (values_viewControllers) {
 
                 Promise.all(scenes.map(function (item_scenes) {
-                    if(item_scenes.get('valid')) {
-                        return item_scenes.toXml(xmlDoc);
-                    }
+                    return item_scenes.toXml(xmlDoc);
                 })).then(function (values_scenes) {
 
                     Promise.all(watchControllers.map(function (item_watchControllers) {

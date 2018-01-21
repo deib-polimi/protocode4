@@ -659,6 +659,26 @@ App.UiPhoneControl = App.UiControl.extend({
         this.set('name', this.get('id') + '-' + this.constructor.toString().split(".")[1]);
     },
 
+    updateNavigations: function(isVC, removedItemId) {
+        if(this.get('navigations')) {
+            this.get('navigations').forEach(function(nav) {
+                if(isVC && (nav.get('destinationViewController.id') === removedItemId)) {
+                    nav.set('destinationViewController', null);
+                    nav.save();
+                } else if(!isVC && (nav.get('destinationScene.id') === removedItemId)) {
+                    nav.set('destinationScene', null);
+                    nav.save();
+                } else if(!isVC && (nav.get('contextId') === removedItemId)) {
+                    this.get('navigations').removeObject(nav);
+                    this.save().then(function(upc) {
+                        nav.deleteRecord();
+                        nav.save();
+                    });
+                }
+            });
+        }
+    },
+
     deleteRecord: function () {
         var self = this;
 

@@ -47,11 +47,12 @@
                     </div>
                     {{input-select
                         label="Click listener"
-                        content=controller.navigationArray
+                        content=null
                         optionLabelPath="content"
                         optionValuePath="content"
                         selection=navigation.destination
-                        prompt="Navigate to:"}}
+                        prompt="Navigate to:"
+                        disabled="disabled"}}
                     <br>
                     <p align="center"><b>List view cells</b></p>
                     <ul class="list-group" id="collapse-views">

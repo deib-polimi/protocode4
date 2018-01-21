@@ -196,6 +196,34 @@ App.ViewController = DS.Model.extend({
         return this.get('xmlName') + '/' + this.get('id');
     }.property('id', 'xmlName'),
 
+    addNavigation: function(id) {
+        this.get('uiPhoneControls').forEach(function(upc) {
+            var hasNavigations = upc.constructor.toString() === 'App.Button';
+            hasNavigations = hasNavigations || upc.constructor.toString() === 'App.GridView';
+            hasNavigations = hasNavigations || upc.constructor.toString() === 'App.ListView';
+            if(hasNavigations) {
+                upc.addNavigation(id);
+            }
+        });
+    },
+
+    removeNavigation: function(id) {
+        this.get('uiPhoneControls').forEach(function(upc) {
+            var hasNavigations = upc.constructor.toString() === 'App.Button';
+            hasNavigations = hasNavigations || upc.constructor.toString() === 'App.GridView';
+            hasNavigations = hasNavigations || upc.constructor.toString() === 'App.ListView';
+            if(hasNavigations) {
+                upc.removeNavigation(id);
+            }
+        });
+    },
+
+    updateNavigations: function(isVC, removedItemId) {
+        this.get('uiPhoneControls').forEach(function(upc) {
+            upc.updateNavigations(isVC, removedItemId);
+        });
+    },
+
     getWidthFromPercent: function(widthPercent) {
         return widthPercent * this.get('width');
     },

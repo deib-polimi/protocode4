@@ -1,6 +1,6 @@
 App.Button = App.UiPhoneControl.extend({
     title: DS.attr('string', {defaultValue: 'Button'}),
-    navigation: DS.belongsTo('navigation', {inverse: null}),
+    navigations: DS.hasMany('navigation', {inverse: null}),
     minWidth: 64,
     minHeight: 40,
     defaultWidth: 88,
@@ -15,25 +15,49 @@ App.Button = App.UiPhoneControl.extend({
 
     xmlName: 'buttons',
 
-    didCreate: function () {
+    addNavigation: function(id) {
         var self = this;
-        this._super();
         this.store.createRecord('navigation', {
-            //contextId: self.get('id'),
-            destination: null
+            contextId: id,
+            destinationViewController: null,
+            destinationScene: null
         }).save().then(function(nav) {
-            self.set('navigation', nav);
+            self.get('navigations').addObject(nav);
             self.save();
         });
     },
 
-    deleteRecord: function () {
-        var navigation = this.get('navigation');
-
-        if (navigation) {
-            navigation.deleteRecord();
-            navigation.save();
+    removeNavigation: function(id) {
+        var navigationToDelete = this.get('navigations').find(function(nav) { return nav.get('contextId') === id });
+        if(navigationToDelete) {
+            this.get('navigations').removeObject(navigationToDelete);
+            navigationToDelete.deleteRecord();
+            navigationToDelete.save();
+            this.save();
         }
+    },
+
+    didCreate: function() {
+        this._super();
+        var self = this;
+        this.store.find('scene').then(function (scenes) {
+            scenes.forEach(function(scene) {
+                if(scene.get('viewControllers').findBy('id', self.get('viewController.id'))) {
+                    self.addNavigation(scene.get('id'));
+                }
+            });
+        });
+    },
+
+    deleteRecord: function () {
+        var navigations = this.get('navigations');
+        var self = this;
+        navigations.forEach(function(nav) {
+            Ember.run.once(self, function () {
+                nav.deleteRecord();
+                nav.save();
+            });
+        });
 
         this._super();
     },
@@ -48,11 +72,10 @@ App.Button = App.UiPhoneControl.extend({
         button.setAttribute('borderRadius', this.get('borderRadius'));
         button.setAttribute('clickColor', this.get('clickColor'));
 
-        var navigation = this.get('navigation');
-
-        if (navigation !== null) {
-            button.appendChild(navigation.toXml(xmlDoc));
-        }
+        var navigations = this.get('navigations');
+        navigations.forEach(function(nav) {
+            button.appendChild(nav.toXml(xmlDoc));
+        });
 
         return button;
     }

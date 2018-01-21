@@ -35,11 +35,12 @@
                     {{input-number min="0" max="40" label="Border Radius" value=borderRadius action='acceptChanges'}}
                     {{input-select
                         label="Click Listener"
-                        content=controller.navigationArray
+                        content=null
                         optionLabelPath="content"
                         optionValuePath="content"
                         selection=navigation.destination
-                        prompt="Navigate to:"}}
+                        prompt="Navigate to:"
+                        disabled="disabled"}}
                 </div>
                 <div class="tab-pane fade form-horizontal" id="position">
                     <br>

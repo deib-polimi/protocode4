@@ -46,11 +46,11 @@
                         </div>
                     </div>
                     {{input-select
-                        label="Click listener"
+                        label="Click Listener"
                         content=controller.navigationArray
-                        optionLabelPath="content"
+                        optionLabelPath="content.name"
                         optionValuePath="content"
-                        selection=navigation.destination
+                        selection=controller.destinationSelected
                         prompt="Navigate to:"}}
                     <br>
                     <p align="center"><b>List view cells</b></p>
