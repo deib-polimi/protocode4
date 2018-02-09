@@ -18,13 +18,6 @@ App.AppMenuItemIndexController = Ember.ObjectController.extend(App.NavigableSave
         'controllers.application.model.scenes.[]'
     ),
 
-    /*isDirtyOverride: function() {
-        if(this.get('model')) {
-            return this.get('model.d');
-        }
-        return false;
-    }.property('model.navigation.destinationScene'),*/
-
     actions: {
 
         delete: function () {

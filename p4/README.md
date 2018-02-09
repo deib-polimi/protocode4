@@ -1,9 +1,23 @@
 # Protocode v4.0
 
 Protocode is a web application that helps you to prototype iOS and Android mobile apps. Thanks to its model-driven approach, you can model your app once for different operating systems.
+Here's a list of the key points of this web application:
+
 ## What's new in v4.0 ##
 
+* __Layout Constraints__: View Editor has been re-styled with constraint-based positioning mechanisms, giving the user the ability to create complex and screen size-adapive UI layouts
 
+* __Control Chains__: in addition to layout constraints, it is now possible to create horizontal and vertical chains of UI controls increasing further the design possibilities for the user
+
+* __Navigation Drawer Menu__: the application menu has been re-styled to the modern Navigation Drawer layout
+
+* __Scenes__: focusing on adaptivity, the design approach has been changed: now the user can create Scenes, which represent different "screens" of the application; each Scene contains one or more View Controllers, and the way in which the different View Controllers of a Scene are presented on screen can be differentiated for Phones and Tablets (so the same Scene can appear with a particular layout on a Phone and with another layout on a Tablet)
+
+* __Reusable View Controllers__: to achieve code reusability, the same View Controller can be reused many times in different Scenes
+
+* __New tablet devices__: iPad Pro 12.9" and iPad Air (9.7") for iOS 11, Nexus 7, 9 and 10 for Android Oreo
+
+* __New smartphone device__: iPhone X.
 
 ## Features from v3.0 ##
 
@@ -30,7 +44,6 @@ Protocode is a web application that helps you to prototype iOS and Android mobil
 * __Upgraded mobile widgets__: Added new properties for the widgets like text color, background color and font style; ListViews and GridViews are now available in 3 different layouts : simple text, with an image or both.
 
 ## Features from v1.0 ##
-Here's a list of the key points of this web application:
 
 * __Widget based prototyping tool__: the user can create the pages that compose the prototype adding various controls such as label, edit texts etc. Now it supports 16 controls: button, label, edit text, web view, image view, video view, audio player, list view, grid view, photocamera controller, videocamera controller and audio recorder.
 

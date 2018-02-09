@@ -2,7 +2,7 @@
  templates/scene/index.hbs
 */
 App.SceneIndexController = Ember.ObjectController.extend(App.Saveable, {
-    sceneTypes: [
+    sceneTypesAll: [
         {type: 'singleVC', label: 'One VC per screen, without tab menu'},
         {type: 'singleVCTab', label: 'One VC per screen, with tab menu'},
         {type: 'multiVC', label: 'Composed (all VCs in the same screen)'}
@@ -91,7 +91,28 @@ App.SceneIndexController = Ember.ObjectController.extend(App.Saveable, {
                 return "../img/gui/scene_type_3.jpg";
             }
         }
-    }.property('currentDeviceIsSmartphone', 'model.typeSmartphone', 'mode.typeTablet'),
+    }.property('currentDeviceIsSmartphone', 'model.typeSmartphone', 'model.typeTablet'),
+
+    sceneTypes: function() {
+        if(this.get('model') && this.get('model.viewControllers.length') < 2) {
+            return [ {type: 'singleVC', label: 'One VC per screen, without tab menu'} ];
+        }
+        return this.get('sceneTypesAll');
+    }.property('model.viewControllers.length'),
+
+    typeObserver: function() {
+        if(!this.get('model.isDeleted')) {
+            if(this.get('model.viewControllers.length') < 2) {
+                if(this.get('model.typeSmartphone') !== "singleVC") {
+                    this.set('model.typeSmartphone', "singleVC");
+                }
+                if(this.get('model.typeTablet') !== "singleVC") {
+                    this.set('model.typeTablet', "singleVC");
+                }
+                this.get('model').save();
+            }
+        }
+    }.observes('model.viewControllers.length'),
 
     actions: {
         addViewController: function() {
@@ -126,14 +147,12 @@ App.SceneIndexController = Ember.ObjectController.extend(App.Saveable, {
                 // Delete container in smartphone - cont is already the container for the removed vc in the parentVCSmartphone
                 scene.get('parentVCSmartphone.uiPhoneControls').removeObject(containerSmartphone);
                 scene.get('parentVCSmartphone').save().then(function(parentVCSmartphone) {
-                    containerSmartphone.deleteRecord();
-                    containerSmartphone.save();
+                    containerSmartphone.deleteFromScene();
                 });
                 // Delete container in tablet
                 scene.get('parentVCTablet.uiPhoneControls').removeObject(containerTablet);
                 scene.get('parentVCTablet').save().then(function(parentVCTablet) {
-                    containerTablet.deleteRecord();
-                    containerTablet.save();
+                    containerTablet.deleteFromScene();
                 });
                 // Delete navigation object for vc's controls with navigation
                 vc.removeNavigation(scene.get('id'));

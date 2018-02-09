@@ -183,18 +183,15 @@ App.ViewController = DS.Model.extend({
             if(this.get('activeScene.hasMenu')) {
                 return false;
             } else {
-                return true;
+                return !this.get('activeScene.launcher');
             }
         }
         return false;
     }.property(
         'activeScene',
-        'activeScene.hasMenu'
+        'activeScene.hasMenu',
+        'activeScene.launcher'
     ),
-
-    referenceName: function() {
-        return this.get('xmlName') + '/' + this.get('id');
-    }.property('id', 'xmlName'),
 
     addNavigation: function(id) {
         this.get('uiPhoneControls').forEach(function(upc) {
@@ -281,16 +278,9 @@ App.ViewController = DS.Model.extend({
             viewController = xmlDoc.createElement(this.get('xmlName'));
         }
         viewController.setAttribute('id', this.get('id'));
-        viewController.setAttribute('name', this.get('id') + '-' + this.get('name'));
+        viewController.setAttribute('name', this.get('name'));
         viewController.setAttribute('backgroundColor', this.get('backgroundColor'));
         viewController.setAttribute('backgroundImage', this.get('backgroundImage'));
-        /*if(this.get('hasBackButton')) {
-            viewController.setAttribute('hasMenuButton', false);
-            viewController.setAttribute('hasBackButton', true);
-        } else {
-            viewController.setAttribute('hasMenuButton', true);
-            viewController.setAttribute('hasBackButton', false);
-        }*/
 
         this.get('alertDialogs').map(function (alertDialog) {
             viewController.appendChild(alertDialog.toXml(xmlDoc));

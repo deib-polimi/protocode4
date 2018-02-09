@@ -6,8 +6,7 @@ App.UiContainerView = Ember.View.extend({
 
   click: function(evt) {
       var idPrefix = evt.target.id;
-      idPrefix = (idPrefix.split('-'))[0];
-      if(idPrefix === 'Container') {
+      if(idPrefix.search('Container') !== -1) {
           this.get('controller').send('transitionToRoute', 'controlContainer', this.get('context'));
       }
   }

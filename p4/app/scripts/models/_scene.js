@@ -5,7 +5,6 @@ App.Scene = DS.Model.extend({
 
     name: DS.attr('string'),
     launcher: DS.attr('boolean', {defaultValue: false}),
-    hasMenu: DS.attr('boolean', {defaultValue: false}),
     typeSmartphone: DS.attr('string', {defaultValue: 'singleVC'}),
     typeTablet: DS.attr('string', {defaultValue: 'singleVC'}),
 
@@ -46,6 +45,17 @@ App.Scene = DS.Model.extend({
         'typeTablet'
     ),
 
+    hasMenu: function() {
+        var self = this;
+        var hasMenu = false;
+        this.get('application.menu.menuItems').forEach(function(mi) {
+            if(mi.get('navigation.destinationScene') === self) {
+                hasMenu = true;
+            }
+        });
+        return hasMenu;
+    }.property('application.menu.menuItems.@each.navigation.destinationScene'),
+
     activeParentVC: function() {
         if(this.get('application.device.type') === 'smartphone') {
             return this.get('parentVCSmartphone');
@@ -69,17 +79,6 @@ App.Scene = DS.Model.extend({
     }.property(
         'type'
     ),
-
-    referenceName: function() {
-        return this.get('xmlName') + '/' + this.get('id');
-    }.property('id', 'xmlName'),
-
-    launcherObserver: function() {
-        if(!this.get('isDeleted') && this.get('launcher') && !this.get('hasMenu')) {
-            this.set('hasMenu', true);
-            this.save();
-        }
-    }.observes('launcher'),
 
     didCreate: function() {
         var self = this;
@@ -116,7 +115,6 @@ App.Scene = DS.Model.extend({
         scene.setAttribute('id', this.get('id'));
         scene.setAttribute('name', this.get('name'));
         scene.setAttribute('launcher', this.get('launcher'));
-        scene.setAttribute('hasMenu', this.get('hasMenu'));
         scene.setAttribute('typeSmartphone', this.get('typeSmartphone'));
         scene.setAttribute('typeTablet', this.get('typeTablet'));
         if(this.get('typeSmartphone') === 'multiVC') {

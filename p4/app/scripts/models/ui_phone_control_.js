@@ -656,7 +656,7 @@ App.UiPhoneControl = App.UiControl.extend({
 
     // Used to reload views
     didCreate: function () {
-        this.set('name', this.get('id') + '-' + this.constructor.toString().split(".")[1]);
+        this.set('name', this.get('id') + this.constructor.toString().split(".")[1]);
     },
 
     updateNavigations: function(isVC, removedItemId) {
@@ -694,7 +694,7 @@ App.UiPhoneControl = App.UiControl.extend({
     },
 
     decorateXml: function (xmlDoc, xmlElem) {
-        xmlElem.setAttribute('id', this.get('name'));
+        xmlElem.setAttribute('id', 'c' + this.get('name'));
 
         if(this.get('viewController')) {
             xmlElem.setAttribute('viewController', this.get('viewController').getRefPath(''));

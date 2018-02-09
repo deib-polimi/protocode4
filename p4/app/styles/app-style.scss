@@ -388,7 +388,7 @@ body,
     z-index: 2;
 }
 
-.smartphone-view .smartphone-screen-view .view-controller-preview-view.dragging-over {
+.smartphone-view .smartphone-screen-view .view-controller-preview-view .view-controller-preview-view.dragging-over {
     box-shadow: 0 0 5px 5px #cc181e inset;
 }
 
@@ -436,8 +436,8 @@ body,
     z-index: 2;
 }
 
-.tablet-view .tablet-screen-view .view-controller-preview-view.dragging-over,
-.tablet-view.rotated .tablet-screen-view .view-controller-preview-view.dragging-over {
+.tablet-view .tablet-screen-view .view-controller-preview-view .view-controller-preview-view.dragging-over,
+.tablet-view.rotated .tablet-screen-view .view-controller-preview-view .view-controller-preview-view.dragging-over {
     box-shadow: 0 0 5px 5px #cc181e inset;
 }
 

@@ -27,7 +27,6 @@
                     </label>
                     <br>
                     {{input-text label="Name" value=name action='acceptChanges'}}
-                    {{input-checkbox label="Has Menu" checked=hasMenu disabled=controller.cantChangeHasMenu}}
                     {{#if controller.currentDeviceIsSmartphone}}
                         {{input-select-image-preview image=controller.imageSrc label="Type" content=controller.sceneTypes optionLabelPath="content.label"
                             optionValuePath="content.type" value=typeSmartphone}}

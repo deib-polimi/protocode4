@@ -443,7 +443,7 @@ App.ControlChain = DS.Model.extend({
 
     didCreate: function () {
         this._super();
-        this.set('name', this.get('id') + '-Chain');
+        this.set('name', this.get('id') + 'Chain');
         this.save();
     },
 

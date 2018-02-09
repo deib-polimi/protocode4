@@ -10,17 +10,28 @@ App.Container = App.UiPhoneControl.extend({
 
     xmlName: "containers",
 
-    didCreate: function() {
-        this.set('name', 'Container-' + this.get('id'));
-        this.save();
-    },
-
     getWidthFromPercent: function(widthPercent) {
         return widthPercent * this.get('width');
     },
 
     getHeightFromPercent: function(heightPercent) {
         return heightPercent * this.get('height');
+    },
+
+    deleteFromScene: function() {
+        var self = this;
+        this.get('bindedControls').forEach(function(control) {
+            control.get('bindedControls').removeObject(self);
+            control.get('constraints').forEach(function(c) {
+                if(c.get('referenceElement') === self) {
+                    c.deleteRecord();
+                    c.save();
+                }
+            });
+            control.save();
+        });
+        this.deleteRecord();
+        this.save();
     },
 
     toXml: function (xmlDoc) {
