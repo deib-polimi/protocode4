@@ -146,7 +146,7 @@ App.UiPhoneControl = App.UiControl.extend({
         'controlChain.axis',
         'controlChain.type',
         'controlChain.totalValue',
-        'controlChain.byas',
+        'controlChain.bias',
         'controlChain.spacing',
         'controlChain.availableSpace',
         'controlChain.valid',
@@ -230,7 +230,7 @@ App.UiPhoneControl = App.UiControl.extend({
         'controlChain.axis',
         'controlChain.type',
         'controlChain.totalValue',
-        'controlChain.byas',
+        'controlChain.bias',
         'controlChain.spacing',
         'controlChain.availableSpace',
         'controlChain.valid',
@@ -315,7 +315,7 @@ App.UiPhoneControl = App.UiControl.extend({
         'controlChain.axis',
         'controlChain.type',
         'controlChain.totalValue',
-        'controlChain.byas',
+        'controlChain.bias',
         'controlChain.availableSpace',
         'controlChain.spacing',
         'controlChain.valid',
@@ -399,7 +399,7 @@ App.UiPhoneControl = App.UiControl.extend({
         'controlChain.axis',
         'controlChain.type',
         'controlChain.totalValue',
-        'controlChain.byas',
+        'controlChain.bias',
         'controlChain.spacing',
         'controlChain.valid',
         'controlChain.availableSpace',
@@ -656,7 +656,7 @@ App.UiPhoneControl = App.UiControl.extend({
 
     // Used to reload views
     didCreate: function () {
-        this.set('name', this.get('id') + this.constructor.toString().split(".")[1]);
+        this.set('name', 'id' + this.get('id') + this.constructor.toString().split(".")[1]);
     },
 
     updateNavigations: function(isVC, removedItemId) {
@@ -694,7 +694,7 @@ App.UiPhoneControl = App.UiControl.extend({
     },
 
     decorateXml: function (xmlDoc, xmlElem) {
-        xmlElem.setAttribute('id', 'c' + this.get('name'));
+        xmlElem.setAttribute('id', this.get('name'));
 
         if(this.get('viewController')) {
             xmlElem.setAttribute('viewController', this.get('viewController').getRefPath(''));

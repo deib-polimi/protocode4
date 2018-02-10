@@ -4,7 +4,7 @@ App.ControlChain = DS.Model.extend({
     name: DS.attr('string'),
     axis: DS.attr('string'),
     type: DS.attr('string'),
-    byas: DS.attr('number', {defaultValue: 0.5}),
+    bias: DS.attr('number', {defaultValue: 0.5}),
     uiPhoneControls: DS.hasMany('uiPhoneControl', {polymorphic: true}),
     spacing: DS.attr('number', {defaultValue: 0}),
 
@@ -33,15 +33,14 @@ App.ControlChain = DS.Model.extend({
         'uiPhoneControls.@each.valueInChain'
     ),
 
-    byasCantBeChanged: function() {
-        if(!this.get('valid')) {
-            return true;
-        } else if(this.get('type')) {
-            return this.get('type') !== 'packed';
-        } else {
-            return true;
+    biasCantBeChanged: function() {
+        if(!this.get('isDeleted')) {
+            if(this.get('type')) {
+                return this.get('type') !== 'packed';
+            }
         }
-    }.property('type', 'valid'),
+        return true;
+    }.property('type'),
 
     getAvailableSpace: function(vcWidth, vcHeight) {
         var controls = this.get('uiPhoneControls');
@@ -107,7 +106,7 @@ App.ControlChain = DS.Model.extend({
         if(!this.get('isDeleted')) {
             return (this.get('type') === 'spread') || (this.get('type') === 'spread_inside');
         }
-        return false;
+        return true;
     }.property('type'),
 
     spacingSet: function() {
@@ -116,11 +115,11 @@ App.ControlChain = DS.Model.extend({
         }
     }.observes('spacing'),
 
-    byasSet: function() {
+    biasSet: function() {
         if(!(this.get('isDeleted'))) {
-            this.set('byas', parseFloat(this.get('byas')));
+            this.set('bias', parseFloat(this.get('bias')));
         }
-    }.observes('byas'),
+    }.observes('bias'),
 
     getSpreadSpace: function(inside, forXml) {
         var controls = this.get('uiPhoneControls');
@@ -152,9 +151,9 @@ App.ControlChain = DS.Model.extend({
             availableSpace = this.get('availableSpace');
         }
         if(first) {
-            packedSpace = availableSpace * this.get('byas');
+            packedSpace = availableSpace * this.get('bias');
         } else {
-            packedSpace = availableSpace * (1 - this.get('byas'));
+            packedSpace = availableSpace * (1 - this.get('bias'));
         }
         return packedSpace;
     },
@@ -443,7 +442,7 @@ App.ControlChain = DS.Model.extend({
 
     didCreate: function () {
         this._super();
-        this.set('name', this.get('id') + 'Chain');
+        this.set('name', 'id' + this.get('id') + 'Chain');
         this.save();
     },
 
@@ -462,13 +461,13 @@ App.ControlChain = DS.Model.extend({
 
     toXml: function (xmlDoc) {
         var chain = xmlDoc.createElement(this.get('xmlName'));
-        chain.setAttribute('id', this.get('id'));
+        chain.setAttribute('id', this.get('name'));
         chain.setAttribute('viewController', this.get('viewController').getRefPath(''));
         chain.setAttribute('axis', this.get('axis'));
         chain.setAttribute('type', this.get('type'));
         chain.setAttribute('nControls', this.get('uiPhoneControls.length'));
         if(this.get('type') === 'packed') {
-            chain.setAttribute('byas', this.get('byas'));
+            chain.setAttribute('bias', this.get('bias'));
         }
         if(this.get('type') === 'packed' || this.get('type') === 'weighted') {
             chain.setAttribute('spacing', this.get('spacing'));

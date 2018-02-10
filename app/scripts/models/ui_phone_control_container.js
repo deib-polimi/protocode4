@@ -18,6 +18,11 @@ App.Container = App.UiPhoneControl.extend({
         return heightPercent * this.get('height');
     },
 
+    didCreate: function () {
+        this.set('name', 'id' + this.get('id') + this.constructor.toString().split(".")[1]);
+        this.save();
+    },
+
     deleteFromScene: function() {
         var self = this;
         this.get('bindedControls').forEach(function(control) {

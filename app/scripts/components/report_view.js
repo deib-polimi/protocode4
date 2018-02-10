@@ -20,7 +20,7 @@ App.ReportViewComponent = Ember.Component.extend({
 
     updateReportObserver: function() {
         this.updateReport();
-    }.observes('scene', 'router.location.lastSetURL'),
+    }.observes('scene', 'router.location.lastSetURL', 'scene.application.device.type'),
 
     updateReport: function() {
         var self = this;

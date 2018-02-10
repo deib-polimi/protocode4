@@ -161,22 +161,26 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
         // Check boundaries: top
         var minTop = control.get('viewController.top');
         if(control.getTopWithMargin(false) < minTop) {
-            return 4;
+            // return 4;
+            return 0;
         }
         // Check boundaries: bottom
         var maxBottom = control.get('viewController.bottom');
         if(control.getBottomWithMargin(false) > maxBottom) {
-            return 5;
+            // return 5;
+            return 0;
         }
         // Check boundaries: start
         var minStart = control.get('viewController.start');
         if(control.getStartWithMargin(false) < minStart) {
-            return 6;
+            // return 6;
+            return 0;
         }
         // Check boundaries: end
         var maxEnd = control.get('viewController.end');
         if(control.getEndWithMargin(false) > maxEnd) {
-            return 7;
+            // return 7;
+            return 0;
         }
         // Check conflicts between different constraints
         // Check conflicts on the same axis
@@ -230,7 +234,8 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
                     }
                 });
                 if(conflict) {
-                    return 12;
+                    // return 12;
+                    return 0;
                 }
             } else if(thisConstraint.get('layoutEdge') === 'start' || thisConstraint.get('layoutEdge') === 'end') {
                 equalConstraints.forEach(function(constraint) {
@@ -239,7 +244,8 @@ App.ConstraintIndexController = Ember.ObjectController.extend(App.Saveable, {
                     }
                 });
                 if(conflict) {
-                    return 12;
+                    // return 12;
+                    return 0;
                 }
             }
         }
