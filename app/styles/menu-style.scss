@@ -421,14 +421,13 @@
 
 .app-menu-item.ios {
     position: relative;
-    color: $ios-color;
+    color: #000000;
     align-self: auto;
     padding-left: 40px;
     padding-top: 15px;
     padding-bottom: 15px;
-    border-bottom: 1px solid #ddd;
     width: 100%;
-    font-size: 14px;
+    font-size: 17px;
     cursor: pointer;
 }
 
@@ -449,7 +448,6 @@
     position: relative;
     width: 100%;
     padding-bottom: 0px;
-    border-bottom: 1px solid #ddd;
 }
 
 .app-menu-header.android {

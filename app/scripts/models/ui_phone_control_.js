@@ -704,7 +704,7 @@ App.UiPhoneControl = App.UiControl.extend({
         xmlElem.setAttribute('defaultHeight', this.get('defaultHeight'));
 
         // Export width and height of the reference device for iOS (now it's the iPhone7 Plus)
-        var width, height, start, top;
+        /*var width, height, start, top;
         if(!this.get('controlChain')) {
             width = this.getEndWithMargin(true, 414) - parseFloat(this.get('marginEnd'))
             - (this.getStartWithMargin(true, 0, 207) + parseFloat(this.get('marginStart')));
@@ -721,9 +721,9 @@ App.UiPhoneControl = App.UiControl.extend({
             start = this.get('controlChain').getStartInChain(this.get('id'), 0) + parseFloat(this.get('marginStart'));
         }
         xmlElem.setAttribute('width', width);
-        xmlElem.setAttribute('height', height);
-        xmlElem.setAttribute('posX', start);
-        xmlElem.setAttribute('posY', top);
+        xmlElem.setAttribute('height', height);*/
+        xmlElem.setAttribute('posX', this.get('posX'));
+        xmlElem.setAttribute('posY', this.get('posY'));
 
         if(this.get('controlChain')) {
             var controlChain = this.get('controlChain');
