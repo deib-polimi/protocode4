@@ -82,7 +82,7 @@ App.ListView = App.UiPhoneControl.extend({
 
         var navigations = this.get('navigations');
         navigations.forEach(function(nav) {
-            button.appendChild(nav.toXml(xmlDoc));
+            elem.appendChild(nav.toXml(xmlDoc));
         });
 
         self.get('listViewCells').map(function (item) {

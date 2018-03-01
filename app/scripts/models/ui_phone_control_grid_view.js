@@ -85,7 +85,7 @@ App.GridView = App.UiPhoneControl.extend({
         var navigation = self.get('navigation');
 
         navigations.forEach(function(nav) {
-            button.appendChild(nav.toXml(xmlDoc));
+            elem.appendChild(nav.toXml(xmlDoc));
         });
 
         self.get('gridViewCells').map(function (item) {

@@ -37,14 +37,7 @@ App.PhotocameraController = App.UiPhoneControl.extend({
     // Override because there's only one PhotocameraController
     getRefPath: function (path) {
         var updatedPath = '/@' + this.get('xmlName');
-
-        if (this.get('parentContainer') !== null) {
-            updatedPath = this.get('parentContainer').getRefPath(updatedPath);
-        }
-        else {
-            updatedPath = this.get('viewController').getRefPath(updatedPath);
-        }
-
+        updatedPath = this.get('viewController').getRefPath(updatedPath);
         return updatedPath;
     }
 });

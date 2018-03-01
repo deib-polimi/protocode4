@@ -15,6 +15,8 @@ Here's a list of the key points of this web application:
 
 * __Reusable View Controllers__: to achieve code reusability, the same View Controller can be reused many times in different Scenes
 
+* __Editor Report__: while viewing a Scene, the View Editor shows a report text view pointing out potential problems like Scene unreachability (no navigation items pointing to that), missing constraints and invalid objects
+
 * __New tablet devices__: iPad Pro 12.9" and iPad Air (9.7") for iOS 11, Nexus 7, 9 and 10 for Android Oreo
 
 * __New smartphone device__: iPhone X.

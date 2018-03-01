@@ -27,13 +27,11 @@
     {{/if}}
 
     <!-- App Menu -->
-    {{#if model.hasMenu}}
-        {{view App.MenuView}}
-        {{#if viewControllerToShow}}
-            {{#link-to "vc" viewControllerToShow}}{{view App.MenuViewShadow}}{{/link-to}}
-        {{else}}
-            {{#link-to "scene"}}{{view App.MenuViewShadow}}{{/link-to}}
-        {{/if}}
+    {{view App.MenuView}}
+    {{#if viewControllerToShow}}
+        {{#link-to "vc" viewControllerToShow}}{{view App.MenuViewShadow}}{{/link-to}}
+    {{else}}
+        {{#link-to "scene"}}{{view App.MenuViewShadow}}{{/link-to}}
     {{/if}}
 {{else}}
     <div class="action-bar">

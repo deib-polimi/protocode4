@@ -485,7 +485,7 @@ App.ControlChain = DS.Model.extend({
     },
 
     getRefPath: function (path) {
-        var updatedPath = '/@' + this.get('xmlName') + '[id=\'' + this.get('id') + '\']' + path;
+        var updatedPath = '/@' + this.get('xmlName') + '[id=\'' + this.get('name') + '\']' + path;
         updatedPath = this.get('viewController').getRefPath(updatedPath);
         return updatedPath;
     },

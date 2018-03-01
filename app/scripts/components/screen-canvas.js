@@ -231,9 +231,8 @@ App.ScreenCanvasComponent = Ember.Component.extend({
                     ctx.fillStyle = "#00ff00";
                 } else if(constraint.get('layoutEdge') === 'centerY') {
                     ctx.fillStyle = "#ffdd00";
-                    var endY = control.get('top') - viewTop + plus;
-                    ctx.fillRect(control.get('centerX'), viewTop, 2, endY);
-                    endY = this.get('device.viewBottom') - control.get('bottom') + plus;
+                    var endY = control.get('top') - control.get('viewController.top') + plus;
+                    ctx.fillRect(control.get('centerX'), control.get('viewController.top'), 2, endY);
                     ctx.fillRect(control.get('centerX'), control.get('bottom') - plus, 2, endY);
                     ctx.fillStyle = "#00ff00";
                 }

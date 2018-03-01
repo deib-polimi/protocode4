@@ -1,7 +1,7 @@
 /*
  templates/view_scenes.hbs
  */
-App.ScenesController = Ember.ObjectController.extend({
+App.ScenesController = Ember.ObjectController.extend(App.Saveable, {
     needs: ['uiPhoneControlTemplates', 'editor'],
 
     vcsCount: function() {
@@ -29,6 +29,7 @@ App.ScenesController = Ember.ObjectController.extend({
     }.property('scenesCount'),
 
     actions: {
+
         createViewController: function () {
             var name = this.get('newNameVC');
             var app = this.get('model');
