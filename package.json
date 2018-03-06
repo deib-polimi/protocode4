@@ -1,7 +1,7 @@
 {
     "name": "protocode",
     "version": "4.0.0",
-    "repository": "https://github.com/alessioros/protocode3.git",
+    "repository": "https://github.com/massimo-beccari/protocode4",
     "license": "GPL-3.0",
     "dependencies": {},
     "devDependencies": {

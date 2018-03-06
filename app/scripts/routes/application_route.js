@@ -50,7 +50,6 @@ App.ApplicationRoute = Ember.Route.extend({
             alertDialogs: this.store.find('alertDialog'),
             progressDialogs: this.store.find('progressDialog'),
 
-            clickListeners: this.store.find('clickListener'),
             watchClickListeners: this.store.find('watchClickListener'),
             navigations: this.store.find('navigation'),
             watchNavigations: this.store.find('watchNavigation'),

@@ -1,7 +1,7 @@
 /*
  templates/watch_controllers.hbs
  */
-App.WatchControllersController = Ember.ArrayController.extend({
+App.WatchControllersController = Ember.ArrayController.extend(App.Saveable, {
 
     isCreating: false,
     newNameWatchController: Ember.computed('watchContrCount', function () {

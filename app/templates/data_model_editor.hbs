@@ -1,3 +1,23 @@
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-addon input-sm">Application</span>
+                    {{input value=application.name class="form-control input-sm" placeholder="name" type="text"
+                            focus-out="acceptChanges" insert-newline="acceptChanges"}}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-addon input-sm">Company Identifier</span>
+                    {{input value=application.companyIdentifier class="form-control input-sm" placeholder="companyId"
+                            type="text" focus-out="acceptChanges" insert-newline="acceptChanges"}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="sidebar col-md-3">
     <div class="side-title">
         <span>STORAGE OPTIONS</span>
