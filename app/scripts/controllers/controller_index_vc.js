@@ -1,7 +1,7 @@
 /*
  templates/vc/index.hbs
  */
-App.VcIndexController = Ember.ObjectController.extend({
+App.VcIndexController = Ember.ObjectController.extend(App.Saveable, {
     needs: ['scene'],
     scene: Ember.computed.alias('controllers.scene.model'),
 

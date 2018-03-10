@@ -26,11 +26,11 @@ App.ControlChain = DS.Model.extend({
     totalValue: function() {
         var total = 0;
         this.get('uiPhoneControls').forEach(function(c) {
-            total = total + c.get('valueInChain');
+            total = total + c.get('weightInChain');
         });
         return total;
     }.property(
-        'uiPhoneControls.@each.valueInChain'
+        'uiPhoneControls.@each.weightInChain'
     ),
 
     biasCantBeChanged: function() {

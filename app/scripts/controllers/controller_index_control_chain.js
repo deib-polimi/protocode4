@@ -128,7 +128,7 @@ App.ControlChainIndexController = Ember.ObjectController.extend(App.Saveable, {
                     var newControl = this.store.createRecord(newControlType, {
                         viewController: chain.get('viewController'),
                         controlChain: chain,
-                        valueInChain: 1,
+                        weightInChain: 1,
                         ratioWidth: 1,
                         ratioHeight: 1
                     });

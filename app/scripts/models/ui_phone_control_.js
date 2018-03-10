@@ -12,7 +12,7 @@ App.UiPhoneControl = App.UiControl.extend({
 
     viewController: DS.belongsTo('viewController', {inverse: 'uiPhoneControls'}),
     controlChain: DS.belongsTo('controlChain', {inverse: 'uiPhoneControls'}),
-    valueInChain: DS.attr('number', {defaultValue: 1}),
+    weightInChain: DS.attr('number', {defaultValue: 1}),
 
     constraints: DS.hasMany('constraint', {inverse: 'uiPhoneControl'}),
     bindedControls: DS.hasMany('uiPhoneControl', {polymorphic: true}),
@@ -218,7 +218,7 @@ App.UiPhoneControl = App.UiControl.extend({
     bottomWithMargin: function () {
         if(!this.get('isDeleted')) {
             if(this.get('controlChain') && this.get('controlChain.axis') === 'vertical') {
-                return this.get('controlChain').getBottomInChain(this.get('id'), this.get('valueInChain'), false);
+                return this.get('controlChain').getBottomInChain(this.get('id'), this.get('weightInChain'), false);
             } else {
                 return this.getBottomWithMargin(true, this.get('viewController.bottom'));
             }
@@ -387,7 +387,7 @@ App.UiPhoneControl = App.UiControl.extend({
     endWithMargin: function () {
         if(!this.get('isDeleted')) {
             if(this.get('controlChain') && this.get('controlChain.axis') === 'horizontal') {
-                return this.get('controlChain').getEndInChain(this.get('id'), this.get('valueInChain'), false);
+                return this.get('controlChain').getEndInChain(this.get('id'), this.get('weightInChain'), false);
             } else {
                 return this.getEndWithMargin(true, this.get('viewController.end'));
             }
@@ -548,7 +548,7 @@ App.UiPhoneControl = App.UiControl.extend({
         'defaultHeight'
     ),
 
-    valueInChainCanBeChanged: function() {
+    weightInChainCanBeChanged: function() {
         if(!this.get('isDeleted') && this.get('controlChain')) {
             if(this.get('controlChain.type') === 'weighted') {
                 return true;
@@ -559,9 +559,9 @@ App.UiPhoneControl = App.UiControl.extend({
         return false;
     }.property('controlChain.type'),
 
-    valueInChainCantBeChanged: function() {
-        return !this.get('valueInChainCanBeChanged');
-    }.property('valueInChainCanBeChanged'),
+    weightInChainCantBeChanged: function() {
+        return !this.get('weightInChainCanBeChanged');
+    }.property('weightInChainCanBeChanged'),
 
     marginTopCantBeChanged: function() {
         if(!this.get('isDeleted')) {
@@ -650,9 +650,9 @@ App.UiPhoneControl = App.UiControl.extend({
 
     valueObserver: function() {
         if(!this.get('isDeleted')) {
-            this.set('valueInChain', parseInt(this.get('valueInChain')));
+            this.set('weightInChain', parseInt(this.get('weightInChain')));
         }
-    }.observes('valueInChain'),
+    }.observes('weightInChain'),
 
     // Used to reload views
     didCreate: function () {
@@ -713,9 +713,9 @@ App.UiPhoneControl = App.UiControl.extend({
             top = this.getTopWithMargin(true, 64, 400) + parseFloat(this.get('marginTop'));
             start = this.getStartWithMargin(true, 0, 207) + parseFloat(this.get('marginStart'));
         } else {
-            width = this.get('controlChain').getEndInChain(this.get('id'), this.get('valueInChain'), true) - parseFloat(this.get('marginEnd'))
+            width = this.get('controlChain').getEndInChain(this.get('id'), this.get('weightInChain'), true) - parseFloat(this.get('marginEnd'))
             - (this.get('controlChain').getStartInChain(this.get('id'), 0) + parseFloat(this.get('marginStart')));
-            height = this.get('controlChain').getBottomInChain(this.get('id'), this.get('valueInChain'), true) - parseFloat(this.get('marginBottom'))
+            height = this.get('controlChain').getBottomInChain(this.get('id'), this.get('weightInChain'), true) - parseFloat(this.get('marginBottom'))
             - (this.get('controlChain').getTopInChain(this.get('id'), 64) + parseFloat(this.get('marginTop')));
             top = this.get('controlChain').getTopInChain(this.get('id'), 64) + parseFloat(this.get('marginTop'));
             start = this.get('controlChain').getStartInChain(this.get('id'), 0) + parseFloat(this.get('marginStart'));
@@ -736,7 +736,7 @@ App.UiPhoneControl = App.UiControl.extend({
                 xmlElem.setAttribute('followingInChain', controlChain.getFollowingControl(this).getRefPath(''));
             }
             if(controlChain.get('type') === 'weighted') {
-                xmlElem.setAttribute('weight', this.get('valueInChain'));
+                xmlElem.setAttribute('weight', this.get('weightInChain'));
             }
         }
 

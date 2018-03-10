@@ -91,7 +91,7 @@ App.ScreenCanvasComponent = Ember.Component.extend({
         'uiPhoneControlsToDraw.@each.height',
         'uiPhoneControlsToDraw.@each.ratioWidth',
         'uiPhoneControlsToDraw.@each.ratioHeight',
-        'uiPhoneControlsToDraw.@each.valueInChain',
+        'uiPhoneControlsToDraw.@each.weightInChain',
         'uiPhoneControlsToDraw.@each.marginTop',
         'uiPhoneControlsToDraw.@each.marginBottom',
         'uiPhoneControlsToDraw.@each.marginStart',

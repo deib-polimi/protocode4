@@ -226,7 +226,7 @@ App.SceneController = Ember.ObjectController.extend({
         vc.get('controlChains').forEach(function(c) {
             if(!c.get('valid')) {
                 nInvalids++;
-                report = report + tab + tab + "Chain <aid>" + c.get('name') + "</aid> is <ainv>not valid</ainv>.<br>";
+                report = report + tab + tab + "<aid>" + c.get('name') + "</aid> is <ainv>not valid</ainv>.<br>";
                 report = report + tab + tab + "So, also the chain's controls aren't valid:<br>";
                 c.get('uiPhoneControls').forEach(function(uic) {
                     report = report + tab + tab + "<ainv>" + uic.get('name') + "</ainv><br>";
@@ -246,7 +246,7 @@ App.SceneController = Ember.ObjectController.extend({
                 nConstraints++;
                 if(!c.get('valid')) {
                     nInvalids++;
-                    report = report + tab + tab + "Constraint <aid>" + c.get('id') + "</aid> of <aid>" + uic.get('name') + "</aid> is <ainv>not valid</ainv>.<br>";
+                    report = report + tab + tab + "<aid>" + c.get('name') + "</aid> of <aid>" + uic.get('name') + "</aid> is <ainv>not valid</ainv>.<br>";
                 }
             });
         });
