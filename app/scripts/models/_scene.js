@@ -125,7 +125,7 @@ App.Scene = DS.Model.extend({
         }
         // if there will be 2 parent view controllers, the first is the smartphone parent vc, the second is the tablet one
         this.get('viewControllers').forEach(function(vc) {
-            var vcInfo = xmlDoc.createElement('sceneViewControllers');
+            var vcInfo = xmlDoc.createElement('childViewControllers');
             vcInfo.setAttribute('viewController', vc.getRefPath(''));
             scene.appendChild(vcInfo);
         });

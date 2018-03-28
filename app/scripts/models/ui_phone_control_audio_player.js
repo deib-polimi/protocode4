@@ -31,7 +31,7 @@ App.AudioPlayer = App.UiPhoneControl.extend({
 
         if (viewController) {
             viewController.get('uiPhoneControls').forEach(function (uiPhoneControl) {
-                if (uiPhoneControl.get('audioPlayer') === self) {
+                if (uiPhoneControl && uiPhoneControl.get('audioPlayer') === self) {
                     uiPhoneControl.set('audioPlayer', null);
                     uiPhoneControl.save();
                 }

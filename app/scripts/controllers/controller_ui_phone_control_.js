@@ -225,17 +225,23 @@ App.UiPhoneControlController = Ember.ObjectController.extend(App.Saveable, {
         deleteUiPhoneControl: function () {
             var self = this;
             var controlToDelete = this.get('model');
+            var viewController = controlToDelete.get('viewController');
 
-            controlToDelete.get('bindedControls').forEach(function(control) {
-                control.get('bindedControls').removeObject(controlToDelete);
-                control.get('constraints').forEach(function(c) {
-                    if(c.get('referenceElement') === controlToDelete) {
-                        c.deleteRecord();
-                        c.save();
+            if(viewController) {
+                viewController.get('uiPhoneControls').without(controlToDelete).forEach(function(control) {
+                    if(control) {
+                        control.get('bindedControls').removeObject(controlToDelete);
+                        control.get('constraints').forEach(function(c) {
+                            if(c.get('referenceElement') === controlToDelete) {
+                                control.get('constraints').removeObject(c);
+                                c.deleteRecord();
+                                c.save();
+                            }
+                        });
+                        control.save();
                     }
                 });
-                control.save();
-            });
+            }
 
             if(controlToDelete.get('controlChain')) {
                 var chain = controlToDelete.get('controlChain');
@@ -250,7 +256,6 @@ App.UiPhoneControlController = Ember.ObjectController.extend(App.Saveable, {
                     });
                 });
             } else {
-                var viewController = this.get('viewController');
                 var uiPhoneControls = viewController.get('uiPhoneControls');
                 uiPhoneControls.removeObject(controlToDelete);
                 viewController.save().then(function(vc) {

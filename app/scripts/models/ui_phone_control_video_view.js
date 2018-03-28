@@ -32,7 +32,7 @@ App.VideoView = App.UiPhoneControl.extend({
 
         if (viewController) {
             viewController.get('uiPhoneControls').forEach(function (uiPhoneControl) {
-                if (uiPhoneControl.get('videoView') === self) {
+                if (uiPhoneControl && uiPhoneControl.get('videoView') === self) {
                     uiPhoneControl.set('videoView', null);
                     uiPhoneControl.save();
                 }
